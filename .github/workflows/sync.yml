@@ -14,16 +14,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # node v20
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
       - name: Sync docs
         run: |
-          git clone https://github.com/BuilderIO/qwik
-          cd qwik
-          git checkout main
-          ls
-          # 确保存在 docs
-          mkdir -p docs
-
-          cp -r packages/docs /docs
+          npx giget@latest gh:BuilderIO/qwik/packages/docs#main docs
           ls
       - name: Commit changes
         run: |
