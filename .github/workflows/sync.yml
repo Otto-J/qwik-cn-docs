@@ -23,10 +23,11 @@ jobs:
       - name: Sync docs
         run: |
           # 切换到 docs 分支
-          git checkout -b docs
+          git checkout docs
 
+          rm -rf docs
           npx giget@latest gh:BuilderIO/qwik/packages/docs#main docs
-          ls
+          # ls
       - name: Commit changes
         run: |
           git config --global user.name "Otto_J"
@@ -38,8 +39,9 @@ jobs:
           git push
       # - name: pnpm install
       #   run: |
-
+      #     cd docs
       #     pnpm install
       # - name: Build
       #   run: |
       #     pnpm run build
+      # 部署单独处理吧
