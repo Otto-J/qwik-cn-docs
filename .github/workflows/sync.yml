@@ -1,0 +1,39 @@
+name: Sync Docs
+
+on:
+  # 手动
+  workflow_dispatch:
+  schedule:
+    - cron: "30 11 * * *"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Sync docs
+        run: |
+          git clone https://github.com/BuilderIO/qwik
+          cd qwik
+          git checkout main
+
+          cp -r packages/docs /docs
+          ls
+      - name: Commit changes
+        run: |
+          git config --global user.name "Otto_J"
+          git config --global user.email "otto@webworker.tech"
+
+          git add .
+          git commit -m "Sync docs"
+          git push
+      # - name: pnpm install
+      #   run: |
+
+      #     pnpm install
+      # - name: Build
+      #   run: |
+      #     pnpm run build
