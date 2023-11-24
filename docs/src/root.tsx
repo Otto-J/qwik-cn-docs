@@ -1,5 +1,9 @@
 import { component$, useContextProvider, useStore } from '@builder.io/qwik';
-import { QwikCityProvider, RouterOutlet, ServiceWorkerRegister } from '@builder.io/qwik-city';
+import {
+  QwikCityProvider,
+  RouterOutlet,
+  ServiceWorkerRegister,
+} from '@builder.io/qwik-city';
 import RealMetricsOptimization from './components/real-metrics-optimization/real-metrics-optimization';
 import { RouterHead } from './components/router-head/router-head';
 import { GlobalStore, type SiteStore } from './context';
@@ -40,5 +44,7 @@ export default component$(() => {
 
 export function collectSymbols() {
   (window as any).symbols = [];
-  document.addEventListener('qsymbol', (e) => (window as any).symbols.push((e as any).detail));
+  document.addEventListener('qsymbol', (e) =>
+    (window as any).symbols.push((e as any).detail),
+  );
 }
