@@ -19,6 +19,9 @@ jobs:
           git clone https://github.com/BuilderIO/qwik
           cd qwik
           git checkout main
+          ls
+          # 确保存在 docs
+          mkdir -p docs
 
           cp -r packages/docs /docs
           ls
