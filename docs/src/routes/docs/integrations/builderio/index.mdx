@@ -1,57 +1,57 @@
 ---
-title: Builder.io | Integrations
-keywords: 'visual cms, headless cms, builder.io'
+title: Builder.io | 集成
+keywords: '可视化 CMS, 无头 CMS, builder.io'
 contributors:
   - manucorporat
 ---
 
 # Builder.io
 
-[Builder.io](https://builder.io/) is a Visual Headless CMS. Think about it as a drag-and-drop CMS that integrates into your existing Qwik codebase, allowing you and your team to edit content without having to write code.
+[Builder.io](https://builder.io/) 是一个可视化无头 CMS。可以将其视为一个拖放式 CMS，可以集成到现有的 Qwik 代码库中，让您和您的团队可以在不编写代码的情况下编辑内容。
 
-## Setup
+## 设置
 
-You can add builder.io easily by using the following `add` script:
+您可以使用以下 `add` 脚本轻松添加 builder.io：
 
 ```shell
 npm run qwik add builder.io
 ```
 
-After running the command, `@builder.io/sdk-qwik` will be installed, and a new sample component and catchall route will be created in `src/components` and `src/routes` respectively.
+运行该命令后，`@builder.io/sdk-qwik` 将被安装，并在 `src/components` 和 `src/routes` 中创建一个新的示例组件和 catchall 路由。
 
-Create a free [Builder.io account](https://builder.io/signup) (only takes a couple minutes), and paste your [public API key](https://www.builder.io/c/docs/using-your-api-key) into `.env`
+创建一个免费的 [Builder.io 账户](https://builder.io/signup)（只需几分钟），并将您的 [公共 API 密钥](https://www.builder.io/c/docs/using-your-api-key) 粘贴到 `.env` 文件中。
 
 ```diff
 - BUILDER_PUBLIC_API_KEY=YOUR_API_KEY
 + BUILDER_PUBLIC_API_KEY=abc123
 ```
 
-Then run the development server:
+然后运行开发服务器：
 
 ```bash
 npm run dev
 ```
 
-Now, go set your [preview URL](https://www.builder.io/c/docs/guides/preview-url) to `http://localhost:5173/`
+现在，将您的 [预览 URL](https://www.builder.io/c/docs/guides/preview-url) 设置为 `http://localhost:5173/`
 
-1. Go to [https://builder.io/models](https://builder.io/models)
-2. Choose the `page` model
-3. Set the preview URL to `http://localhost:5173/` and click `save` in the top right
+1. 前往 [https://builder.io/models](https://builder.io/models)
+2. 选择 `page` 模型
+3. 将预览 URL 设置为 `http://localhost:5173/`，然后点击右上角的 `保存`
 
-Now, let's create a page in Builder.io and see it live in Qwik!
+现在，让我们在 Builder.io 中创建一个页面，并在 Qwik 中实时查看它！
 
-1. Go to [https://builder.io/content](https://builder.io/content)
-2. Click `+ New` and choose `Page`
-3. Give it a name and click `Create`
+1. 前往 [https://builder.io/content](https://builder.io/content)
+2. 点击 `+ 新建`，选择 `页面`
+3. 给它一个名称，然后点击 `创建`
 
-Now, try out the visual editor! You can find a custom Qwik components
-in the `Custom Components` section of the insert tab.
+现在，尝试使用可视化编辑器！您可以在插入选项卡的 `自定义组件` 部分找到自定义的 Qwik 组件。
 
-You may also limit visual editing to only your custom components with [components-only mode](https://www.builder.io/c/docs/guides/components-only-mode).
 
-## Register your components
+您还可以使用 [仅组件模式](https://www.builder.io/c/docs/guides/components-only-mode) 限制可视化编辑仅适用于您的自定义组件。
 
-One of the killer features of a Visual Headless CMS, is that you can [expose your components](https://www.builder.io/c/docs/custom-components-setup) to the CMS, ie, your Qwik components can be used as blocks in Builder.io.
+## 注册您的组件
+
+可视化无头 CMS 的一个重要功能是，您可以将您的组件[公开](https://www.builder.io/c/docs/custom-components-setup)给 CMS，也就是说，您的 Qwik 组件可以在 Builder.io 中用作块。
 
 ```tsx
 import { MyFunComponent } from './fun/fun';
@@ -80,11 +80,11 @@ export default component$(() => {
 });
 ```
 
-## Next Steps
+## 下一步
 
-See our full integration guides [here](https://www.builder.io/c/docs/developers)
+请查看我们的完整集成指南 [here](https://www.builder.io/c/docs/developers)
 
-Also, when you push your integration to production, go back and update your preview URL to your production URL so now anyone on your team can visuall create content in your Qwik app!
+此外，当您将集成推送到生产环境时，请返回并将您的预览 URL 更新为您的生产 URL，这样您团队中的任何人都可以在您的 Qwik 应用中可视化创建内容！
 
-Also, to integrate structured data, see [this guide](https://www.builder.io/c/docs/integrate-cms-data)
+另外，要集成结构化数据，请参阅 [此指南](https://www.builder.io/c/docs/integrate-cms-data)
 

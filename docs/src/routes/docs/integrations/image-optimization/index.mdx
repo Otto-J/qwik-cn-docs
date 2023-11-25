@@ -1,9 +1,9 @@
 ---
-title: Image Optimization | Integrations
+title: 图片优化 | 集成
 keywords: >-
-  third party image optimization, image optimization, image optimization tools,
-  image optimization services, image optimization service, image optimization
-  tool, image optimization api, im
+  第三方图片优化，图片优化，图片优化工具，图片优化服务，图片优化工具，图片优化API，图片优化
+
+
 contributors:
   - mhevery
   - gioboa
@@ -12,60 +12,60 @@ contributors:
 import CodeSandbox from '../../../../components/code-sandbox/index.tsx';
 
 
-# Image Optimization
+# 图片优化
 
-Image optimization is the process of reducing the number of bytes that represent an image. The smaller the image size, the faster it will load on a page. The smaller the image size, the less bandwidth it consumes. The less bandwidth it consumes, the better the experience for your users especially on mobile networks.
-
-
-## Responsive Images
-
-Qwik supports responsive images.
-
-This is a built-in feature that relies on the [`vite-imagetools`](https://www.npmjs.com/package/vite-imagetools) module, so no additional packages or components need to be installed.
+图片优化是减少表示图像的字节数的过程。图像大小越小，加载速度越快。图像大小越小，占用的带宽越少。占用的带宽越少，对用户的体验越好，尤其是在移动网络上。
 
 
+## 响应式图片
 
-#### How it works
+Qwik 支持响应式图片。
 
-* Import any image from the `src` folder
-* The image is converted in several webp images, one for each breakpoint (200px, 400px, 600px, 800px, 1200px)
-* The image is processed and optimized to reduce its size
-* An `<img>` element is rendered, using the `srcset` attribute to set the image source for several resolutions
-* Now the browser will load the most suitable image for the resolution in use
-
-#### Key Points
-The community and the Qwik team love this API for a number of reasons:
+这是一个内置功能，依赖于 [`vite-imagetools`](https://www.npmjs.com/package/vite-imagetools) 模块，因此不需要安装额外的包或组件。
 
 
-* Zero runtime, zero JS
-* Zero props by default, simple API
-* Zero 404, strongly typed API
-* Zero layout reflows (Automatic width/height)
-* Hashed images, immutable cached
-* Automatic `.webp` / `.avif` format optimization
-* Automated `srcSet` generation
-* Extendable (use any `<img>` attribute)
-* Loading lazy and async decoding by default
-* Lightweight, a single `<img>` node in the HTML
+
+#### 工作原理
+
+* 从 `src` 文件夹导入任何图像
+* 图像会被转换为多个 webp 图像，每个断点一个（200px、400px、600px、800px、1200px）
+* 图像会被处理和优化以减小其大小
+* 使用 `srcset` 属性渲染一个 `<img>` 元素，为多个分辨率设置图像源
+* 现在，浏览器将加载适合当前分辨率的最合适的图像
+
+#### 要点
+社区和 Qwik 团队喜欢这个 API 的原因有很多：
 
 
-#### Usage
+* 零运行时，零 JS
+* 默认情况下零 props，简单的 API
+* 零 404，强类型 API
+* 零布局回流（自动宽度/高度）
+* 哈希图像，不可变缓存
+* 自动 `.webp` / `.avif` 格式优化
+* 自动生成 `srcSet`
+* 可扩展（使用任何 `<img>` 属性）
+* 默认懒加载和异步解码
+* 轻量级，在 HTML 中只有一个 `<img>` 节点
 
-Add the `?jsx` suffix at the end of the import
+
+#### 用法
+
+在导入的末尾添加 `?jsx` 后缀
 
 ```tsx
 import Image from '[IMAGE_PATH]?jsx';
 ```
 
-Use the image in the template as a component:
+在模板中将图像用作组件：
 
 ```tsx
 <Image />
 ````
 
-#### Result
+#### 结果
 
-This script will generate the following `<img>` element:
+此脚本将生成以下 `<img>` 元素：
 
 ```tsx
 <img
@@ -83,21 +83,21 @@ This script will generate the following `<img>` element:
 >
 ```
 
-> - `decoding="async"`: indicates that the image will not block the rendering of the page while the image is being decoded. For further reference, please check the [MDN web docs](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/decoding).
-> - `loading="lazy"`: allows the browser to delay the loading of an image until it is visible in the viewport, which helps improve [page loading performance](https://web.dev/browser-level-image-lazy-loading/)
-> - `srcset`: this attribute allows to choose the most appropriate image based on the device's screen size and resolution
-> - `width` and `height`: setting `width` and `height` attributes prevents layout reflow, which hurts the [CLS](https://web.dev/cls/) score
+> - `decoding="async"`：表示图像在解码时不会阻塞页面的渲染。更多信息，请参阅 [MDN web 文档](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/decoding)。
+> - `loading="lazy"`：允许浏览器延迟加载图像，直到它在视口中可见，这有助于提高[页面加载性能](https://web.dev/browser-level-image-lazy-loading/)
+> - `srcset`：此属性允许根据设备的屏幕大小和分辨率选择最合适的图像
+> - `width` 和 `height`：设置 `width` 和 `height` 属性可以防止布局回流，这会影响 [CLS](https://web.dev/cls/) 分数
 
-> **Note:** You can also change the default behavior by manually setting the value of these properties:
+> **注意：** 您还可以通过手动设置这些属性的值来更改默认行为：
 > * ```<Image decoding="sync" loading="eager" />```
 
-Thanks to `srcset` attribute the browser will load the most suitable image for the device's resolution:
+由于 `srcset` 属性，浏览器将加载适合设备分辨率的最合适的图像：
 
-<img width="100%" src="/docs/integrations/image-optimization/image-network.png"/>
+<img width="100%" src="/docs/integrations/image-optimization/image-network.png" />
 
-> The original source size was 1.5Mb but its size is now just few kilobytes
+> 原始源大小为 1.5Mb，但现在只有几千字节
 
-#### Example
+#### 示例
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -113,24 +113,24 @@ export default component$(() => {
 ```
 
 
-#### Customize image `width`  and `height`
+#### 自定义图像的 `width` 和 `height`
 
-You may need to set a custom `width` to the image:
+您可能需要为图像设置自定义的 `width`：
 
 ```tsx
 <Image style={{ width: '300px'}} />
 ```
 
-but in that case you need to manually specify the `height` as well to avoid it being stretched:
+但在这种情况下，您还需要手动指定 `height`，以避免图像被拉伸：
 
 
 ```tsx
 <Image style={{ width: '300px', height: '200px'}} />
 ```
 
-Below you can see a simple trick to avoid having to manually set the `height`, while also maintaining the aspect ratio:
+下面是一个简单的技巧，可以避免手动设置 `height`，同时保持纵横比：
 
-> **TIP:** you should always specify `width` and `height` values to prevent layout reflow
+> **提示：** 您应该始终指定 `width` 和 `height` 值，以防止布局回流
 
 
 ```tsx
@@ -140,7 +140,7 @@ import Image from '~/media/emote.png?jsx';
 export default component$(() => {
   return (
     <>
-      <h1>Image Example</h1>
+      <h1>图像示例</h1>
       <div class="image-wrapper" >
         <Image />
       </div>
@@ -151,26 +151,26 @@ export default component$(() => {
 
 ```css
 .image-wrapper {
-  width: 300px; /* Set the desired width of the wrapper */
-  position: relative; /* Required for absolute positioning */
+  width: 300px; /* 设置包装器的所需宽度 */
+  position: relative; /* 绝对定位所需 */
 }
 
 .image-wrapper img {
-  width: 100%; /* Make the image fill the width of its container */
-  height: auto; /* Let the browser calculate the height to maintain aspect ratio */
-  display: block; /* Remove any extra white space below the image */
+  width: 100%; /* 让图像填充其容器的宽度 */
+  height: auto; /* 让浏览器计算高度以保持纵横比 */
+  display: block; /* 删除图像下方的任何额外空白 */
 }
 ````
 
 ## `@unpic/qwik`
 
-- Site with detailed instructions on usage: [@unpic/qwik](https://unpic.pics/img/qwik/)
-- Installation: `npm install @unpic/qwik`
+- 详细使用说明网站：[@unpic/qwik](https://unpic.pics/img/qwik/)
+- 安装：`npm install @unpic/qwik`
 
-Unpic is a third-party image optimization library that works with existing image optimization CDNs. It provides an `Image` component that can be used to optimize images.
+Unpic 是一个与现有图像优化 CDN 配合使用的第三方图像优化库。它提供了一个 `Image` 组件，可用于优化图像。
 
-<CodeSandbox src="/src/routes/demo/integration/img/unpic/simple/index.tsx" style={{ height: '40em' }}>
-```tsx {6} /Slot/
+    <CodeSandbox src="/src/routes/demo/integration/img/unpic/simple/index.tsx" style={{ height: '40em' }}>
+    ```tsx {6} /Slot/
 import { component$ } from '@builder.io/qwik';
 import { Image } from '@unpic/qwik';
 
@@ -181,29 +181,29 @@ export default component$(() => {
       layout="constrained"
       width={800}
       height={600}
-      alt="A lovely bath"
+      alt="一个可爱的浴缸"
     />
   );
 });
 ```
 </CodeSandbox>
 
-> **Note:** qwik-image and unpic are not a CDN and does not host your images. They work with existing image optimization CDNs. We suggest using some of the popular CDNs:
+> **注意：** qwik-image 和 unpic 不是 CDN，也不托管您的图像。它们与现有的图像优化 CDN 配合使用。我们建议使用一些流行的 CDN：
 > - Cloudinary
 > - Cloudflare
 > - Bunny.net
 > - Vercel / Next.js
-> - Imgix, including Unsplash, DatoCMS, Sanity and Prismic
+> - Imgix，包括 Unsplash、DatoCMS、Sanity 和 Prismic
 > - Shopify
 > - Kontent.ai
 > - Builder.io
 > - Contentful
 > - Storyblok
-> - WordPress.com and Jetpack Site Accelerator
+> - WordPress.com 和 Jetpack Site Accelerator
 
 ## `qwik-image`
 
-Performant images with automatic optimisation.
+高性能图像，自动优化。
 
 ```bash
 npm install qwik-image
@@ -213,7 +213,7 @@ or
 pnpm install qwik-image
 ```
 
-> This is a pluggable component so devs could connect different image loaders to it (like builder.io or other CDNs)
+> 这是一个可插拔的组件，因此开发人员可以将不同的图像加载器连接到它上面（如 builder.io 或其他 CDN）
 
 <CodeSandbox src="/src/routes/demo/integration/img/qwik-image/index.tsx" style={{ height: '40em' }}>
 ```tsx
@@ -227,14 +227,14 @@ import {
 export default component$(() => {
   const imageTransformer$ = $(
     ({ src, width, height }: ImageTransformerProps): string => {
-      // Here you can set your favorite image loaders service
+      // 在这里，您可以设置您喜欢的图像加载器服务
       return `https://cdn.builder.io/api/v1/${src}?height=${height}&width=${width}&format=webp&fit=fill`;
     }
   );
 
-  // Global Provider (required)
+  // 全局提供者（必需）
   useImageProvider({
-    // You can set this prop to overwrite default values [3840, 1920, 1280, 960, 640]
+    // 您可以设置此属性以覆盖默认值 [3840, 1920, 1280, 960, 640]
     resolutions: [640],
     imageTransformer$,
   });
@@ -245,7 +245,7 @@ export default component$(() => {
       objectFit="fill"
       width={400}
       height={500}
-      alt="Tropical paradise"
+      alt="热带天堂"
       placeholder="#e6e6e6"
       src={
         'image/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fe5113e1c02db40e5bac75146fa46386f'
@@ -254,8 +254,8 @@ export default component$(() => {
   );
 });
 ```
-</CodeSandbox>
+    </CodeSandbox>
 
-Here is the Github repository with detailed instructions on usage and customizations: [qwikifiers/qwik-image](https://github.com/qwikifiers/qwik-image)
+这是带有详细使用说明和自定义的 Github 仓库：[qwikifiers/qwik-image](https://github.com/qwikifiers/qwik-image)
 
 

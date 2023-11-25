@@ -1,5 +1,5 @@
 ---
-title: Cloudflare Pages Adapter and Middleware | Deployments
+title: Cloudflare Pages 适配器和中间件 | 部署
 contributors:
   - adamdbradley
   - manucorporat
@@ -9,19 +9,19 @@ contributors:
   - mhevery
 ---
 
-# Cloudflare Pages Adapter
+# Cloudflare Pages 适配器
 
-Qwik City Cloudflare Pages adapter allows you to connect Qwik City to [Cloudflare Pages](https://pages.cloudflare.com/).
+Qwik City Cloudflare Pages 适配器允许您将 Qwik City 连接到 [Cloudflare Pages](https://pages.cloudflare.com/)。
 
-## Installation
+## 安装
 
-To integrate the `cloudflare-pages` adapter, use the `add` command:
+要集成 `cloudflare-pages` 适配器，请使用 `add` 命令：
 
 ```shell
 npm run qwik add cloudflare-pages
 ```
 
-The adapter will add a new `vite.config.ts` within the `adapters/` directory, and a new entry file will be created, such as:
+适配器将在 `adapters/` 目录下添加一个新的 `vite.config.ts` 文件，并创建一个新的入口文件，例如：
 
 ```shell
 └── adapters/
@@ -31,31 +31,31 @@ The adapter will add a new `vite.config.ts` within the `adapters/` directory, an
     └── entry.cloudflare-pages.tsx
 ```
 
-Additionally, within the `package.json`, the `build.server` and `deploy` scripts will be updated.
+此外，在 `package.json` 中，`build.server` 和 `deploy` 脚本将被更新。
 
-## Production build
+## 生产构建
 
-To build the application for production, use the `build` command, this command will automatically run `npm run build.server` and `npm run build.client`:
+要为生产环境构建应用程序，请使用 `build` 命令，此命令将自动运行 `npm run build.server` 和 `npm run build.client`：
 
 ```shell
 npm run build
 ```
 
-[Read the full guide here](https://github.com/BuilderIO/qwik/tree/main/starters/adapters/cloudflare-pages/README.md)
+[阅读完整指南](https://github.com/BuilderIO/qwik/tree/main/starters/adapters/cloudflare-pages/README.md)
 
-## Deploy to Cloudflare Pages
+## 部署到 Cloudflare Pages
 
-After installing the integration using `npm run qwik add cloudflare-pages`, the project is ready to be deployed to Cloudflare Pages.
+在使用 `npm run qwik add cloudflare-pages` 安装集成后，项目已准备好部署到 Cloudflare Pages。
 
-Please refer to the [Cloudflare Pages docs](https://developers.cloudflare.com/pages/framework-guides/deploy-a-qwik-site/) for more information on how to deploy your site.
+请参阅 [Cloudflare Pages 文档](https://developers.cloudflare.com/pages/framework-guides/deploy-a-qwik-site/) 以获取有关如何部署您的站点的更多信息。
 
-Note that you will need a [Cloudflare account](https://dash.cloudflare.com/sign-up?lang=en-US) in order to complete this step.
+请注意，您需要一个 [Cloudflare 账户](https://dash.cloudflare.com/sign-up?lang=en-US) 才能完成此步骤。
 
-## Advanced
+## 高级
 
-### Cloudflare Pages Entry Middleware
+### Cloudflare Pages 入口中间件
 
-When the `cloudflare-pages` adapter is added, a new entry file will be created at `src/entry.cloudflare-pages.tsx`. Below is an example of using the built-in middleware within the entry file.
+当添加 `cloudflare-pages` 适配器时，将在 `src/entry.cloudflare-pages.tsx` 创建一个新的入口文件。以下是在入口文件中使用内置中间件的示例。
 
 ```tsx title="src/entry.cloudflare-pages.tsx"
 import {
@@ -71,25 +71,25 @@ const fetch = createQwikCity({ render, qwikCityPlan, manifest });
 export { fetch };
 ```
 
-The compiled middleware will be built in the `server/` directory. Such directory also contains a `_worker.js` file which implements the application's request handling as per the [Cloudflare Pages Advanced Mode](https://developers.cloudflare.com/pages/platform/functions/advanced-mode/#advanced-mode).
-The file simply re-exports the produced `fetch` handler as shown below.
+编译后的中间件将构建在 `server/` 目录中。该目录还包含一个 `_worker.js` 文件，根据 [Cloudflare Pages 高级模式](https://developers.cloudflare.com/pages/platform/functions/advanced-mode/#advanced-mode) 实现应用程序的请求处理。
+该文件只是简单地重新导出生成的 `fetch` 处理程序，如下所示。
 
 ```tsx title="/dist/_worker.js"
 import { fetch } from "../server/entry.cloudflare-pages";
 export default { fetch };
 ```
 
-- [Cloudflare Pages Middleware Source](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/middleware/cloudflare-pages/index.ts)
-- [Cloudflare Pages Advanced Mode](https://developers.cloudflare.com/pages/platform/functions/advanced-mode/)
-- [Function Invocation Route Config](https://developers.cloudflare.com/pages/platform/functions/routing/#functions-invocation-routes)
+- [Cloudflare Pages 中间件源代码](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/middleware/cloudflare-pages/index.ts)
+- [Cloudflare Pages 高级模式](https://developers.cloudflare.com/pages/platform/functions/advanced-mode/)
+- [函数调用路由配置](https://developers.cloudflare.com/pages/platform/functions/routing/#functions-invocation-routes)
 
-### Cloudflare Pages Function Invocation Routes
+### Cloudflare Pages 函数调用路由
 
-Cloudflare Page's [function-invocation-routes config](https://developers.cloudflare.com/pages/platform/functions/routing/#functions-invocation-routes) can be used to include, or exclude, certain paths to be used by the worker functions. Having a `_routes.json` file gives developers more granular control over when your Function is invoked.
+Cloudflare Pages 的 [函数调用路由配置](https://developers.cloudflare.com/pages/platform/functions/routing/#functions-invocation-routes) 可用于包含或排除某些路径供 worker 函数使用。拥有 `_routes.json` 文件可以让开发人员更精细地控制何时调用您的函数。
 
-This is useful to determine if a page response should be Server-Side Rendered (SSR) or if the response should use a static-site generated (SSG) `index.html` file instead.
+这对于确定页面响应是否应该进行服务器端渲染 (SSR)，还是响应应该使用静态站点生成 (SSG) 的 `index.html` 文件非常有用。
 
-By default, the Cloudflare Pages adapter _does not_ include a `public/_routes.json` config, but rather it is auto-generated from the build by the Cloudflare adapter. An example of an auto-generated `dist/_routes.json` would be:
+默认情况下，Cloudflare Pages 适配器 _不会_ 包含一个 `public/_routes.json` 配置，而是由 Cloudflare 适配器从构建中自动生成。一个自动生成的 `dist/_routes.json` 的示例可能是：
 
 ```json
 {
@@ -107,13 +107,13 @@ By default, the Cloudflare Pages adapter _does not_ include a `public/_routes.js
 }
 ```
 
-In the above example, it's saying _all_ pages should be SSR'd. However, the root static files such as `/favicon.ico` and any static assets in `/build/*` should be excluded from the Functions, and instead treated as a static file.
+在上面的示例中，它表示 _所有_ 页面都应该进行 SSR。然而，根目录下的静态文件，如 `/favicon.ico` 和 `/build/*` 中的任何静态资源，应该从函数中排除，并且作为静态文件处理。
 
-In most cases the generated `dist/_routes.json` file is ideal. However, if you need more granular control over each path, you can instead provide your own `public/_routes.json` file. When the project provides its own `public/_routes.json` file, then the Cloudflare adapter will not auto-generate the routes config and instead use the committed one within the `public` directory.
+在大多数情况下，生成的 `dist/_routes.json` 文件是理想的。然而，如果您需要对每个路径进行更精细的控制，您可以提供自己的 `public/_routes.json` 文件。当项目提供自己的 `public/_routes.json` 文件时，Cloudflare 适配器将不会自动生成路由配置，而是使用 `public` 目录中提交的配置。
 
-### Context
+### 上下文
 
-You may access Cloudflare Page's environment variables in the endpoint method's `platform` param:
+您可以在端点方法的 `platform` 参数中访问 Cloudflare Pages 的环境变量：
 
 ```ts
 export const onRequest = async ({ platform }) => {
@@ -121,7 +121,7 @@ export const onRequest = async ({ platform }) => {
 };
 ```
 
-Additionally, you may import the `RequestHandler` and `PlatformCloudflarePages` types to have type completions in your editor.
+此外，您可以导入 `RequestHandler` 和 `PlatformCloudflarePages` 类型，以在编辑器中获得类型补全。
 
 ```tsx
 import { type RequestHandler } from '@builder.io/qwik-city';

@@ -601,11 +601,11 @@ export default component$(() => {
 `routeAction$()`用于处理表单提交和其他操作的特殊组件，仅在服务器上执行。例如，您可以使用它将用户添加到数据库，然后重定向到用户配置文件页面。
 
 
-## Run code only in the browser
+## 仅在浏览器中运行代码
 
-Since Qwik executes the same code on the server and in the browser, you cannot use `window` or other browser APIs in your code, because they don't exist when the code is executed on the server.
+由于 Qwik 在服务器和浏览器上执行相同的代码，因此您不能在代码中使用 `window` 或其他浏览器 API，因为在服务器上执行代码时它们不存在。
 
-If you want to access browser APIs, such as `window`, `document`, `localStorage`, `sessionStorage`, `webgl` etc, you need to check if the code is running in the browser before accessing the browser APIs.
+如果您想要访问浏览器 API，例如 `window`、`document`、`localStorage`、`sessionStorage`、`webgl` 等，您需要在访问浏览器 API 之前检查代码是否在浏览器中运行。
 
 ```tsx
 import { component$, useTask$, useVisibleTask$, useSignal } from '@builder.io/qwik';

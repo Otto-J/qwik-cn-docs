@@ -1,22 +1,22 @@
 ---
-title: Component library | Advanced
+title: 组件库 | 高级
 contributors:
   - manucorporat
 ---
 
-# Library
+# 组件库
 
-Qwik uses the [library mode of Vite](https://vitejs.dev/guide/build.html#library-mode) to create component libraries.
+Qwik 使用 [Vite 的库模式](https://vitejs.dev/guide/build.html#library-mode) 来创建组件库。
 
-In order to create a component library for Qwik, you need to make sure of specific rules, this is because the Qwik Optimizer needs to recognize your library as a Qwik library.
+为了为 Qwik 创建一个组件库，你需要确保遵循特定的规则，这是因为 Qwik 优化器需要将你的库识别为 Qwik 库。
 
-The easiest way to create a new component library is to use the build-in `library` starter:
+创建一个新的组件库的最简单方法是使用内置的 `library` 起始模板：
 
 ```bash
 pnpm create qwik library my-library
 ```
 
-This will create a new folder called `my-library` with the following structure:
+这将创建一个名为 `my-library` 的新文件夹，具有以下结构：
 
 ```bash {2,11,14}
 ├── README.md
@@ -35,7 +35,7 @@ This will create a new folder called `my-library` with the following structure:
 └── vite.config.ts
 ```
 
-The most important files of a library are a properly configured `package.json` and `vite.config.ts`.
+一个库的最重要的文件是一个正确配置的 `package.json` 和 `vite.config.ts`。
 
 ## package.json
 
@@ -43,7 +43,7 @@ The most important files of a library are a properly configured `package.json` a
 {
   "name": "my-qwik-library-name",
   "version": "0.0.1",
-  "description": "Create a reusable Qwik component library",
+  "description": "创建一个可重用的 Qwik 组件库",
   "main": "./lib/index.qwik.mjs",
   "qwik": "./lib/index.qwik.mjs",
   "types": "./lib-types/index.d.ts",
@@ -62,9 +62,9 @@ The most important files of a library are a properly configured `package.json` a
 }
 ```
 
-Notice the `qwik` field, this is the entry point for the Qwik Optimizer, it will use this file to generate the `index.qwik.mjs` file.
+注意 `qwik` 字段，这是 Qwik 优化器的入口点，它将使用这个文件生成 `index.qwik.mjs` 文件。
 
-> The file must be called with the `.qwik.mjs` extension, otherwise the Qwik Optimizer will not recognize it.
+> 文件必须以 `.qwik.mjs` 扩展名命名，否则 Qwik 优化器将无法识别它。
 
 ## vite.config.ts
 
@@ -87,38 +87,38 @@ export default defineConfig(() => {
 });
 ```
 
-Compared to a normal Vite configuration, libraries will use [the `lib` mode of Vite](https://vitejs.dev/guide/build.html#library-mode), which requires you to properly configure `build.lib`.
+与普通的 Vite 配置相比，库将使用 [Vite 的 `lib` 模式](https://vitejs.dev/guide/build.html#library-mode)，这要求你正确配置 `build.lib`。
 
 ## `src/index.ts`
 
-This is the entry point of your library, it will export all the components, and functions that you want to expose to the world.
+这是你的库的入口点，它将导出所有你想要向世界公开的组件和函数。
 
 ```ts
-// As an example, we will export the Logo and Counter components
+// 作为示例，我们将导出 Logo 和 Counter 组件
 export { Logo } from './components/logo/logo';
 export { Counter } from './components/counter/counter';
 ```
 
-## Libraries are also Apps
+## 库也是应用程序
 
-The library starter is also a standalone Qwik app (without routing, nor Qwik City), this is the reason why you will find `entry.dev.tsx`, `entry.ssr.tsx` and `root.tsx` files.
+库起始模板也是一个独立的 Qwik 应用程序（没有路由，也没有 Qwik City），这就是为什么你会找到 `entry.dev.tsx`、`entry.ssr.tsx` 和 `root.tsx` 文件的原因。
 
-Do not worry about them, they won't be part of the final library, but they are useful during development and testing, so you can test your components in a real Qwik app.
+不用担心它们，它们不会成为最终库的一部分，但在开发和测试过程中非常有用，这样你就可以在一个真实的 Qwik 应用程序中测试你的组件。
 
-## Build and publish
+## 构建和发布
 
-In order to publish your library, you have to first build it in `lib` mode and then publish to npm.
+为了发布你的库，你首先需要以 `lib` 模式构建它，然后发布到 npm。
 
 ```bash
 npm run build
 ```
 
-This will create a `lib` folder with the following structure. Then you can publish it to npm.
+这将创建一个具有以下结构的 `lib` 文件夹。然后你可以将它发布到 npm。
 
 ```bash {2,11,14}
 npm publish
 ```
 
-> Notice that before first publishing, you might want to update the `package.json` fields, like `name`, `version`, `description`, etc.
+> 注意，在首次发布之前，你可能需要更新 `package.json` 的字段，如 `name`、`version`、`description` 等。
 
-> For any other subsequent publish, you will need to update the `version` field.
+> 对于任何其他后续发布，你将需要更新 `version` 字段。

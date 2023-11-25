@@ -1,5 +1,5 @@
 ---
-title: Custom Build Output Directory | Advanced
+title: 自定义构建输出目录 | 高级
 contributors:
   - manucorporat
   - adamdbradley
@@ -7,15 +7,15 @@ contributors:
   - mhevery
 ---
 
-# Custom Build Output Directory
+# 自定义构建输出目录
 
-By default, the build output directory for Qwik is the `dist` folder in the root folder of the project.
+默认情况下，Qwik 的构建输出目录是项目根目录下的 `dist` 文件夹。
 
-In certain cases, we may need to make the build output directory different from the default package.
+在某些情况下，我们可能需要将构建输出目录与默认包不同。
 
-## Wrong Way
+## 错误的方法
 
-Usually with Vite.js we do it like this:
+通常在 Vite.js 中我们会这样做：
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite';
@@ -30,7 +30,7 @@ export default defineConfig(() => {
   return {
     /* VITE_CONFIG */
     build: {
-      outDir: '../resources/', // This will be overrided to `dist` by qwikVite() setting
+      outDir: '../resources/', // 这将被 qwikVite() 设置覆盖为 `dist`
     },
     plugins: [
       qwikCity({
@@ -46,11 +46,11 @@ export default defineConfig(() => {
 });
 ```
 
-However, it will be overridden by the settings of QwikVite() so nothing happens and the build output directory is still in the `dist` folder
+然而，它将被 QwikVite() 的设置覆盖，所以什么都不会发生，构建输出目录仍然在 `dist` 文件夹中。
 
-## The Right Way
+## 正确的方法
 
-So instead of changing the settings in Vite.js directly, we just need to change the settings in QwikVite() like this:
+所以，我们不需要直接在 Vite.js 中更改设置，只需要在 QwikVite() 中更改设置，像这样：
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite';
@@ -65,7 +65,7 @@ export default defineConfig(() => {
       qwikCity(),
       qwikVite({
         client: {
-          outDir: 'resources/', // This is the right setting
+          outDir: 'resources/', // 这是正确的设置
         },
       }),
       tsconfigPaths(),
@@ -74,4 +74,4 @@ export default defineConfig(() => {
 });
 ```
 
-So that the output build directory becomes `resources`, please rename this folder name as needed.
+这样，输出的构建目录就变成了 `resources`，请根据需要重新命名此文件夹名称。

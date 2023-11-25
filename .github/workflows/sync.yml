@@ -4,7 +4,7 @@ on:
   # 手动
   workflow_dispatch:
   schedule:
-    - cron: "30 11 * * *"
+    - cron: '30 11 * * *'
 
 jobs:
   sync:
@@ -37,14 +37,14 @@ jobs:
           # 如果有内容没有变化，直接退出
           git diff-index --quiet HEAD || git commit -m "ci: Sync docs"
           git push
-      - name: PR to main
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: docs
-          title: "Sync docs"
-          body: "This PR syncs the docs branch with the main branch."
-          labels: "documentation"
+      # - name: PR to main
+      #   uses: peter-evans/create-pull-request@v3
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     branch: docs
+      #     title: "Sync docs"
+      #     body: "This PR syncs the docs branch with the main branch."
+      #     labels: "documentation"
 
       # - name: pnpm install
       #   run: |

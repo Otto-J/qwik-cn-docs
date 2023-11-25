@@ -1,130 +1,129 @@
 ---
-title: Turso | Integrations
-keywords: "database, edge"
+title: Turso | 集成
+keywords: "数据库, 边缘"
 contributors:
   - xinnks
 ---
 
 # Turso
 
-[Turso] is the edge database based on [libSQL] - the open-source
-open-contribution fork of SQLite.
+[Turso] 是基于 [libSQL] 的边缘数据库，
+它是 SQLite 的开源开放贡献分支。
 
-It enables you to place your data close to your users in over 35 locations
-around the world.
+它使您能够将数据放置在全球35个位置附近，靠近您的用户。
 
-## Usage
 
-You can easily add Turso by using the following Qwik starter script:
+## 使用方法
+
+您可以通过使用以下 Qwik 起始脚本轻松添加 Turso：
 
 ```shell
 npm run qwik add turso
 ```
 
-This command will add the necessary dependencies to use Turso.
+此命令将添加使用 Turso 所需的依赖项。
 
-It also adds new files inside your project folder:
+它还会在您的项目文件夹中添加新文件：
 
 - `src/lib/turso.ts`
 
-and adds or modifies a `.env.local` file to include
+并添加或修改 `.env.local` 文件以包含以下内容
 
 ```txt title=".env.local"
 PRIVATE_TURSO_DB_URL=
 PRIVATE_TURSO_DB_AUTH_TOKEN=
 ```
 
-## Using file databases
+## 使用文件数据库
 
-For local development and CI integration, it is ideal to use local database files.
+对于本地开发和 CI 集成，使用本地数据库文件是理想的。
 
-First, check if SQLite is installed in your machine by running `sqlite3
---version`. If you get anything other than a version number (e.g `0-14 20:58:05
-554764a6e721fab307c63a4f98cd958c8428a5d9d8edfde951858d6fd02daapl`), visit [this
-link for installation instructions].
+首先，通过运行 `sqlite3 --version` 检查您的机器上是否安装了 SQLite。
+如果您得到的不是版本号（例如 `0-14 20:58:05 554764a6e721fab307c63a4f98cd958c8428a5d9d8edfde951858d6fd02daapl`），
+请访问[此链接以获取安装说明]。
 
-Proceed to create an SQLite file database by running the following command.
+
+然后，运行以下命令创建一个 SQLite 文件数据库。
 
 ```sh
 sqlite3 foo.db
 ```
 
-Create your database schema.
+创建您的数据库模式。
 
 ```sh
 sqlite> create table todo (id integer not null, task text, done int default 0);
 ```
 
-Seed some data into your table.
+向表中插入一些数据。
 
 ```sh
-sqlite> insert into todo(id, task) values(1, "Go to the gym");
-sqlite> insert into todo(id, task) values(2, "Buy groceries");
+sqlite> insert into todo(id, task) values(1, "去健身房");
+sqlite> insert into todo(id, task) values(2, "购买杂货");
 ```
 
-Quit the shell `.quit`
+退出 shell `.quit`
 
-Then, assign the database file path to the `PRIVATE_TURSO_DB_URL` environment variable
-inside `.env.local`.
+然后，在 `.env.local` 文件中将数据库文件路径分配给 `PRIVATE_TURSO_DB_URL` 环境变量。
 
 ```
 PRIVATE_TURSO_DB_URL=file:foo.db
 ```
 
-> ***Note***: A database token is not needed when working with file databases.
+> ***注意***：使用文件数据库时不需要数据库令牌。
 
-## Using a Turso database
+## 使用 Turso 数据库
 
-When you want to deploy your project to production, you can then [install the
-Turso CLI] to your machine and [create a Turso database].
+当您想要将项目部署到生产环境时，您可以将 [安装 Turso CLI] 
+到您的机器上，并[创建一个 Turso 数据库]。
 
-Use the Turso CLI's `db shell` command to issue queries to your database.
+使用 Turso CLI 的 `db shell` 命令向数据库发出查询。
 
 ```sh
 turso db shell <database-name>
 ```
 
-Create your database schema.
+创建您的数据库模式。
 
 ```sh
 →  create table todo (id integer not null, task text, done int default 0);
 ```
 
-Seed some data into your table.
+向表中插入一些数据。
 
 ```sh
-→  insert into todo(id, task) values(1, "Go to the gym");
-→  insert into todo(id, task) values(2, "Buy groceries");
+→  insert into todo(id, task) values(1, "去健身房");
+→  insert into todo(id, task) values(2, "购买杂货");
 ```
 
-Quit the shell `.quit`
+退出 shell `.quit`
 
-Use the following instructions to obtain your Turso database credentials and
-assign them to the environment variables inside your deployment environment.
+使用以下说明获取您的 Turso 数据库凭据，
+并将其分配给部署环境中的环境变量。
 
-Starting with the database url, run the following command.
+从数据库 URL 开始，运行以下命令。
 
 ```sh
 turso db show <database-name> --url
 ```
 
-Copy the resulting URL and assign it to the `PRIVATE_TURSO_DB_URL` environment variable.
+复制生成的 URL，并将其分配给 `PRIVATE_TURSO_DB_URL` 环境变量。
 
-And, for the database authentication token, run the command.
+然后，对于数据库身份验证令牌，运行以下命令。
 
 ```sh
 turso db tokens create <database-name>
 ```
 
-Copy the resulting token and assign it to the `PRIVATE_TURSO_DB_AUTH_TOKEN` environment
-variable.
+复制生成的令牌，并将其分配给 `PRIVATE_TURSO_DB_AUTH_TOKEN` 
+环境变量。
 
-## How to use Turso inside Qwik
+## 如何在 Qwik 中使用 Turso
 
-Import `tursoClient` inside your routes and initiate a database client instance
-within Qwik's server-side APIs that expose the `RequestEvent` object, such as
-`routeLoader$()`, `routeAction$()`, `server$()` and endpoint handlers such as
-`onGet`, `onPost`, `onRequest`.
+在您的路由中导入 `tursoClient`，并在 Qwik 的服务器端 API 中初始化一个数据库客户端实例，
+这些 API 公开了 `RequestEvent` 对象，例如 `routeLoader$()`、`routeAction$()`、
+`server$()` 和端点处理程序，
+例如 `onGet`、`onPost`、`onRequest`。
 
 ```ts
 import { tursoClient } from "~/utils/turso";
@@ -142,13 +141,13 @@ export const useRouteLoader = routeLoader$(
 );
 ```
 
-For more information, please visit the [Turso docs].
+有关更多信息，请访问 [Turso 文档]。
 
 [Turso]: https://turso.tech
 [libSQL]: https://libsql.org
-[this link for installation instructions]: https://sqlite.org/download.html
-[install the Turso CLI]:
+[此链接以获取安装说明]: https://sqlite.org/download.html
+[安装 Turso CLI]:
     https://docs.turso.tech/reference/turso-cli#installation
-[create a Turso database]:
+[创建一个 Turso 数据库]:
     https://docs.turso.tech/reference/turso-cli#create-a-logical-database
-[Turso docs]: https://docs.turso.tech
+[Turso 文档]: https://docs.turso.tech

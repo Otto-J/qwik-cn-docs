@@ -1,46 +1,45 @@
 ---
-title: Nx Monorepos | Integrations
-keywords: 'monorepo, nx, enterprise'
+title: Nx Monorepos | 集成
+keywords: 'monorepo, nx, 企业'
 contributors:
   - shairez
 ---
 
-# Nx and enterprise scale monorepos
+# Nx 和企业级规模的 monorepos
 
-[Nx](https://nx.dev/) is a robust and extensible development platform designed to simplify the management 
-of large-scale monorepos containing multiple applications and libraries by offering powerful tools for code generation, 
-build orchestration, dependency management, and code sharing.
+[Nx](https://nx.dev/) 是一个强大且可扩展的开发平台，
+旨在通过提供强大的代码生成工具、构建编排、依赖管理和代码共享，
+简化管理包含多个应用程序和库的大规模 monorepos。
 
-Qwik integrates with nx beautifully by using the [qwik-nx](https://github.com/qwikifiers/qwik-nx) plugin.
-
-
-## Main features
-
-* Generate a new Nx workspace using a "Qwik" preset
-* Generate Qwik applications and libraries.
-* Generate Qwik components and routes.
-* Generate Storybook, React Qwikify, Cloudflare configuration and much more
-* Run executors that are built specifically for building Qwik applications.
+Qwik 通过使用 [qwik-nx](https://github.com/qwikifiers/qwik-nx) 插件与 nx 紧密集成。
 
 
-## Usage
+## 主要特性
 
-You can generate a new workspace by running:
+* 使用 "Qwik" 预设生成新的 Nx 工作区
+* 生成 Qwik 应用程序和库
+* 生成 Qwik 组件和路由
+* 生成 Storybook、React Qwikify、Cloudflare 配置等等
+* 运行专为构建 Qwik 应用程序而构建的执行器
+
+## 使用方法
+
+您可以通过运行以下命令生成一个新的工作区：
 
 ```shell
 npx create-nx-workspace@latest org-workspace --preset=qwik-nx
 ```
 
-Or add a new Qwik application to an existing workspace by running:
+或者在现有工作区中添加一个新的 Qwik 应用程序，运行以下命令：
 
 ```shell
 npm install -D qwik-nx
 ```
 
-and then
+然后运行：
 
 ```shell
 nx generate qwik-nx:app
 ```
 
-For further reference, please check the [qwik-nx documentation](https://github.com/qwikifiers/qwik-nx).
+更多详细信息，请查阅 [qwik-nx 文档](https://github.com/qwikifiers/qwik-nx)。

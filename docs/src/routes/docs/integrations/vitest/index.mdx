@@ -1,6 +1,6 @@
 ---
-title: Vitest | Integrations
-keywords: 'testing, unit test, jest'
+title: Vitest | 集成
+keywords: '测试, 单元测试, jest'
 contributors:
   - manucorporat
   - reemardelarosa
@@ -9,24 +9,24 @@ contributors:
 
 # Vitest
 
-[Vitest](https://vitest.dev/) is a blazing-fast unit test framework powered by Vite. Because Qwik City uses [Vite](https://vitejs.dev/) by default, Vitest is our defacto unit test framework.
+[Vitest](https://vitest.dev/) 是一个由 Vite 提供支持的高速单元测试框架。由于 Qwik City 默认使用 [Vite](https://vitejs.dev/)，Vitest 是我们的默认单元测试框架。
 
-## Usage
+## 使用方法
 
-You can add vitest easily by using the following Qwik starter script:
+您可以通过使用以下 Qwik 脚本轻松添加 vitest：
 
 ```shell
 npm run qwik add vitest
 ```
 
-After running the command, vitest will be installed and a new component will be added to your project. The component will be added to the `src/components/example` directory as long as a new unit test is named `example.spec.ts`.
+运行该命令后，vitest 将被安装，并且一个新的组件将被添加到您的项目中。只要新的单元测试命名为 `example.spec.ts`，该组件将被添加到 `src/components/example` 目录中。
 
 ```tsx title="example.spec.ts"
 import { createDOM } from '@builder.io/qwik/testing';
 import { test, expect } from 'vitest';
 import { ExampleTest } from './example';
 
-test(`[ExampleTest Component]: Should render ⭐`, async () => {
+test(`[ExampleTest 组件]: 应该渲染 ⭐`, async () => {
   const { screen, render } = await createDOM();
   await render(<ExampleTest flag={true} />);
   expect(screen.outerHTML).toContain('⭐');
@@ -34,13 +34,13 @@ test(`[ExampleTest Component]: Should render ⭐`, async () => {
   expect(div.outerHTML).toContain('⭐');
 });
 
-test(`[ExampleTest Component]: Should render 💣`, async () => {
+test(`[ExampleTest 组件]: 应该渲染 💣`, async () => {
   const { screen, render } = await createDOM();
   await render(<ExampleTest flag={false} />);
   expect(screen.outerHTML).toContain('💣');
 });
 
-test(`[ExampleTest Component]: Click counter +1`, async () => {
+test(`[ExampleTest 组件]: 点击计数器 +1`, async () => {
   const { screen, render, userEvent } = await createDOM();
   await render(<ExampleTest flag={true} />);
 

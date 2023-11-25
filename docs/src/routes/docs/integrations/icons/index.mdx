@@ -1,7 +1,7 @@
 ---
-title: Icons | Integrations
+title: 图标 | 集成
 keywords: >-
-  icons, icones, iconify, iconoir, bootstrap, heroicons, tabler, lucide, mono, simple, octicons, ionicons
+  图标, icones, iconify, iconoir, bootstrap, heroicons, tabler, lucide, mono, simple, octicons, ionicons
 contributors:
   - manucorporat
 ---
@@ -9,25 +9,25 @@ contributors:
 import image from './icones.png';
 import CodeSandbox from '../../../../components/code-sandbox/index.tsx';
 
-# Icons
+# 图标
 
-Icons are an important part of any application. There are already more than 180.000 icons you can add to your Qwik app.
+图标是任何应用程序的重要组成部分。您可以将超过 180,000 个图标添加到您的 Qwik 应用程序中。
 
 ## `qwikest/icons`
 
-This package allows for a stremalined way to add icons to your Qwik app from a variety of icon sets.
+该软件包允许以简化的方式从各种图标集中添加图标到您的 Qwik 应用程序中。
 
-- `Bs`: Bootstrap Icons
-- `Go`: Octicons by GitHub
-- `Hi`: Heroicons by Tailwind
+- `Bs`: Bootstrap 图标
+- `Go`: GitHub 的 Octicons
+- `Hi`: Tailwind 的 Heroicons
 - `In`: Iconoir
-- `Io`: Ionicons by Ionic
-- `Lu`: Lucide [superset of feather icons]
-- `Mo`: Mono Icons
-- `Si`: Simple Icons [icons for popular brands]
-- `Tb`: Tabler Icons
+- `Io`: Ionic 的 Ionicons
+- `Lu`: Lucide [feather 图标的超集]
+- `Mo`: Mono 图标
+- `Si`: 热门品牌的 Simple 图标
+- `Tb`: Tabler 图标
 
-Simply install the package with your package manager of choice:
+只需使用您选择的软件包管理器安装该软件包：
 
 ```bash
 npm i @qwikest/icons
@@ -35,13 +35,13 @@ yarn add @qwikest/icons
 pnpm add @qwikest/icons
 ```
 
-### Usage
+### 使用方法
 
 ```tsx
 import { LuRocket } from "@qwikest/icons/lucide";
 
 export const MyComponent = component$(() => {
-  // Icon size and color are inherited by default ⬇️
+  // 默认情况下，图标的大小和颜色会继承 ⬇️
   return (
     <div style={{ color: "red", fontSize: "40px" }}>
       <LuRocket />
@@ -50,18 +50,18 @@ export const MyComponent = component$(() => {
 });
 ```
 
-Please refer to the [official docs for more details](https://github.com/qwikest/icons).
+请参阅[官方文档以获取更多详细信息](https://github.com/qwikest/icons)。
 
 
 ## `icones.js.org`
 
-[icones.js.org](https://icones.js.org/) is a collection of icon collections. More than 180.000 public domain icons are available, ready to be used in your Qwik app.
+[icones.js.org](https://icones.js.org/) 是一个图标集合。超过 180,000 个公共领域图标可供使用，可立即在您的 Qwik 应用程序中使用。
 
-Icones is powered by [iconify](https://iconify.design/) which allows to easy add icons from Material Design, Phosphor, Remix, Carbon, Bootstrap, Tabler, Feather, Fluent, IconPark, Octicons and many other icon sets. Twitter Emoji, Fluent Emoji, EmojiOne, Noto Emoji... to any Qwik app.
+Icones 由 [iconify](https://iconify.design/) 提供支持，它允许轻松添加来自 Material Design、Phosphor、Remix、Carbon、Bootstrap、Tabler、Feather、Fluent、IconPark、Octicons 和许多其他图标集的图标。Twitter Emoji、Fluent Emoji、EmojiOne、Noto Emoji... 都可以添加到任何 Qwik 应用程序中。
 
-<img src={image}/>
+<img src={image} />
 
-Click the `Qwik` button to copy the icon code to your clipboard, then paste it into your project.
+点击 `Qwik` 按钮将图标代码复制到剪贴板，然后粘贴到您的项目中。
 
 ```tsx
 import type { QwikIntrinsicElements } from '@builder.io/qwik'

@@ -1,5 +1,5 @@
 ---
-title: Prefetching | Advanced
+title: 预取 | 高级
 contributors:
   - adamdbradley
   - RATIU5
@@ -10,51 +10,51 @@ contributors:
   - mhevery
 ---
 
-# Prefetching
+# 预取
 
-Qwik provides various strategies to prefetch modules ahead of time, and building on top of that, Qwik City is able to take it further by using [Speculative Module Fetching](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx). This docs page describes the **low-level** features of Qwik's prefetching. However, it's recommended to refer to Qwik City's documentation on [Speculative Module Fetching](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx) for a more comprehensive understanding.
+Qwik 提供了各种策略来提前预取模块，并且在此基础上，Qwik City 还能通过使用[推测性模块获取](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx)进一步提升。本文档页面描述了 Qwik 预取的**低级**特性。然而，建议参考 Qwik City 的[推测性模块获取](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx)文档以获得更全面的理解。
 
-- [Pre-populate the Cache with service workers](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx)
+- [使用 Service Worker 预填充缓存](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx)
 - [Link rel](#link-rel)
 - [Web Worker Fetch](#web-worker-fetch)
 
-Prefetching is a way for applications to begin downloading modules in a background task, before the user may actually require these modules. The ideal solution is to only prefetch the smallest amount of code that is highly likely to be executed from a user's interaction, while also avoiding any JavaScript that _will not_ be used.
+预取是应用程序在用户实际需要这些模块之前，通过后台任务开始下载模块的一种方式。理想的解决方案是仅预取用户交互中高度可能执行的最小代码量，同时避免任何不会被使用的 JavaScript。
 
-Only downloading and executing a minimal amount of JavaScript is an area where Qwik applications excel. And since Qwik is able to understand how individual components are used (and what's not used), it can also best decide which bundles should be prefetched.
+仅下载和执行最小量的 JavaScript 是 Qwik 应用程序擅长的领域。由于 Qwik 能够理解如何使用各个组件（以及什么不使用），它还可以最好地决定应该预取哪些捆绑包。
 
-Remember, the [difference between resumability and hydration](../../concepts/resumable/index.mdx), is that resumability allows Qwik applications to avoid executing JavaScript just to restore the event listeners, component tree, and application state. By fundamentally breaking apart a component's event listeners, render function, and state, the amount of code to prefetch is also significantly smaller than it would be with a traditional approach.
+请记住，[可恢复性和水合](../../concepts/resumable/index.mdx)之间的区别在于，可恢复性允许 Qwik 应用程序避免执行 JavaScript 来恢复事件监听器、组件树和应用程序状态。通过基本上分解组件的事件监听器、渲染函数和状态，与传统方法相比，预取的代码量也显著减少。
 
-## Collecting Used Symbols
+## 收集已使用的符号
 
-When Qwik renders an app, it's able to collect which "symbols" were used during the render. A symbol includes various parts of a component, which are [extracted by the optimizer](../optimizer/index.mdx) to break apart the application. Individual event listeners, component state, and the component renderer itself are examples of different symbols that could be extracted.
+当 Qwik 渲染应用程序时，它能够收集渲染过程中使用的“符号”。符号包括组件的各个部分，这些部分由[优化器](../optimizer/index.mdx)提取出来以拆分应用程序。单独的事件监听器、组件状态和组件渲染器本身都是可能提取的不同符号的示例。
 
-For example, consider a product page that is mostly static except for one "Add to cart" button. When this button is clicked, the user should immediately get feedback to show the product added to the cart. In this example, the Qwik optimizer would be able to understand that the only symbol a user could interact with is the "Add to cart" button click event listener.
+例如，考虑一个产品页面，除了一个“添加到购物车”按钮外，大部分内容都是静态的。当点击此按钮时，用户应立即获得反馈，以显示产品已添加到购物车。在此示例中，Qwik 优化器能够理解用户唯一可能与之交互的符号是“添加到购物车”按钮的点击事件监听器。
 
-For our "Add to cart" example, the optimizer would collect the symbols for only the click event listener, and the renderer for the add to cart widget. It would not, however, have to download, hydrate, and re-render any of the other parts of the application since it's not even possible to re-render other sections of the page.
+对于我们的“添加到购物车”示例，优化器将仅收集点击事件监听器的符号以及添加到购物车小部件的渲染器。然而，它不必下载、水合和重新渲染应用程序的任何其他部分，因为重新渲染页面的其他部分根本不可能。
 
-Since Qwik understands what's possible, it's able to prefetch the code only for the event listener rather than all the JavaScript for the entire application or route. This is in contrast to the traditional approach where the entire application or route, and framework code, must be prefetched just to add the click event listener.
+由于 Qwik 理解可能性，它能够仅预取事件监听器的代码，而不是整个应用程序或路由的所有 JavaScript。这与传统方法相反，在传统方法中，必须预取整个应用程序或路由以及框架代码才能添加点击事件监听器。
 
-## Prefetching Strategy
+## 预取策略
 
-The prefetching strategy is the logic that decides which JavaScript, if any, Qwik should prefetch in the background. By default, Qwik will prefetch any visible listeners on the page. To configure the prefetching strategy, use the options argument of the `renderToStream()` function, often found in the `src/entry.ssr.tsx` source file. Providing optimal prefetching strategies is an area Qwik will continue to research and experiment with.
+预取策略是决定 Qwik 是否应该在后台预取哪些 JavaScript 的逻辑。默认情况下，Qwik 将预取页面上任何可见的监听器。要配置预取策略，请使用 `renderToStream()` 函数的选项参数，通常可以在 `src/entry.ssr.tsx` 源文件中找到。提供最佳的预取策略是 Qwik 将继续研究和实验的领域。
 
-For Qwik City applications, we highly recommended using [Speculative Module Fetching](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx).
+对于 Qwik City 应用程序，我们强烈推荐使用[推测性模块获取](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx)。
 
 ```ts
 export default function (opts: RenderToStreamOptions) {
   return renderToStream(<Root />, {
     manifest,
     prefetchStrategy: {
-      // custom prefetching config
+      // 自定义预取配置
     },
     ...opts,
   });
 }
 ```
 
-## Prefetching Implementation
+## 预取实现
 
-Browsers offer numerous ways to "implement", or apply, a [prefetching strategy](#prefetching-strategy), and Qwik can be configured to prefer one implementation over another, each with their pros and cons. Depending on the configuration, the generated HTML content will include the prefetch implementation.
+浏览器提供了许多方法来“实现”或应用[预取策略](#prefetching-strategy)，并且 Qwik 可以配置为优先选择一种实现，每种实现都有其优缺点。根据配置，生成的 HTML 内容将包括预取实现。
 
 ```ts
 export default function (opts: RenderToStreamOptions) {
@@ -62,7 +62,7 @@ export default function (opts: RenderToStreamOptions) {
     manifest,
     prefetchStrategy: {
       implementation: {
-        // custom prefetching implementation
+        // 自定义预取实现
       },
     },
     ...opts,
@@ -70,24 +70,24 @@ export default function (opts: RenderToStreamOptions) {
 }
 ```
 
-For Qwik City applications, we highly recommended using [Speculative Module Fetching](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx), which uses the `prefetchEvent` implementation.
+对于 Qwik City 应用程序，我们强烈推荐使用[推测性模块获取](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx)，它使用 `prefetchEvent` 实现。
 
-| Option              | Description                                                                                                                                                                                                                                                                                                           |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `prefetchEvent`     | Dispatch a `qprefetch` event with `detail` data containing the urls that should be prefetched. The event dispatch script will be inlined into the document's HTML. By default, the `prefetchEvent` implementation will be set to `always`.                                                                            |
-| `linkInsert`        | Insert the `<link>` element into the document. When using `html-append`, it will render each `<link>` directly within the html, appended at the end of the body. Using the `js-append` option, it will instead insert some JavaScript, which creates the elements at runtime and appends them at the end of the body. |
-| `linkRel`           | This option is used to define the [`rel` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types) of the `<link>` element. When the `linkInsert` option is used, the default is `prefetch`. Other options include `preload` and `modulepreload`.                                                      |
-| `workerFetchInsert` | Prefetch urls by calling a `fetch()` for each module, with the goal of populating the network cache.                                                                                                                                                                                                                  |
+| 选项                | 描述                                                                                                                                                                                                                                                                                                               |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `prefetchEvent`     | 使用包含应预取的 URL 的 `detail` 数据分发 `qprefetch` 事件。事件分发脚本将内联到文档的 HTML 中。默认情况下，`prefetchEvent` 实现将设置为 `always`。                                                                                                                                                                |
+| `linkInsert`        | 将 `<link>` 元素插入文档中。当使用 `html-append` 时，它将直接在 html 中渲染每个 `<link>`，并将其附加到 body 的末尾。使用 `js-append` 选项时，它将插入一些 JavaScript，该 JavaScript 在运行时创建元素并将其附加到 body 的末尾。                                                                                   |
+| `linkRel`           | 此选项用于定义 `<link>` 元素的 [`rel` 属性](https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types)。当使用 `linkInsert` 选项时，默认值为 `prefetch`。其他选项包括 `preload` 和 `modulepreload`。                                                                                                          |
+| `workerFetchInsert` | 通过为每个模块调用 `fetch()` 来预取 URL，以填充网络缓存。                                                                                                                                                                                                                                                          |
 
-### Dispatched Prefetch Event
+### 分发的预取事件
 
-[Speculative Module Fetching](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx) is the preferred caching strategy used by Qwik City. This strategy listens for the `qprefetch` event, which is dispatched by the Qwik framework. The event contains a list of URLs that the background thread should use to pre-populate the browser's [Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache).
+[推测性模块获取](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx)是 Qwik City 使用的首选缓存策略。该策略监听由 Qwik 框架分发的 `qprefetch` 事件。该事件包含一个 URL 列表，后台线程应使用这些 URL 来预填充浏览器的[缓存](https://developer.mozilla.org/en-US/docs/Web/API/Cache)。
 
-Qwik itself should be configured to use the `prefetchEvent` implementation, which will dispatch a `qprefetch` event. By default, the `prefetchEvent` implementation will be set to `always`. Next, [Qwik City](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx) will listen for this event and communicate with its service worker to persist the Request / Response object pairs so they are cached in long-lived memory.
+Qwik 本身应配置为使用 `prefetchEvent` 实现，它将分发一个 `qprefetch` 事件。默认情况下，`prefetchEvent` 实现将设置为 `always`。接下来，[Qwik City](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx)将监听此事件，并与其服务工作线程通信，以将请求/响应对象对持久化，以便将其缓存在长期内存中。
 
-By using a service worker to intercept `fetch` requests from the browser, this approach allows granular control over caching, along with preventing duplicate requests for the same resource.
+通过使用服务工作线程拦截浏览器的 `fetch` 请求，这种方法允许对缓存进行细粒度控制，并防止对同一资源的重复请求。
 
-Below is an example of manually dispatching the event. These events are dispatched from Qwik itself and do not require developers to dispatch these events manually. Additionally, the [service worker](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx) will automatically add listeners for these events.
+以下是手动分发事件的示例。这些事件是由 Qwik 本身分发的，不需要开发人员手动分发这些事件。此外，[服务工作线程](../../../(qwikcity)/advanced/speculative-module-fetching/index.mdx)将自动为这些事件添加侦听器。
 
 ```ts
 dispatchEvent(new CustomEvent("qprefetch", { detail: {
@@ -97,46 +97,46 @@ dispatchEvent(new CustomEvent("qprefetch", { detail: {
 
 ### Link `rel`
 
-Using the `<link>` element with the `rel` attribute is a common approach by today's frameworks, and Qwik can use this method by configuring the `linkInsert` and `linkRel` options. The challenge with the link rel approach is lack of support on _all_ devices, at least at the time of writing. Additionally, during development, it can be misleading that it works everywhere; while on mobile devices it is not easily visible that link prefetching is working correctly.
+使用带有 `rel` 属性的 `<link>` 元素是当今框架的常见方法，Qwik 可以通过配置 `linkInsert` 和 `linkRel` 选项来使用此方法。使用 link rel 方法的挑战在于在撰写本文时，_所有_设备上都不支持它。此外，在开发过程中，它可能会误导人们认为它在任何地方都有效；而在移动设备上，很难看到链接预取是否正常工作。
 
-For example, Safari (the browser powering iPhones and iPads) does not support `modulepreload`. This is significant because mobile devices maybe benefit the most from module preloading. Next is Firefox, which does not support link rel `prefetch` when on `https`.
+例如，Safari（驱动 iPhone 和 iPad 的浏览器）不支持 `modulepreload`。这很重要，因为移动设备可能最能从模块预加载中受益。接下来是 Firefox，在 `https` 上不支持链接 rel `prefetch`。
 
-> Prefetch is a feature that's supposed to help make our visitor's experiences faster but with the wrong combination of browser and CDN / server it can actually make experiences slower!
+> 预取是一项旨在帮助加快访问者体验的功能，但是如果浏览器和 CDN/服务器的组合不正确，它实际上可能会使体验变慢！
 >
 > \- <cite><a href="https://andydavies.me/blog/2020/07/08/rel-equals-prefetch-and-the-importance-of-effective-http-slash-2-prioritisation/">Rel=prefetch and the Importance of Effective HTTP/2 Prioritisation</a></cite>
 
-Additionally, it may be possible to fire off multiple requests for the same resource. For example, let's say we want to prefetch `module-a.js`, and while that's being downloaded (which may take a short time, or a very long time), the user interacts with the app, which then decides to actually request and execute `module-a.js`. At the time of writing, browsers will often fire off a second request, which makes matters worse.
+此外，可能会对同一资源发起多个请求。例如，假设我们要预取 `module-a.js`，而在下载该文件时（可能需要很短的时间或很长的时间），用户与应用程序进行交互，然后决定实际请求和执行 `module-a.js`。撰写本文时，浏览器通常会发起第二个请求，这使情况变得更糟。
 
 #### link rel="modulepreload"
 
-- Even though it's in the HTML spec, that doesn't mean your end-users are preloading your app correctly. [Can I Use: modulepreload](https://caniuse.com/link-rel-modulepreload)
-- Not supported by [Firefox](https://bugzilla.mozilla.org/show_bug.cgi?id=1425310).
+- 即使它在 HTML 规范中，也不能保证最终用户正确预加载您的应用程序。[Can I Use: modulepreload](https://caniuse.com/link-rel-modulepreload)
+- 不受 [Firefox](https://bugzilla.mozilla.org/show_bug.cgi?id=1425310) 支持。
 
 ### Web Worker Fetch
 
-`workerFetchInsert` instructs Qwik to employ a web worker to `fetch()` a JavaScript file, with the goal of priming the browser cache with the module. By using a web worker, the fetch and caching logic lives on another thread. The fetch response will also have an `immutable` or long cache-control header, so the browser doesn't make a second network request.
+`workerFetchInsert` 指示 Qwik 使用 Web Worker 来 `fetch()` JavaScript 文件，目的是使用模块预热浏览器缓存。通过使用 Web Worker，获取和缓存逻辑位于另一个线程上。获取响应还将具有 `immutable` 或长时间的缓存控制头，以便浏览器不会发起第二个网络请求。
 
-The downside of this setting is that the fetched response is thrown away, and it's only at the browser level that hopefully the file is cached.
+这种设置的缺点是获取的响应被丢弃，只有在浏览器级别上才有希望缓存该文件。
 
-## Frequently Asked Prefetching Questions
+## 常见的预取问题
 
-**QUESTION**: _Is lazy loading on user events slow because the user must wait for the code to download?_
+**问题**：_用户事件上的延迟加载是否会很慢，因为用户必须等待代码下载？_
 
-Yes, that would create a noticeable delay, especially on slow 3G networks. This is why code prefetching is an important part of Qwik applications.
+是的，这会导致明显的延迟，尤其是在慢速的 3G 网络上。这就是为什么代码预取是 Qwik 应用程序的重要部分。
 
-Prefetching code ensures that all of the necessary code for running the application is fetched immediately on navigating to the page. This way, when the user performs an action, the code for that action comes from the prefetch cache rather than the network. The result is that the code execution is instant.
+代码预取确保在导航到页面时立即获取运行应用程序所需的所有代码。这样，当用户执行操作时，该操作的代码来自预取缓存而不是网络。结果是代码执行是即时的。
 
-**QUESTION**: _Doesn't code prefetch results in the same behavior as existing frameworks that download and execute all of the code eagerly?_
+**问题**：_代码预取不会导致与现有框架下载并急切执行所有代码的行为相同吗？_
 
-No, for several reasons:
+不会，有几个原因：
 
-- Existing frameworks must download and execute all of the code ([hydration](../../concepts/resumable/index.mdx)) before the application can be interactive. Typically the download of the code is a smaller time cost than the execution of the code.
-- Qwik code prefetch only downloads but does not execute the code. Therefore even if Qwik prefetches the same amount of code as the existing frameworks, the result is significant time cost savings.
-- Qwik only prefetches the code which is needed for the current page. Qwik avoids downloading code associated with components that are static. In the worst case, Qwik prefetches the same amount of code as the existing frameworks' best case. In most cases, Qwik prefetches a small fraction of code compared to the existing frameworks.
-- Prefetching of code can happen on other threads than the main thread. Many browsers can even pre-parse the AST of the code off the main thread.
-- If the user interaction happens before the prefetch is completed, the browser will automatically prioritize the interaction chunk before the remaining prefetch chunks.
-- Qwik can break up the application into many small chunks, and these chunks can be downloaded in the order of probability that the user will interact with them. Existing frameworks have trouble breaking up applications into small chunks, and there is no easy way to prioritize the chunk download order because hydration requires a single "main" entry point to the application.
+- 现有框架必须在应用程序可以交互之前下载并执行所有代码（水合）。通常，代码的下载是较小的时间成本，而代码的执行是较大的时间成本。
+- Qwik 代码预取仅下载而不执行代码。因此，即使 Qwik 预取与现有框架预取相同数量的代码，结果也会显著节省时间成本。
+- Qwik 仅预取当前页面所需的代码。Qwik 避免下载与静态组件相关的代码。在最坏的情况下，Qwik 预取与现有框架的最佳情况相同数量的代码。在大多数情况下，与现有框架相比，Qwik 预取的代码量要小得多。
+- 代码的预取可以在主线程之外的其他线程上进行。许多浏览器甚至可以在主线程之外预解析代码的 AST。
+- 如果用户交互发生在预取完成之前，浏览器将自动优先处理交互块，然后再处理剩余的预取块。
+- Qwik 可以将应用程序分解为许多小块，并且这些块可以按照用户与之交互的概率顺序下载。现有框架难以将应用程序分解为小块，并且没有简单的方法来优先下载块的顺序，因为水合需要一个单一的“主”入口点到应用程序。
 
-**QUESTION**: _Who is responsible for knowing what code to prefetch?_
+**问题**：_谁负责知道要预取哪些代码？_
 
-Qwik can automatically generate the prefetch instructions as part of the SSR rendering. By executing the application, Qwik has runtime knowledge of which components are visible, which events the users can trigger and what code will need to be downloaded. The result is that the prefetch is an ideal set of files for this page. No action on the developers' part is required other than adding the prefetching strategy to `renderToStream()`.
+Qwik 可以作为 SSR 渲染的一部分自动生成预取指令。通过执行应用程序，Qwik 在运行时了解哪些组件可见，用户可以触发哪些事件以及哪些代码需要下载。结果是预取是适用于此页面的理想文件集。除了将预取策略添加到 `renderToStream()` 中之外，开发人员不需要采取任何其他操作。

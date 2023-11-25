@@ -1,5 +1,5 @@
 ---
-title: Bootstrap | Integrations
+title: Bootstrap | 集成
 keywords: 'bootstrap, spinners, alerts, buttons'
 contributors:
   - mugan86
@@ -7,45 +7,45 @@ contributors:
 
 # Bootstrap
 
-It is a powerful, extensible, and feature-packed frontend toolkit (with HTML, CSS, and JavaScript). Build and customize with Sass, utilize a predefined grid system and components, and bring your projects to life with powerful JavaScript plugins.
+它是一个功能强大、可扩展且功能丰富的前端工具包（包含HTML、CSS和JavaScript）。使用Sass构建和自定义，利用预定义的网格系统和组件，利用强大的JavaScript插件使您的项目栩栩如生。
 
-More information at [https://getbootstrap.com/](https://getbootstrap.com/)
+更多信息请访问[https://getbootstrap.com/](https://getbootstrap.com/)
 
-## Usage
+## 使用方法
 
-You can add Bootstrap easily by using the following Qwik starter script:
+您可以通过使用以下 Qwik 启动脚本轻松添加 Bootstrap：
 
 ```shell
 npm run qwik add bootstrap
 ```
 
-The previous command updates your app with the necessary dependencies.
+上述命令会更新您的应用程序，并添加所需的依赖项。
 
 - `bootstrap@5`
 - `@types/bootstrap@5`
 
-It also adds new files inside to your project folder:
+它还会在您的项目文件夹中添加新文件：
 
-- `src/models/bootstrap.ts`: Model to define Boostrap components info to use in props.
-- `src/constants/data.ts`: Constant values information that we will use in the example to be created with this integration.
-- `src/components/bootstrap/button.tsx`: Button component feature with Bootstrap.
-- `src/components/bootstrap/alert.tsx`: Alert component feature with Bootstrap.
-- `src/components/bootstrap/spinner.tsx`: Spinner component feature with Bootstrap.
-- `src/components/bootstrap/index.ts`: Entry point where we will add the components of the elements that will be used, for easier and cleaner access to them.
-- `src/components/bootstrap/navbar.tsx`: Navbar component functionality with Bootstrap to demonstrate how to add and use JavaScript functionalities without encountering the 'document is not defined' error due to improper import declaration in the Qwik lifecycle.
-- `src/routes/bootstrap/layout.tsx`: Layout where we add Bootstrap styling configuration to ensure styles are applied to all routes nested within the main Bootstrap route.
-- `src/routes/bootstrap/index.tsx`: Boostrap components option home page.
-- `src/routes/bootstrap/buttons/index.tsx`: Example to consume Button component with demo data.
-- `src/routes/bootstrap/alerts/index.tsx`: Example to consume Alert component with demo data.
-- `src/routes/bootstrap/spinners/index.tsx`: Example to consume Spinner component with demo data.
+- `src/models/bootstrap.ts`：用于定义在 props 中使用的 Boostrap 组件信息的模型。
+- `src/constants/data.ts`：我们将在创建与此集成相关的示例时使用的常量值信息。
+- `src/components/bootstrap/button.tsx`：使用 Bootstrap 的按钮组件功能。
+- `src/components/bootstrap/alert.tsx`：使用 Bootstrap 的警告组件功能。
+- `src/components/bootstrap/spinner.tsx`：使用 Bootstrap 的旋转器组件功能。
+- `src/components/bootstrap/index.ts`：入口点，我们将在其中添加将要使用的元素的组件，以便更轻松、更清晰地访问它们。
+- `src/components/bootstrap/navbar.tsx`：使用 Bootstrap 的导航栏组件功能，以演示如何添加和使用 JavaScript 功能，避免在 Qwik 生命周期中由于不正确的导入声明而遇到“document is not defined”错误。
+- `src/routes/bootstrap/layout.tsx`：布局，在其中添加 Bootstrap 样式配置，以确保样式应用于主要 Bootstrap 路由中嵌套的所有路由。
+- `src/routes/bootstrap/index.tsx`：Bootstrap 组件选项主页。
+- `src/routes/bootstrap/buttons/index.tsx`：使用演示数据消耗按钮组件的示例。
+- `src/routes/bootstrap/alerts/index.tsx`：使用演示数据消耗警告组件的示例。
+- `src/routes/bootstrap/spinners/index.tsx`：使用演示数据消耗旋转器组件的示例。
 
-## After integrating Bootstrap
+## 集成 Bootstrap 后
 
-We access to `/bootstrap/` route and there we can find all the examples available in this integration.
+我们访问 `/bootstrap/` 路由，那里可以找到此集成中的所有可用示例。
 
-## Interesting info about About
+## 关于 About 的有趣信息
 
-### Official
+### 官方
 
-- `Examples`: Examples that we can use as inspiration and learn how to create interesting websites using Bootstrap. [Reference](https://getbootstrap.com/docs/5.3/examples/).
-- `Docs`: All necessary info to work with Bootstrap. [Reference](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
+- `示例`：我们可以用作灵感并学习如何使用 Bootstrap 创建有趣网站的示例。[参考链接](https://getbootstrap.com/docs/5.3/examples/)
+- `文档`：使用 Bootstrap 的所有必要信息。[参考链接](https://getbootstrap.com/docs/5.3/getting-started/introduction/)

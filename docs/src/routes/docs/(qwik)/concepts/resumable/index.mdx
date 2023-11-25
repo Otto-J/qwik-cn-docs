@@ -1,5 +1,5 @@
 ---
-title: Resumable | Concepts
+title: Resumable | 概念
 contributors:
   - voluntadpear
   - RATIU5
@@ -12,111 +12,111 @@ contributors:
 
 # Resumable vs. Hydration
 
-A key concept of Qwik applications is that they are resumable from a server-side-rendered state. The best way to explain resumability is to understand how the current generation of frameworks are replayable (hydration).
+Qwik 应用程序的一个关键概念是它们可以从服务器端渲染的状态中恢复。解释可恢复性的最好方式是理解当前一代框架是如何可重放（hydration）的。
 
-When an SSR/SSG application boots up on a client, it requires that the framework on the client restores three pieces of information:
+当 SSR/SSG 应用程序在客户端启动时，它需要客户端上的框架恢复三个信息：
 
-1. Listeners - locate event listeners and install them on the DOM nodes to make the application interactive.
-2. Component tree - build up an internal data structure representing the application component tree.
-3. Application state - restore any data that was fetched or saved in a `store` on the server.
+1. 监听器 - 定位事件监听器并将其安装在 DOM 节点上，使应用程序具有交互性。
+2. 组件树 - 构建表示应用程序组件树的内部数据结构。
+3. 应用程序状态 - 恢复在服务器上获取或保存在 `store` 中的任何数据。
 
-Collectively, this is known as hydration. All current generations of frameworks require this step to make the application interactive.
+总体而言，这被称为hydration。所有当前一代的框架都需要这一步骤来使应用程序具有交互性。
 
-[Hydration is expensive](https://www.builder.io/blog/hydration-is-pure-overhead) for two reasons:
+[hydration 是昂贵的](https://www.builder.io/blog/hydration-is-pure-overhead)，原因有两点：
 
-1. The frameworks have to download all of the component code associated with the current page.
-2. The frameworks have to execute the templates associated with the components on the page to rebuild the listener location and the internal component tree.
+1. 框架必须下载与当前页面相关的所有组件代码。
+2. 框架必须执行与页面上的组件相关联的模板，以重建监听器位置和内部组件树。
 
-<img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F04681212764f4025b2b5f5c6a258ad6e?format=webp&width=945" 
-     alt="Resumable vs Hydration" 
-     style="width: 100%;aspect-ratio: 2.216;"/>
+<img src="https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F04681212764f4025b2b5f5c6a258ad6e?format=webp&width=945"
+      alt="Resumable vs Hydration"
+      style="width: 100%;aspect-ratio: 2.216;" />
 
-Qwik is different because it does not require hydration to resume an application on the client. Not requiring hydration is what makes the Qwik application startup instantaneous.
+Qwik 不同的地方在于它不需要 hydration 来在客户端上恢复应用程序。不需要 hydration 是使 Qwik 应用程序启动瞬间完成的原因。
 
-All other frameworks' hydration **replays** all the application logic on the client. Qwik instead pauses execution on the server, and resumes execution on the client.
+其他框架的 hydration **重放**了客户端上的所有应用程序逻辑。Qwik 相反，在服务器上暂停执行，然后在客户端上恢复执行。
 
-## Introducing Resumability
+## 引入可恢复性
 
-Resumability is about pausing execution on the server and resuming execution on the client without having to replay and download all of the application logic.
+可恢复性是指在服务器上暂停执行，然后在客户端上恢复执行，而无需重放和下载所有应用程序逻辑。
 
-A good mental model is that Qwik applications at any point of their lifecycle can be serialized and moved to a different VM instance (server to browser). There, the application simply resumes where the serialization stopped. No hydration is required. This is why we say that Qwik applications don't hydrate; they resume.
+一个好的思维模型是，Qwik 应用程序在其生命周期的任何时刻都可以被序列化并移动到不同的 VM 实例（从服务器到浏览器）。在那里，应用程序只需在序列化停止的地方继续执行。不需要 hydration。这就是为什么我们说 Qwik 应用程序不进行 hydration，而是进行恢复。
 
-In order to achieve this, Qwik needs to solve the 3 problems (listeners, component tree, application state) in a way that is compatible with a no-code startup.
+为了实现这一点，Qwik 需要以与无代码启动兼容的方式解决 3 个问题（监听器、组件树、应用程序状态）。
 
-### Listeners
+### 监听器
 
-DOM without event listeners is just a static page; it is not an application. Today's standard for all sites is quite a high level of interactivity, so even the most static-looking sites are full of event listeners. These include menus, hovers, expanding details, or even full-on interactive apps.
+没有事件监听器的 DOM 只是一个静态页面；它不是一个应用程序。如今，所有网站的标准都具有相当高的交互性，因此即使是看起来最静态的网站也充满了事件监听器。这些包括菜单、悬停、展开详情，甚至是完全交互式的应用程序。
 
-Existing frameworks solve the event listener by downloading the components and executing their templates to collect event listeners that are then attached to the DOM. The current approach has these issues:
+现有的框架通过下载组件并执行其模板来解决事件监听器问题，以收集附加到 DOM 上的事件监听器。当前的方法存在以下问题：
 
-1. Requires the template code to be eagerly downloaded.
-2. Requires template code to be eagerly executed.
-3. Requires the event handler code to be downloaded eagerly (to be attached).
+1. 需要急切下载模板代码。
+2. 需要急切执行模板代码。
+3. 需要急切下载事件处理程序代码（以进行附加）。
 
-The above approach does not scale. As the application becomes more complicated, the amount of code needed to download eagerly and execute grows proportionally with the size of the application. This negatively impacts the application startup performance and hence the user experience.
-In other frameworks, lazy-loading chunks of the application becomes a development task in itself that consumes time and effort. In Qwik, lazy-loading is a natural consequence of the resumable architecture.
+上述方法不可扩展。随着应用程序变得更加复杂，需要急切下载和执行的代码量与应用程序的大小成比例增长。
+这对应用程序的启动性能产生负面影响，从而影响用户体验。在其他框架中，按需加载应用程序的代码块本身就成为一个开发任务，需要耗费时间和精力。在 Qwik 中，按需加载是可恢复架构的自然结果。
 
-Qwik solves the above issue by serializing the event listeners into DOM like so:
+Qwik 通过将事件监听器序列化到 DOM 中来解决上述问题，如下所示：
 
 ```html
 <button on:click="./chunk.js#handler_symbol">click me</button>
 ```
 
-Qwik still needs to collect the listener information, but this step is done as part of the SSR/SSG. The results of SSR/SSG are then serialized into HTML so that the browser does not need to do anything to resume the execution. Notice that the `on:click` attribute contains all of the information to resume the application without doing anything eagerly.
+Qwik 仍然需要收集监听器信息，但这一步骤是作为 SSR/SSG 的一部分完成的。SSR/SSG 的结果然后被序列化为 HTML，因此浏览器无需执行任何操作即可恢复执行。请注意，`on:click` 属性包含了恢复应用程序所需的所有信息，而无需急切执行任何操作。
 
-1. [Qwikloader](https://qwik.builder.io/docs/advanced/qwikloader/) sets up a single global listener instead of many individual listeners per DOM element. This step can be done with no application code present.
-2. The HTML contains a URL to the chunk and symbol name. The attribute tells Qwikloader which code chunk to download and which symbol to retrieve from the chunk and then to be executed.
-3. Finally, to make all of the above possible, Qwik's event processing implementation understands asynchronicity which allows it to lazy load closures automatically.
+1. [Qwikloader](https://qwik.builder.io/docs/advanced/qwikloader/) 设置了一个全局监听器，而不是每个 DOM 元素都有一个独立的监听器。这一步可以在没有应用程序代码的情况下完成。
+2. HTML 包含了一个指向代码块和符号名称的 URL。该属性告诉 Qwikloader 下载哪个代码块，并从代码块中检索哪个符号，然后执行它。
+3. 最后，为了使上述所有操作成为可能，Qwik 的事件处理实现理解异步性，这使得它可以自动惰性加载闭包。
 
-### Component Trees
+### 组件树
 
-Frameworks work with component trees. To that end, frameworks need a complete understanding of the component trees to know which components need to be rerendered and when. If you look into the existing framework SSR/SSG output, the component boundary information has been destroyed. There is no way of knowing where component boundaries are by looking at the resulting HTML. To recreate this information, frameworks re-execute the component templates and memoize the component boundary location. Re-execution is what hydration is. Hydration is expensive as it requires both the download of component templates and their execution.
+框架使用组件树。为此，框架需要完全了解组件树，以知道哪些组件需要重新渲染以及何时重新渲染。如果查看现有框架的 SSR/SSG 输出，组件边界信息已被破坏。通过查看生成的 HTML，无法知道组件边界的位置。为了重新创建此信息，框架会重新执行组件模板并对组件边界位置进行记忆化。重新执行就是 hydration。hydration 是昂贵的，因为它需要下载组件模板并执行它们。
 
-Qwik collects [component boundary information](https://qwik.builder.io/docs/cheat/serialization/) as part of the SSR/SSG and then serializes that information into HTML. The result is that Qwik can:
+Qwik 在 SSR/SSG 的一部分中收集[组件边界信息](https://qwik.builder.io/docs/cheat/serialization/)，然后将该信息序列化为 HTML。结果是，Qwik 可以：
 
-1. Rebuild the component hierarchy information without the component code actually being present. The component code can remain lazy.
-2. Qwik can do this lazily only for the components which need to be re-rendered rather than all upfront.
-3. Qwik collects relationship information between stores and components. This creates a subscription model that informs Qwik which components need to be re-rendered as a result of state change. The subscription information also gets serialized into HTML.
+1. 重新构建组件层次结构信息，而无需实际存在组件代码。组件代码可以保持惰性加载。
+2. Qwik 只能对需要重新渲染的组件进行惰性操作，而不是一次性操作所有组件。
+3. Qwik 收集存储和组件之间的关系信息。这创建了一个订阅模型，通知 Qwik 哪些组件需要重新渲染以响应状态更改。订阅信息也被序列化为 HTML。
 
-### Application State
+### 应用程序状态
 
-Existing frameworks usually have a way of serializing the application state into HTML so that the state can be restored as part of hydration. In this way, they are very similar to Qwik. However, Qwik has state management more tightly integrated into the lifecycle of the components. In practice, this means that component can be delay-loaded independently from the state of the component. This is not easily achievable in existing frameworks because component props are usually created by the parent component. This creates a chain reaction. In order to restore component X, its parents need to be restored as well. Qwik allows any component to be resumed without the parent component code being present.
+现有的框架通常有一种方式将应用程序状态序列化为 HTML，以便在 hydration 的过程中恢复状态。在这方面，它们与 Qwik 非常相似。然而，Qwik 将状态管理更紧密地集成到组件的生命周期中。实际上，这意味着组件可以独立于组件的状态进行延迟加载。这在现有的框架中很难实现，因为组件的 props 通常由父组件创建。这会引发连锁反应。为了恢复组件 X，必须先恢复其父组件。Qwik 允许任何组件在没有父组件代码的情况下恢复。
 
-#### Serialization
+#### 序列化
 
-The simplest way to think about serialization is through `JSON.stringify`. However, JSON has several limitations. Qwik can overcome some limitations, but some can't be overcome, and they place limitations on what the developer can do. Understanding these limitations is important when building Qwik applications.
+最简单的序列化方式是通过 `JSON.stringify` 进行序列化。然而，JSON 有一些限制。Qwik 可以克服一些限制，但有些限制无法克服，并对开发人员的操作产生限制。了解这些限制在构建 Qwik 应用程序时非常重要。
 
-Limitations of JSON which Qwik solves:
+Qwik 解决的 JSON 限制：
 
-- JSON produces a DAG. DAG stands for Directed Acyclic Graph, which means that the object which is being serialized can't have circular references. This is a big limitation because the application state is often circular. Qwik ensures that when the graph of objects gets serialized, the circular references get properly saved and then restored.
-- JSON can't serialize some object types. For example, DOM references, or Dates. Qwik's serialization format ensures that such objects can correctly be serialized and restored. Here is a list of types that can be serialized with Qwik:
-  - DOM references
-  - Promises (See [resources](../../components/resource/))
-  - Function closures (if wrapped in QRL)
-  - Dates
-  - `URL` objects
-  - `Map` and `Set` instances.
+- JSON 生成一个有向无环图（DAG）。这意味着被序列化的对象不能具有循环引用。这是一个很大的限制，因为应用程序状态通常是循环的。Qwik 确保在序列化对象图时，循环引用得到正确保存和恢复。
+- JSON 无法序列化某些对象类型。例如，DOM 引用或日期。Qwik 的序列化格式确保这些对象可以正确地序列化和恢复。以下是可以使用 Qwik 进行序列化的类型列表：
+  - DOM 引用
+  - Promises（参见 [resources](../../components/resource/)）
+  - 函数闭包（如果包装在 QRL 中）
+  - 日期
+  - `URL` 对象
+  - `Map` 和 `Set` 实例。
 
-Limitations of JSON that Qwik does not solve:
+Qwik 无法解决的 JSON 限制：
 
-- Serialization of classes (`instanceof` and prototype)
-  - Although some built-in classes, such as [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date), [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL), [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map), [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) are supported.
-- Serialization of Streams.
+- 类的序列化（`instanceof` 和原型）
+  - 尽管支持一些内置类，例如 [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)、[URL](https://developer.mozilla.org/en-US/docs/Web/API/URL)、[Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)、[Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set)。
+- 流的序列化。
 
-For cases where serialization is not possible, code should run [on client only](https://qwik.builder.io/docs/components/lifecycle/#serverbrowser-only-task).
+对于无法进行序列化的情况，代码应该仅在客户端上运行（[仅在服务器和浏览器上运行的任务](https://qwik.builder.io/docs/components/lifecycle/#serverbrowser-only-task)）。
 
-### Writing applications with serializability in mind
+### 以可序列化为目标编写应用程序
 
-The resumability capability of the framework must extend to resumability of the application as well. This means that the framework must provide mechanisms for the developer to express *components* and *entities* of the application in a way which can be serialized and then resumed (without re-bootstrapping). This necessitates that the application is written with resumability constraints in mind. It is simply not possible for developers to continue to write applications in a heap-centric way and expect that a better framework can somehow make up for this sub-optimal approach.
+框架的可恢复性能力必须扩展到应用程序的可恢复性能力。这意味着框架必须为开发人员提供一种方式来以可序列化并在恢复时（无需重新启动）的方式来表达应用程序的 *组件* 和 *实体*。这要求应用程序在编写时考虑到可恢复性的约束条件。开发人员无法继续以堆为中心的方式编写应用程序，并期望更好的框架可以弥补这种次优方法。
 
-Developers must write their applications in a DOM-centric way. This will require a change of behavior and retooling of web developers' skills. Frameworks need to provide guidance and APIs to make it easy for developers to write the applications in this way.
+开发人员必须以 DOM 为中心的方式编写他们的应用程序。这将需要改变行为并重新调整 Web 开发人员的技能。框架需要提供指导和 API，以便开发人员可以轻松地以这种方式编写应用程序。
 
-### Other benefits of resumability
+### 可恢复性的其他好处
 
-The most obvious benefit of using resumability is for server-side-rendering. However, there are secondary benefits:
+使用可恢复性的最明显好处是用于服务器端渲染。然而，还有其他次要的好处：
 
-- Serializing existing PWA apps so that users don't lose context when they return to the application
-- Improved rendering performance because only changed components need to be re-rendered
-- Fine-grained lazy-loading
-- Decreased memory pressure, especially on mobile devices
-- Progressive interactivity of existing static websites
+- 序列化现有的 PWA 应用程序，以便用户在返回应用程序时不会丢失上下文
+- 改进的渲染性能，因为只需要重新渲染更改的组件
+- 细粒度的按需加载
+- 减少内存压力，特别是在移动设备上
+- 现有静态网站的渐进式交互

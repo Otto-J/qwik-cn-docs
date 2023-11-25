@@ -1,5 +1,5 @@
 ---
-title: Vite | Advanced
+title: Vite | 高级
 contributors:
   - zanettin
   - manucorporat
@@ -12,16 +12,15 @@ contributors:
 
 # Vite
 
-Qwik leverages [Vite](https://vitejs.dev/) to provide a fast development experience. Vite is a build tool that serves your code via native ES Modules during development.
-This means that it doesn't need to bundle your code or transpile it to work in the browser. It also comes with lightning fast hot module replacement (HMR) that updates your browser instantly when you make changes to your code.
+Qwik 使用 [Vite](https://vitejs.dev/) 提供快速的开发体验。Vite 是一个构建工具，在开发过程中通过原生 ES 模块来提供代码。这意味着它不需要将代码打包或转译以在浏览器中运行。它还提供了闪电般快速的热模块替换（HMR），当你修改代码时，它会立即更新浏览器。
 
-## Configuration
+## 配置
 
-After scaffolding a new Qwik project, you'll find a `vite.config.js` file in the root of your project. This is where you can configure Vite.
+在创建一个新的 Qwik 项目后，你会在项目的根目录下找到一个 `vite.config.js` 文件。你可以在这里配置 Vite。
 
-## Plugins
+## 插件
 
-Qwik comes with two plugins that make it easy to use Vite with Qwik and Qwik City.
+Qwik 提供了两个插件，使得在 Qwik 和 Qwik City 中使用 Vite 变得更加容易。
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite';
@@ -38,14 +37,14 @@ export default defineConfig(() => {
 
 ### `qwikVite()`
 
-To modify the configuration, you can pass an object to the `qwikVite` function. Possible options are:
+要修改配置，你可以向 `qwikVite` 函数传递一个对象。可能的选项有：
 
 #### `debug`
 
 ```js
 /**
- * Prints verbose Qwik plugin debug logs.
- * Default `false`
+ * 打印详细的 Qwik 插件调试日志。
+ * 默认为 `false`
  */
 debug?: boolean;
 ```
@@ -54,9 +53,9 @@ debug?: boolean;
 
 ```js
 /**
- * The Qwik entry strategy to use while bundling for production.
- * During development the type is always `hook`.
- * Default `{ type: "smart" }`)
+ * 在生产环境中进行打包时使用的 Qwik 入口策略。
+ * 在开发过程中，类型始终为 `hook`。
+ * 默认为 `{ type: "smart" }`
  */
 entryStrategy?: EntryStrategy;
 ```
@@ -65,10 +64,9 @@ entryStrategy?: EntryStrategy;
 
 ```js
 /**
- * The source directory to find all the Qwik components. Since Qwik
- * does not have a single input, the `srcDir` is use to recursively
- * find Qwik files.
- * Default `src`
+ * 用于查找所有 Qwik 组件的源目录。由于 Qwik
+ * 没有单一的输入，`srcDir` 用于递归查找 Qwik 文件。
+ * 默认为 `src`
  */
 srcDir?: string;
 ```
@@ -77,8 +75,8 @@ srcDir?: string;
 
 ```js
 /**
- * List of tsconfig.json files to use for ESLint warnings during development.
- * Default `['tsconfig.json']`
+ * 用于开发过程中的 ESLint 警告的 tsconfig.json 文件列表。
+ * 默认为 `['tsconfig.json']`
  */
 tsconfigFileNames?: string[];
 ```
@@ -87,8 +85,8 @@ tsconfigFileNames?: string[];
 
 ```js
 /**
- * List of directories to recursively search for Qwik components or Vendors.
- * Default `[]`
+ * 递归搜索 Qwik 组件或 Vendors 的目录列表。
+ * 默认为 `[]`
  */
 vendorRoots?: string[];
 ```
@@ -98,26 +96,24 @@ vendorRoots?: string[];
 ```js
 client?: {
     /**
-     * The entry point for the client builds. Typically this would be
-     * the application's main component.
-     * Default `src/components/app/app.tsx`
+     * 客户端构建的入口点。通常是应用程序的主组件。
+     * 默认为 `src/components/app/app.tsx`
      */
     input?: string[] | string;
     /**
-     * Entry input for client-side only development with hot-module reloading.
-     * This is for Vite development only and does not use SSR.
-     * Default `src/entry.dev.tsx`
+     * 用于仅在客户端进行开发时进行热模块重载的入口输入。
+     * 这仅适用于 Vite 的开发环境，不使用 SSR。
+     * 默认为 `src/entry.dev.tsx`
      */
     devInput?: string;
     /**
-     * Output directory for the client build.
-     * Default `dist`
+     * 客户端构建将创建一个清单，此钩子将使用生成的构建数据调用。
+     * 默认为 `undefined`
      */
     outDir?: string;
     /**
-     * The client build will create a manifest and this hook
-     * is called with the generated build data.
-     * Default `undefined`
+     * 客户端构建将创建一个清单，此钩子将使用生成的构建数据调用。
+     * 默认为 `undefined`
      */
     manifestOutput?: (manifest: QwikManifest) => Promise<void> | void;
 };
@@ -128,23 +124,21 @@ client?: {
 ```js
 ssr?: {
     /**
-     * The entry point for the SSR renderer. This file should export
-     * a `render()` function. This entry point and `render()` export
-     * function is also used for Vite's SSR development and Node.js
-     * debug mode.
-     * Default `src/entry.ssr.tsx`
+     * SSR 渲染器的入口点。此文件应导出一个 `render()` 函数。
+     * 此入口点和 `render()` 导出函数也用于 Vite 的 SSR 开发和 Node.js 调试模式。
+     * 默认为 `src/entry.ssr.tsx`
      */
     input?: string;
     /**
-     * Output directory for the server build.
-     * Default `dist`
+     * 服务器构建的输出目录。
+     * 默认为 `dist`
      */
     outDir?: string;
     /**
-     * The SSR build requires the manifest generated during the client build.
-     * By default, this plugin will wire the client manifest to the ssr build.
-     * However, the `manifestInput` option can be used to manually provide a manifest.
-     * Default `undefined`
+     * SSR 构建需要在客户端构建期间生成的清单。
+     * 默认情况下，此插件将客户端清单与 SSR 构建连接起来。
+     * 但是，`manifestInput` 选项可以用于手动提供清单。
+     * 默认为 `undefined`
      */
     manifestInput?: QwikManifest;
 };
@@ -154,8 +148,8 @@ ssr?: {
 
 ```js
 /**
- * Options for the Qwik optimizer.
- * Default `undefined`
+ * Qwik 优化器的选项。
+ * 默认为 `undefined`
  */
 optimizerOptions?: OptimizerOptions;
 ```
@@ -164,8 +158,7 @@ optimizerOptions?: OptimizerOptions;
 
 ```js
 /**
- * Hook that's called after the build and provides all of the transformed
- * modules that were used before bundling.
+ * 在构建后调用的钩子，提供了在打包之前使用的所有转换模块。
  */
 transformedModuleOutput?:
     | ((transformedModules: TransformModule[]) => Promise<void> | void)
@@ -177,11 +170,11 @@ transformedModuleOutput?:
 ```js
 devTools?: {
     /**
-     * Press-hold the defined keys to enable qwik dev inspector.
-     * By default the behavior is activated by pressing the left or right `Alt` key.
-     * If set to `false`, qwik dev inspector will be disabled.
-     * Valid values are `KeyboardEvent.code` values.
-     * Please note that the 'Left' and 'Right' suffixes are ignored.
+     * 按住定义的键以启用 qwik 开发检查器。
+     * 默认情况下，通过按下左或右 `Alt` 键来激活行为。
+     * 如果设置为 `false`，qwik 开发检查器将被禁用。
+     * 有效值为 `KeyboardEvent.code` 值。
+     * 请注意，忽略了 'Left' 和 'Right' 后缀。
      */
     clickToSource: string[] | false;
 };
@@ -189,13 +182,13 @@ devTools?: {
 
 ### `qwikCity()`
 
-To modify the configuration, you can pass an object to the `qwikCity` function. Possible options are:
+要修改配置，你可以向 `qwikCity` 函数传递一个对象。可能的选项有：
 
 #### `routesDir`
 
 ```js
 /**
- * Directory of the `routes`. Defaults to `src/routes`.
+ * `routes` 的目录。默认为 `src/routes`。
  */
 routesDir?: string;
 ```
@@ -204,7 +197,7 @@ routesDir?: string;
 
 ```js
 /**
- * Directory of the `server plugins`. Defaults to `src/server-plugins`.
+ * `server plugins` 的目录。默认为 `src/server-plugins`。
  */
 serverPluginsDir?: string;
 ```
@@ -213,9 +206,8 @@ serverPluginsDir?: string;
 
 ```js
 /**
- * The base pathname is used to create absolute URL paths up to
- * the `hostname`, and must always start and end with a
- * `/`.  Defaults to `/`.
+ * 基本路径用于创建到 `hostname` 的绝对 URL 路径，并且必须始终以 `/` 开头和结尾。
+ * 默认为 `/`。
  */
 basePathname?: string;
 ```
@@ -224,8 +216,8 @@ basePathname?: string;
 
 ```js
 /**
- * Ensure a trailing slash ends page urls. Defaults to `true`.
- * (Note: Previous versions defaulted to `false`).
+ * 确保页面 URL 以斜杠结尾。默认为 `true`。
+ * （注意：之前的版本默认为 `false`）。
  */
 trailingSlash?: boolean;
 ```
@@ -234,7 +226,7 @@ trailingSlash?: boolean;
 
 ```js
 /**
- * Enable or disable MDX plugins included by default in qwik-city.
+ * 启用或禁用 qwik-city 中默认包含的 MDX 插件。
  */
 mdxPlugins?: MdxPlugins;
 ```
@@ -243,7 +235,7 @@ mdxPlugins?: MdxPlugins;
 
 ```js
 /**
-* MDX Options https://mdxjs.com/
+* MDX 选项 https://mdxjs.com/
 */
 mdx?: any;
 ```
@@ -252,11 +244,11 @@ mdx?: any;
 
 ```js
 /**
-* The platform object which can be used to mock the Cloudflare bindings.
+* 平台对象，可用于模拟 Cloudflare 绑定。
 */
 platform?: Record<string, unknown>;
 ```
 
-## Troubleshooting
+## 故障排除
 
-Before creating an issue on the Qwik repository please check the `Troubleshooting` section of the [Vite documentation](https://vitejs.dev/guide/troubleshooting.html) and make sure you're using the recommended version.
+在在 Qwik 仓库上创建问题之前，请检查 [Vite 文档](https://vitejs.dev/guide/troubleshooting.html) 的 `故障排除` 部分，并确保您使用的是推荐版本。

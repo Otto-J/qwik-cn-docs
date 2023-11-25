@@ -1,6 +1,6 @@
 ---
-title: Auth.js | Integrations
-keywords: 'authentication, auth, oauth'
+title: Auth.js | 集成
+keywords: '身份验证, auth, oauth'
 contributors:
   - the-r3aper7
   - ulic75
@@ -10,36 +10,36 @@ contributors:
 
 # Auth.js
 
-[Auth.js](https://authjs.dev/) is a well-known library for authentication used by various JS frameworks. With Auth.js, we benefit from reduced complexity. We also have access to a range of authentication providers, such as GitHub, Google, Facebook, among others. Moreover, it can be integrated into multiple frameworks including Qwik.
+[Auth.js](https://authjs.dev/) 是一个广泛应用于各种 JS 框架的身份验证库。使用 Auth.js，我们可以减少复杂性。我们还可以访问一系列身份验证提供者，例如 GitHub、Google、Facebook 等。此外，它可以集成到多个框架中，包括 Qwik。
 
-Auth.js offers several features that enhance simplicity, productivity, flexibility, and provider diversity. Here are the main features of Auth.js:
+Auth.js 提供了几个功能，可以增强简单性、生产力、灵活性和提供者多样性。以下是 Auth.js 的主要功能：
 
-- **Providers**: Auth.js supports multiple providers, simplifying the authentication process in our applications (e.g., Github, Google, Facebook, Twitter). It also offers Single Sign-On (SSO) services as well as traditional authentication.
-- **Management**: Auth.js greatly assists us in concentrating on our business logic. It manages tokens, stores them, and refreshes them automatically.
-- **Configuration**: Configuring Auth.js is straightforward. It offers easy installation, error handling, custom forms for login and registration, and effortless integration with providers.
-- **Integrations**: Auth.js seamlessly integrates with JS frameworks, aided by its comprehensive documentation that provides a clear guide to follow.
-- **Security**: While Auth.js is developer-friendly, it's essential to recognize the underlying complexity that ensures a high level of security for our data.
+- **提供者**：Auth.js 支持多个提供者，简化了应用程序中的身份验证过程（例如 Github、Google、Facebook、Twitter）。它还提供了单点登录（SSO）服务以及传统身份验证。
+- **管理**：Auth.js 在我们专注于业务逻辑方面提供了很大的帮助。它自动管理令牌的存储和刷新。
+- **配置**：配置 Auth.js 很简单。它提供了简单的安装、错误处理、自定义登录和注册表单以及与提供者的无缝集成。
+- **集成**：Auth.js 与 JS 框架无缝集成，其全面的文档提供了清晰的指南。
+- **安全性**：虽然 Auth.js 对开发人员友好，但我们必须认识到底层的复杂性，以确保我们的数据具有高级别的安全性。
 
-Be aware that the Auth.js library is still in a pre-1.0 stage and could have bugs.
+请注意，Auth.js 库仍处于 1.0 版本之前的阶段，可能存在错误。
 
-## Installation
+## 安装
 
-You can add Auth.js easily by using the following Qwik starter script:
+您可以使用以下 Qwik 起始脚本轻松添加 Auth.js：
 
 ```shell
 npm run qwik add auth
 ```
 
-This command will add new packages:
+此命令将添加以下新包：
 
 - `@auth/core`
 - `@builder.io/qwik-auth`
 
-and create a new file named `plugin@auth.ts` with an example configuration.
+并创建一个名为 `plugin@auth.ts` 的新文件，其中包含一个示例配置。
 
-### Manual Action Required
+### 需要手动操作
 
-After installing the auth package using `npm run qwik add auth` the `@auth/core` package will need to be added to the dependency optimization settings of the `vite.config.js` file:
+在使用 `npm run qwik add auth` 安装 auth 包之后，需要将 `@auth/core` 包添加到 `vite.config.js` 文件的依赖优化设置中：
 
 ```js {9-11} title="vite.config.js"
 export default defineConfig(() => {
@@ -66,7 +66,7 @@ export default defineConfig(() => {
 
 ### useAuthSession
 
-A [routeLoader$](/docs/route-loader/) that returns a session object or an empty object if there is no session. The contents of the session object that is returned are configurable with the session callback. Session data can also be retrieved using the [session](#session) REST API.
+一个 [routeLoader$](/docs/route-loader/)，如果存在会返回一个会话对象，否则返回一个空对象。返回的会话对象的内容可以通过会话回调进行配置。还可以使用 [session](#session) REST API 来检索会话数据。
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -81,18 +81,18 @@ export default component$(() => {
 
 ### useAuthSignin
 
-A [routeAction$](/docs/action/) used to initiate a signin flow or send the user to the signin page listing all possible providers. The CSRF token is handled internally when signing in using `useAuthSignin`.
+一个 [routeAction$](/docs/action/)，用于启动登录流程或将用户发送到登录页面，列出所有可能的提供者。在使用 `useAuthSignin` 进行登录时，CSRF 令牌会在内部处理。
 
-#### Parameters
+#### 参数
 
-* `providerId`: An optional string parameter with the name of the provider. When supplied will initiate the Authorization Request to your Identity Provider. When omitted will redirect to the built-in/unbranded sign-in page.
-* `options`: An optional object of options.
-  * `callbackUrl`: An optional string specifying to which URL the user will be redirected after signing in. Defaults to the page URL the sign-in is initiated from.
-* `authorizationParams`: An optional object of additional parameters sent to the /authorize endpoint. See the Authorization Request OIDC spec for some ideas.
+* `providerId`：可选的字符串参数，提供者的名称。如果提供，将启动到身份提供者的授权请求。如果省略，将重定向到内置/无品牌的登录页面。
+* `options`：可选的选项对象。
+  * `callbackUrl`：可选的字符串，指定用户在登录后将被重定向到的 URL。默认为发起登录的页面 URL。
+* `authorizationParams`：可选的附加参数对象，发送到 /authorize 端点。有关一些想法，请参阅授权请求 OIDC 规范。
 
-> **NOTE:** You can also set the `authorizationParams` through the provider.authorizationParams configuration
+> **注意**：您还可以通过 provider.authorizationParams 配置设置 `authorizationParams`
 
-Example using `useAuthSignin` with the [&lt;Form&gt;](/docs/action/#using-actions-with-form) component and optional `providerId` and `options.callbackUrl`:
+使用 [&lt;Form&gt;](/docs/action/#using-actions-with-form) 组件和可选的 `providerId` 和 `options.callbackUrl` 来示例使用 `useAuthSignin`：
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -105,13 +105,13 @@ export default component$(() => {
     <Form action={signIn}>
       <input type="hidden" name="providerId" value="github" />
       <input type="hidden" name="options.callbackUrl" value="http://qwik-auth-example.com/dashboard" />
-      <button>Sign In</button>
+      <button>登录</button>
     </Form>
   );
 });
 ```
 
-Example using `useAuthSignin` programmatically with optional `providerId` and `options.callbackUrl`:
+使用可选的 `providerId` 和 `options.callbackUrl` 来示例使用 `useAuthSignin`：
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -120,22 +120,22 @@ import { useAuthSignin } from '~/routes/plugin@auth';
 export default component$(() => {
   const signIn = useAuthSignin();
   return (
-    <button onClick$={() => signIn.submit({ providerId: 'github', options: { callbackUrl: 'http://qwik-auth-example.com/dashboard' } })}>Sign In</button>
+    <button onClick$={() => signIn.submit({ providerId: 'github', options: { callbackUrl: 'http://qwik-auth-example.com/dashboard' } })}>登录</button>
   );
 });
 ```
 
 ### useAuthSignout
 
-A [routeAction$](/docs/action/) used to initiate a signout flow. The user session will be invalidated/removed from the cookie/database, depending on the flow you chose to store sessions.
+一个 [routeAction$](/docs/action/)，用于启动登出流程。用户会话将被作废/从 cookie/数据库中删除，具体取决于您选择存储会话的流程。
 
-#### Parameters
+#### 参数
 
-* `callbackUrl`: An optional string specifying to which URL the user will be redirected after signing out. Defaults to the page URL the sign-in is initiated from.
+* `callbackUrl`：可选的字符串，指定用户在登出后将被重定向到的 URL。默认为发起登录的页面 URL。
 
-The 'callbackUrl' must be considered valid by the redirect callback handler. By default, it requires the URL to be an absolute URL at the same host name, or you can also supply a relative URL starting with a slash. If it does not match it will redirect to the homepage. You can define your own redirect callback to allow other URLs.
+'callbackUrl' 必须被重定向回调处理程序视为有效。默认情况下，它要求 URL 是同一主机名下的绝对 URL，或者您还可以提供以斜杠开头的相对 URL。如果不匹配，将重定向到主页。您可以定义自己的重定向回调以允许其他 URL。
 
-Example using `useAuthSignout` with the [&lt;Form&gt;](/docs/action/#using-actions-with-form) component and optional `callbackUrl`:
+使用 [&lt;Form&gt;](/docs/action/#using-actions-with-form) 组件和可选的 `callbackUrl` 来示例使用 `useAuthSignout`：
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -147,13 +147,13 @@ export default component$(() => {
   return (
     <Form action={signOut}>
       <input type="hidden" name="callbackUrl" value="/signedout" />
-      <button>Sign Out</button>
+      <button>登出</button>
     </Form>
   );
 });
 ```
 
-Example using `useAuthSignout` programmatically with optional `callbackUrl`:
+使用可选的 `callbackUrl` 来示例使用 `useAuthSignout`：
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -161,23 +161,23 @@ import { useAuthSignout } from '~/routes/plugin@auth';
 
 export default component$(() => {
   const signOut = useAuthSignout();
-  return <button onClick$={() => signOut.submit({ callbackUrl: '/signedout' })}>Sign Out</button>;
+  return <button onClick$={() => signOut.submit({ callbackUrl: '/signedout' })}>登出</button>;
 });
 ```
 
 ## REST API
 
-All the same REST APIs as provided by Auth.js are available.
+提供了与 Auth.js 提供的相同的 REST API。
 
 ### signin
 
 **GET /api/auth/signin**
 
-Displays the built-in/unbranded sign-in page.
+显示内置/无品牌的登录页面。
 
 **POST /api/auth/signin/:provider**
 
-Starts a provider-specific sign-in flow. In the case of an OAuth provider, calling this endpoint will initiate the Authorization Request to your Identity Provider.  This endpoint is also used by the [useAuthSignin](#useauthsignin) action internally.
+启动特定于提供者的登录流程。对于 OAuth 提供者，调用此端点将启动到您的身份提供者的授权请求。此端点也由 [useAuthSignin](#useauthsignin) 方法在内部使用。
 
 ### callback
 
@@ -187,36 +187,36 @@ Starts a provider-specific sign-in flow. In the case of an OAuth provider, calli
 
 **GET /api/auth/signout**
 
-Displays the built-in/unbranded sign out page.
+显示内置/无品牌的登出页面。
 
 **POST /api/auth/signout**
 
-Handles signing the user out - this is a POST submission to prevent malicious links from triggering signing a user out without their consent. The user session will be invalidated/removed from the cookie/database, depending on the flow you chose to store sessions. This endpoint is also used by the [useAuthSignout](#useauthsignout) method internally.
+处理用户登出 - 这是一个 POST 提交，以防止恶意链接触发未经用户同意的用户登出。用户会话将被作废/从 cookie/数据库中删除，具体取决于您选择存储会话的流程。此端点也由 [useAuthSignout](#useauthsignout) 方法在内部使用。
 
 ### session
 
 **GET /api/auth/session**
 
-Returns client-safe session object - or an empty object if there is no session. The contents of the session object that is returned are configurable with the session callback. Session data can also be retrieved using the [useAuthSession](#useauthsession) routerLoader.
+返回客户端安全的会话对象 - 如果没有会话，则返回一个空对象。返回的会话对象的内容可以通过会话回调进行配置。还可以使用 [useAuthSession](#useauthsession) routerLoader 来检索会话数据。
 
 ### csrf
 
 **GET /api/auth/csrf**
 
-Returns object containing CSRF token. In NextAuth.js, CSRF protection is present on all authentication routes. It uses the "double submit cookie method", which uses a signed HttpOnly, host-only cookie. The CSRF token returned by this endpoint must be passed as form variable named csrfToken in all POST submissions to any API endpoint.
+返回包含 CSRF 令牌的对象。在 NextAuth.js 中，所有身份验证路由都具有 CSRF 保护。它使用“双重提交 cookie 方法”，该方法使用了一个带有签名的 HttpOnly、仅限主机的 cookie。此端点返回的 CSRF 令牌必须作为名为 csrfToken 的表单变量传递给任何 API 端点的所有 POST 提交。
 
 ### providers
 
 **GET /api/auth/providers**
 
-Returns a list of configured OAuth services and details (e.g. sign in and callback URLs) for each service. It is useful to dynamically generate custom sign up pages and to check what callback URLs are configured for each OAuth provider that is configured.
+返回配置的 OAuth 服务和每个服务的详细信息（例如登录和回调 URL）的列表。它对于动态生成自定义注册页面以及检查为每个配置的 OAuth 提供者配置了哪些回调 URL 非常有用。
 
-## Examples
+## 示例
 
 ### GitHub
 
-1. Follow the [GitHub OAuth Guide](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) to get your `GitHub Client ID`, `GitHub Client Secrets` and generate `AUTH_SECRET` using `openssl rand -base64 32` or [Secret Generator](https://generate-secret.vercel.app/32).
-2. Since the default `plugin@auth.ts` uses GitHub as an example, we don't need to change anything there. However a provider other than GitHub could be used or additional provides could be added. Auth.js also supports many [additional options](https://next-auth.js.org/configuration/options#options) that can be set in this file.
+1. 按照 [GitHub OAuth 指南](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app) 获取您的 `GitHub 客户端 ID`、`GitHub 客户端密钥`，并使用 `openssl rand -base64 32` 或 [Secret Generator](https://generate-secret.vercel.app/32) 生成 `AUTH_SECRET`。
+2. 由于默认的 `plugin@auth.ts` 使用 GitHub 作为示例，我们不需要在那里进行任何更改。但是可以使用除 GitHub 之外的其他提供者，或者添加其他提供者。Auth.js 还支持许多[其他选项](https://next-auth.js.org/configuration/options#options)，可以在此文件中设置。
 ```ts title="src/routes/plugin@auth.ts"
 import { serverAuth$ } from '@builder.io/qwik-auth';
 import GitHub from '@auth/core/providers/github';
@@ -236,9 +236,9 @@ export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } = serv
 );
 ```
 
-> *IMPORTANT*: Make sure to keep the `onRequest` export as it is used to handle the oAuth flow redirects. Once the user finished oAuth flow, GitHub (or any other provider) will redirect the user back to the application to `/api/auth/callback/github` (or `/api/auth/callback/[otherProvider]`). The `onRequest` middleware function will handle requests to this endpoint and finish the oAuth flow.
+> *重要提示*：请确保保持 `onRequest` 导出，因为它用于处理 oAuth 流重定向。用户完成 oAuth 流后，GitHub（或任何其他提供者）将重定向用户返回到应用程序的 `/api/auth/callback/github`（或 `/api/auth/callback/[otherProvider]`）。`onRequest` 中间件函数将处理对此端点的请求并完成 oAuth 流。
 
-3. Create or edit the `.env.local` file at the root of your project to store secrets
+3. 创建或编辑项目根目录下的 `.env.local` 文件以存储密钥
 
 ```bash title=".env.local"
 GITHUB_ID=
@@ -246,20 +246,20 @@ GITHUB_SECRET=
 AUTH_SECRET=
 ```
 
-> *IMPORTANT*: Please read the Qwik documentation about [Environment Variables](/docs/env-variables/) to ensure you are using them safely. Many provider secrets should be kept secure and not exposed to the client/browser.
+> *重要提示*：请阅读 Qwik 文档中关于[环境变量](/docs/env-variables/)的部分，以确保您安全地使用它们。许多提供者密钥应保持安全，不要暴露给客户端/浏览器。
 
-4. The application is now ready to implement authentication using Auth.js.
-5. Enjoy!
+4. 应用程序现在已准备好使用 Auth.js 实现身份验证。
+5. 尽情享受吧！
 
-### Credentials
+### 凭据
 
-> Warning: This functionality is discourage by Auth.js.
+> 警告：Auth.js 不鼓励使用此功能。
 >
 > https://next-auth.js.org/providers/credentials
 >
-> - The functionality provided for credentials based authentication is intentionally limited to discourage use of passwords due to the inherent security risks associated with them and the additional complexity associated with supporting usernames and passwords.
+> - 凭据身份验证提供的功能有意限制，以防止使用密码，因为密码本身存在固有的安全风险，并且支持用户名和密码会增加额外的复杂性。
 
-1. Since the default `plugin@auth.ts` uses GitHub as an example, we need to replace it with Credentials.
+1. 由于默认的 `plugin@auth.ts` 使用 GitHub 作为示例，我们需要将其替换为凭据。
 ```ts title="src/routes/plugin@auth.ts"
 import { serverAuth$ } from '@builder.io/qwik-auth';
 import Credentials from "@auth/core/providers/credentials";
@@ -272,7 +272,7 @@ export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } = serv
     providers: [
       Credentials({
         async authorize(credentials, req) {
-          // Add logic here to look up the user from the credentials supplied
+          // 在此处添加逻辑以查找提供的凭据对应的用户
           const user = {
             id: 1,
             name: "Mike",
@@ -287,20 +287,20 @@ export const { onRequest, useAuthSession, useAuthSignin, useAuthSignout } = serv
 );
 ```
 
-2. Create or edit the `.env.local` file at the root of your project to store secrets
+2. 创建或编辑项目根目录下的 `.env.local` 文件以存储密钥
 
 ```bash title=".env.local"
 AUTH_SECRET=
 ```
 
-> *IMPORTANT*: Please read the Qwik documentation about [Environment Variables](/docs/env-variables/) to ensure you are using them safely. Many provider secrets should be kept secure and not exposed to the client/browser.
+> *重要提示*：请阅读 Qwik 文档中关于[环境变量](/docs/env-variables/)的部分，以确保您安全地使用它们。许多提供者密钥应保持安全，不要暴露给客户端/浏览器。
 
-3. The application is now ready to implement authentication using Auth.js.
-4. Enjoy!
+3. 应用程序现在已准备好使用 Auth.js 实现身份验证。
+4. 尽情享受吧！
 
-### Route Protection
+### 路由保护
 
-Session data can be accessed via the route `event.sharedMap`.  So a route can be protected and redirect using something like this located in a `layout.tsx` or page `index.tsx`:
+会话数据可以通过路由 `event.sharedMap` 访问。因此，可以通过在 `layout.tsx` 或页面 `index.tsx` 中放置以下代码来保护和重定向路由：
 
 ```tsx
 export const onRequest: RequestHandler = (event) => {
@@ -311,4 +311,4 @@ export const onRequest: RequestHandler = (event) => {
 };
 ```
 
-> Note: If placed in a layout.tsx ensure that the redirect destination does not share the same layout.tsx or a redirection loop could occur.
+> 注意：如果放置在 layout.tsx 中，请确保重定向目标不与相同的 layout.tsx 共享，否则可能会发生重定向循环。

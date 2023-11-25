@@ -1,6 +1,6 @@
 ---
-title: Tailwind | Integrations
-keywords: 'styles, styling'
+title: Tailwind | 集成
+keywords: '样式, 样式化'
 contributors:
   - manucorporat
   - leifermendez
@@ -11,31 +11,29 @@ contributors:
 
 # Tailwind
 
-Tailwind is a CSS framework that provides us with single-purpose utility classes which are
-opinionated for the most part, and which help us design our web pages from right inside our
-markup or `.js/.jsx/.ts/.tsx/.mdx` files. [Tailwindcss Website](https://tailwindcss.com/)
+Tailwind 是一个 CSS 框架，它为我们提供了单一目的的实用类，这些类在很大程度上是有偏见的，并且可以帮助我们在标记或 `.js/.jsx/.ts/.tsx/.mdx` 文件中设计我们的网页。[Tailwindcss 网站](https://tailwindcss.com/)
 
-## Usage
+## 使用方法
 
-You can add Tailwind easily by using the following Qwik starter script:
+您可以使用以下 Qwik 脚本轻松添加 Tailwind：
 
 ```shell
 npm run qwik add tailwind
 ```
 
-The previous command updates your app with the necessary dependencies.
+上述命令会更新您的应用程序，并添加所需的依赖项。
 
-It also adds new files to your project folder:
+它还会向您的项目文件夹添加新文件：
 
 - `postcss.config.js`
 - `tailwind.config.js`
 - `.vscode/settings.json`
 
-and modifies your `src/global.css` to include
+并修改您的 `src/global.css` 文件以包含以下内容：
 
 ```css title="src/global.css"
 
-# global.css file
+# global.css 文件
 
 @tailwind base;
 @tailwind components;

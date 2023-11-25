@@ -1,5 +1,5 @@
 ---
-title: The $ dollar sign | Advanced
+title: 美元符号 `$` | 高级
 contributors:
   - the-r3aper7
   - manucorporat
@@ -14,17 +14,17 @@ contributors:
   - zanettin
 ---
 
-# The dollar `$` sign
+# 美元符号 `$`
 
-Qwik splits up your application into many small pieces we call symbols. A component can be broken up into many symbols, so a symbol is smaller than a component. The splitting up is performed by the [Qwik Optimizer](../optimizer/index.mdx).
+Qwik 将您的应用程序拆分成许多我们称之为符号的小块。一个组件可以被拆分成多个符号，因此符号比组件更小。拆分是由 [Qwik 优化器](../optimizer/index.mdx) 执行的。
 
-The `$` suffix is used to signal both the optimizer and the developer when this transformation occurs. As a developer, you need to understand that special rules apply whenever you see `$` (not all valid JavaScript is a valid Qwik Optimizer transform.)
+`$` 后缀用于在此转换发生时向优化器和开发人员发出信号。作为开发人员，您需要了解，每当看到 `$` 时，都会应用特殊规则（并非所有有效的 JavaScript 都是有效的 Qwik 优化器转换）。
 
-## Compiler-time implications
+## 编译时的影响
 
-[Optimizer](../optimizer/index.mdx) runs as a Vite plugin during bundling. The purpose of the Optimizer is to break up the application into many small lazy-loadable chunks. The Optimizer moves expressions (usually functions) into new files and leaves behind a reference pointing to where the expression was moved from.
+[优化器](../optimizer/index.mdx) 在打包期间作为 Vite 插件运行。优化器的目的是将应用程序拆分成许多小的按需加载块。优化器将表达式（通常是函数）移动到新文件中，并留下一个指向表达式移动前位置的引用。
 
-The `$` tells the optimizer which functions to extract into a separate file and which ones to leave untouched. The optimizer does not keep an internal list of magic functions, instead, it solely relies on the `$` suffix to know which functions to transform. The system is extendable and developers can create their own `$` functions, such as `myCustomFunction$()`.
+`$` 告诉优化器哪些函数要提取到单独的文件中，哪些函数要保持不变。优化器不会保留魔术函数的内部列表，而是完全依赖 `$` 后缀来知道要转换哪些函数。该系统是可扩展的，开发人员可以创建自己的 `$` 函数，例如 `myCustomFunction$()`。
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -35,7 +35,7 @@ export default component$(() => {
 });
 ```
 
-The component above is split into multiple chunks thanks to the `$` syntax:
+上面的组件通过 `$` 语法拆分成多个块：
 
 ```js title="app.js"
 import { componentQrl, qrl } from '@builder.io/qwik';
@@ -66,74 +66,74 @@ export const App_component_AkbU84a8zes = () => {
 export const App_component_p_onClick_01pEgC10cpw = () => console.log('hello');
 ```
 
-## Rules
+## 规则
 
-The optimizer uses `$` as a signal to extract the code. The developer needs to understand that the extraction comes with constraints and therefore special rules apply whenever the `$` is present. (Not all valid JavaScript code is valid code for the Optimizer.)
+优化器使用 `$` 作为提取代码的信号。开发人员需要了解，提取会带来一些限制，因此每当存在 `$` 时，都会应用特殊规则（并非所有有效的 JavaScript 代码都是优化器的有效代码）。
 
-> The worst kind of code magic is the kind that's invisible to the developer.
+> 最糟糕的代码魔法是对开发人员来说是看不见的。
 
-### Allowed expressions
+### 允许的表达式
 
-The first argument of any function that ends with `$` has certain restrictions:
+以 `$` 结尾的任何函数的第一个参数都有一定的限制：
 
-#### Literals without local identifiers
+#### 没有本地标识符的字面量
 
 
 ```tsx
 const bar = 'bar';
 const foo = 'foo';
 
-// Invalid expressions
-foo$({ value: bar }); // it contains a local identifier "bar"
-foo$(`Hello, ${bar}`); // it contains a local identifier "bar"
-foo$(count + 1); // it contains a local identifier "count"
-foo$(foo); // foo is not exported, so it's not importable
+// 无效的表达式
+foo$({ value: bar }); // 包含本地标识符 "bar"
+foo$(`Hello, ${bar}`); // 包含本地标识符 "bar"
+foo$(count + 1); // 包含本地标识符 "count"
+foo$(foo); // foo 没有被导出，所以不能被导入
 
-// Valid expressions
-foo$(`Hello, bar`); // string literal without local identifiers
-foo$({ value: 'stuff' }); // object literal without local identifiers
-foo$(1 + 3); // expression without local identifiers
+// 有效的表达式
+foo$(`Hello, bar`); // 不包含本地标识符的字符串字面量
+foo$({ value: 'stuff' }); // 不包含本地标识符的对象字面量
+foo$(1 + 3); // 不包含本地标识符的表达式
 ```
 
 
-#### Importable identifiers
+#### 可导入的标识符
 
 
 ```tsx
-// Invalid
+// 无效的
 const foo = 'foo';
-foo$(foo); // foo is not exported, so it's not importable
+foo$(foo); // foo 没有被导出，所以不能被导入
 
-// Valid
+// 有效的
 export const bar = 'bar';
 foo$(bar);
 
-// Valid
+// 有效的
 import { bar } from './bar';
 foo$(bar);
 ```
 
-#### Closures
+#### 闭包
 
-For closures, the rules are a bit relaxed, and local identifiers can be referenced and captured.
+对于闭包，规则稍微放松，可以引用和捕获本地标识符。
 
-> **RULE**: If a function lexically captures a variable (or parameter), that variable must be:
+> **规则**：如果一个函数在词法上捕获了一个变量（或参数），那么该变量必须是：
 >
-> 1. a `const` and
-> 2. the value must be serializable.
+> 1. 一个 `const`，并且
+> 2. 值必须是可序列化的。
 
-##### Captured variables must be declared as a `const`.
+##### 捕获的变量必须声明为 `const`。
 
-**Invalid**
+**无效的**
 
 ```tsx
 component$(() => {
-  let foo = 'value'; // variable is not a const
+  let foo = 'value'; // 变量不是 const
   return <div onClick$={() => console.log(foo)}/>
 });
 ```
 
-**Valid**
+**有效的**
 
 ```tsx
 component$(() => {
@@ -142,50 +142,50 @@ component$(() => {
 });
 ```
 
-##### Local captured variables must be serializable
+##### 本地捕获的变量必须是可序列化的
 
 ```tsx
-// Invalid
+// 无效的
 component$(() => {
-  const foo = new MyCustomClass(12); // MyCustomClass is not serializable
+  const foo = new MyCustomClass(12); // MyCustomClass 不可序列化
   return <div onClick$={() => console.log(foo)}/>
 });
 
-// Valid
+// 有效的
 component$(() => {
   const foo = { data: 12 };
   return <div onClick$={() => console.log(foo)}/>
 });
 ```
 
-##### Module-declared variables can be importable
+##### 模块声明的变量可以被导入
 
-If a function that is being extracted by the Optimizer refers to a top-level symbol, that symbol must either be imported or exported.
+如果优化器要提取的函数引用了顶级符号，那么该符号必须被导入或导出。
 
 ```tsx
-// Invalid
+// 无效的
 const foo = new MyCustomClass(12);
 component$(() => {
-  // Foo is declared at the module level, but it's not exported
+  // Foo 在模块级别声明，但它没有被导出
   console.log(foo);
 });
 
-// Valid
+// 有效的
 export const foo = new MyCustomClass(12);
 component$(() => {
   console.log(foo);
 });
 
-// Valid
+// 有效的
 import { foo } from './foo';
 component$(() => {
   console.log(foo);
 });
 ```
 
-## Deep dive
+## 深入了解
 
-Let's look at the hypothetical problem of acting on a scroll event. You may be tempted to write the code like so:
+让我们来看一个假设的问题，如何在滚动事件上执行操作。您可能会尝试编写以下代码：
 
 ```tsx
 function onScroll(fn: () => void) {
@@ -194,9 +194,9 @@ function onScroll(fn: () => void) {
 onScroll(() => alert('scroll'));
 ```
 
-The problem with this approach is that the event handler is eagerly loaded, even if the scroll event never triggers. What is needed is a way to refer to code in a lazy loadable way.
+这种方法的问题是，即使滚动事件从未触发，事件处理程序也会被急切地加载。需要的是一种以按需加载的方式引用代码的方法。
 
-The developer could write:
+开发人员可以这样编写：
 
 ```tsx
 export scrollHandler = () => alert('scroll');
@@ -204,7 +204,7 @@ export scrollHandler = () => alert('scroll');
 onScroll(() => (await import('./some-chunk')).scrollHandler());
 ```
 
-This works but is a lot of work. The developer is responsible for putting the code in a different file and hard coding the chunk name. Instead, we use the Optimizer to perform the work for us automatically. But we need a way to tell the Optimizer that we want to perform such a refactoring. We use `$()` as a marker function for this purpose.
+这样可以工作，但是需要做很多工作。开发人员需要将代码放在不同的文件中，并硬编码块名称。相反，我们使用优化器自动为我们执行此工作的方式。但是我们需要一种方法来告诉优化器我们想要执行这样的重构。我们使用 `$()` 作为标记函数来实现此目的。
 
 ```tsx
 function onScroll(fnQrl: QRL<() => void>) {
@@ -217,7 +217,7 @@ function onScroll(fnQrl: QRL<() => void>) {
 onScroll($(() => alert('scroll')));
 ```
 
-The Optimizer will generate:
+优化器将生成：
 
 ```tsx
 onScroll(qrl('./chunk-a.js', 'onScroll_1'));
@@ -227,10 +227,10 @@ onScroll(qrl('./chunk-a.js', 'onScroll_1'));
 export const onScroll_1 = () => alert('scroll');
 ```
 
-1. All that the developer had to do was to wrap the function in the `$()` to signal to the Optimizer that the function should be moved to a new file and therefore be lazy-loaded.
-2. The `onScroll` function had to be implemented slightly differently as it needs to take into account the fact that the `QRL` of the function needs to be loaded before it can be used. In practice using `QRL.resolve()` is rare in Qwik applications as the Qwik framework provides higher-level APIs that rarely expect the developer to work with `QRL.resolve()` directly.
+1. 开发人员只需要将函数包装在 `$()` 中，以向优化器发出信号，表明该函数应该移动到新文件中，因此应该按需加载。
+2. `onScroll` 函数必须稍微不同地实现，因为它需要考虑到在使用之前需要加载函数的 `QRL`。在实践中，在 Qwik 应用程序中使用 `QRL.resolve()` 是很少见的，因为 Qwik 框架提供了更高级的 API，很少需要开发人员直接使用 `QRL.resolve()`。
 
-However, wrapping code in `$()` is a bit inconvenient. For this reason, one can use `implicit$FirstArg()` to automatically perform the wrapping and type matching of the function taking the `QRL`. The function passed into `implicit$FirstArg()` should have a suffix of `Qrl`, and the result of that function should be set to a value with a suffix of `$`;
+然而，将代码包装在 `$()` 中有点不方便。因此，可以使用 `implicit$FirstArg()` 来自动执行包装和类型匹配，以接受 `QRL` 的函数。传递给 `implicit$FirstArg()` 的函数应该以 `Qrl` 后缀结尾，并且该函数的结果应该设置为以 `$` 结尾的值。
 
 ```tsx
 const onScroll$ = implicit$FirstArg(onScrollQrl);
@@ -238,21 +238,21 @@ const onScroll$ = implicit$FirstArg(onScrollQrl);
 onScroll$(() => alert('scroll'));
 ```
 
-Now the developer has an easy syntax for expressing that a particular function should be lazy-loaded.
+现在开发人员有了一种简单的语法来表示特定的函数应该按需加载。
 
-## Symbol extraction
+## 符号提取
 
-Assume that you have this code:
+假设您有以下代码：
 
 ```tsx
 export const MyComp = component$(() => {
-  /* my component definition */
+  /* 我的组件定义 */
 });
 ```
 
-The Optimizer breaks the code up into two files:
+优化器将代码拆分成两个文件：
 
-The original file:
+原始文件：
 
 ```tsx
 const MyComp = component(qrl('./chunk-a.js', 'MyComp_onMount'));
@@ -260,20 +260,20 @@ const MyComp = component(qrl('./chunk-a.js', 'MyComp_onMount'));
 
 ```tsx title="chunk-a.js"
 export const MyComp_onMount = () => {
-  /* my component definition */
+  /* 我的组件定义 */
 };
 ```
 
-The result of Optimizer is that the `MyComp`'s `onMount` method was extracted into a new file. There are a few benefits to doing this:
+优化器的结果是 `MyComp` 的 `onMount` 方法被提取到一个新文件中。这样做有几个好处：
 
-- A Parent component can refer to `MyComp` without pulling in `MyComp` implementation details.
-- The application now has more entry points, giving the bundler more ways to chunk up the codebase.
+- 父组件可以引用 `MyComp`，而不必引入 `MyComp` 的实现细节。
+- 应用程序现在有更多的入口点，使打包工具有更多的方式来划分代码库。
 
-## Capturing the lexical scope
+## 捕获词法作用域
 
-The Optimizer extracts expressions (usually functions) into new files and leaves behind a `QRL` pointing to the lazy-loaded location.
+优化器将表达式（通常是函数）提取到新文件中，并留下一个指向按需加载位置的 `QRL`。
 
-Let's look at a simple case:
+让我们看一个简单的例子：
 
 ```tsx
 export const Greeter = component$(() => {
@@ -281,7 +281,7 @@ export const Greeter = component$(() => {
 });
 ```
 
-this will result in:
+这将导致：
 
 ```tsx
 const Greeter = component(qrl('./chunk-a.js', 'Greeter_onMount'));
@@ -297,7 +297,7 @@ const Greeter_onMount = () => {
 const Greeter_onRender = () => <span>Hello World!</span>;
 ```
 
-The above is for simple cases where the extracted function closure does not capture any variables. Let's look at a more complicated case where the extracted function closure lexically captures variables.
+上面的代码是针对简单情况的，提取的函数闭包不捕获任何变量。让我们看一个更复杂的情况，提取的函数闭包在词法上捕获变量。
 
 ```tsx
 export const Greeter = component$((props: { name: string }) => {
@@ -311,7 +311,7 @@ export const Greeter = component$((props: { name: string }) => {
 });
 ```
 
-The naive way to extract functions will not work.
+简单提取函数的方式将无法工作。
 
 ```tsx
 const Greeter = component(qrl('./chunk-a.js', 'Greeter_onMount'));
@@ -332,7 +332,7 @@ const Greeter_onRender = () => (
 );
 ```
 
-The issue can be seen in `chunk-b.js`. The extracted function refers to `salutation` and `props`, which are no longer in the lexical scope of the function. For this reason, the generated code must be slightly different.
+问题可以在 `chunk-b.js` 中看到。提取的函数引用了不再是词法作用域内的 `salutation` 和 `props`。因此，生成的代码必须稍微不同。
 
 ```tsx title="chunk-a.js"
 const Greeter_onMount = (props) => {
@@ -353,9 +353,9 @@ const Greeter_onRender = () => {
 };
 ```
 
-Notice two changes:
+注意两个变化：
 
-1. The `QRL` in `Greeter_onMount` now stores the `salutation` and `props`. This performs the role of capturing the constants inside closures.
-2. The generated closure `Greeter_onRender` now has a preamble which restores the `salutation` and `props` (`const [salutation, props] = useLexicalScope()`.)
+1. `Greeter_onMount` 中的 `QRL` 现在存储了 `salutation` 和 `props`。这起到了在闭包中捕获常量的作用。
+2. 生成的闭包 `Greeter_onRender` 现在有一个前导部分，用于恢复 `salutation` 和 `props`（`const [salutation, props] = useLexicalScope()`）。
 
-The ability for the Optimizer (and Qwik runtime) to capture lexically scoped constants significantly improves which functions can be extracted into lazy-loaded resources. It is a powerful tool for breaking up complex applications into smaller lazy-loadable chunks.
+优化器（和 Qwik 运行时）能够捕获词法作用域常量的能力，极大地改善了可以提取到按需加载资源中的函数的范围。这是将复杂应用程序拆分成更小的按需加载块的强大工具。
