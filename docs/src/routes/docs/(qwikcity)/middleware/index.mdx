@@ -1,5 +1,5 @@
 ---
-title: Middleware | Guides
+title: 中间件 | 指南
 contributors:
   - adamdbradley
   - manucorporat
@@ -11,19 +11,19 @@ contributors:
 import CodeSandbox from '../../../../components/code-sandbox/index.tsx';
 
 
-# Middleware
+# 中间件
 
-Qwik City comes with server middleware that allows you to centralize and chain logic such as authentication, security, caching, redirects, and logging. Middleware can also be used to define endpoints. Endpoints are useful for returning data such as  RESTful API, or GraphQL API.
+Qwik City 提供了服务器中间件，允许您集中和链式处理逻辑，例如身份验证、安全性、缓存、重定向和日志记录。中间件还可以用于定义端点。端点用于返回数据，例如 RESTful API 或 GraphQL API。
 
-Middleware consists of a set of functions that are called in a specific order defined by the route. A middleware which returns a response is called an [endpoint](/docs/endpoints/).
+中间件由一组按照路由定义的特定顺序调用的函数组成。返回响应的中间件称为[端点](/docs/endpoints/)。
 
-## Middleware Function
+## 中间件函数
 
-Middleware is defined by exporting a function called `onRequest` (or `onGet`, `onPost`, `onPut`, `onPatch`, and `onDelete`) in the `layout.tsx` or `index.tsx` file inside of `src/routes` folder. 
+通过在 `src/routes` 文件夹中的 `layout.tsx` 或 `index.tsx` 文件中导出一个名为 `onRequest`（或 `onGet`、`onPost`、`onPut`、`onPatch` 和 `onDelete`）的函数来定义中间件。 
 
-This example shows a simple `onRequest` middleware function that logs all requests. 
+以下示例显示了一个简单的 `onRequest` 中间件函数，用于记录所有请求。
 
-File: `src/routes/layout.tsx`
+文件：`src/routes/layout.tsx`
 ```typescript
 import type { RequestHandler } from '@builder.io/qwik-city';
  
@@ -33,9 +33,9 @@ export const onRequest: RequestHandler = async ({next, url}) => {
   console.log('After request', url);
 };
 ```
-If you want to intercept a specific HTTP method you can use one of these variations. If you use both `onRequest` and `onGet` for example then both will execute but `onRequest` will execute before `onGet` in the chain.
+如果您想拦截特定的 HTTP 方法，可以使用以下其中之一。例如，如果同时使用 `onRequest` 和 `onGet`，则两者都会执行，但 `onRequest` 会在链中的 `onGet` 之前执行。
 ```typescript
-// Called only with a specific HTTP method
+// 仅在特定的 HTTP 方法中调用
 export const onGet: RequestHandler = async (requestEvent) => { ... }
 export const onPost: RequestHandler = async (requestEvent) => { ... }
 export const onPut: RequestHandler = async (requestEvent) => { ... }
@@ -43,32 +43,32 @@ export const onPatch: RequestHandler = async (requestEvent) => { ... }
 export const onDelete: RequestHandler = async (requestEvent) => { ... }
 ```
 
-Each middleware function is passed a [`RequestEvent`](#requestevent) object which allows the middleware to control the response.
+每个中间件函数都会传递一个 [`RequestEvent`](#requestevent) 对象，该对象允许中间件控制响应。
 
 
-## Order of invocation
+## 调用顺序
 
-The order of middleware function chain is determined by their location. Starting from the topmost `layout.tsx` and ending at the `index.tsx` for a given route. (Same resolution logic as the order of layout and route component as defined by the route path.)
+中间件函数链的调用顺序由它们的位置决定。从最顶层的 `layout.tsx` 开始，以给定路由的 `index.tsx` 结束。（与路由路径定义的布局和路由组件的顺序相同的解析逻辑。）
 
-For example, if the request is `/api/greet/` in the following folder structure, the invocation order is as follows:
+例如，如果请求是 `/api/greet/`，则以下文件夹结构的调用顺序如下：
 
 ```bash
 src/
 └── routes/
-    ├── layout.tsx            # Invocation order: 1 (first)
+    ├── layout.tsx            # 调用顺序：1（第一个）
     └── api/
-        ├── layout.tsx        # Invocation order: 2   
+        ├── layout.tsx        # 调用顺序：2   
         └── greet/
-            └── index.ts      # Invocation order: 3 (last)
+            └── index.ts      # 调用顺序：3（最后一个）
 ```
 
-Qwik City looks into each file in order and checks to see if it has `onRequest` (or `onGet`, `onPost`, `onPut`, `onPatch`, and `onDelete`) exported functions. If found the function gets added into the middleware execution chain in that order. 
+Qwik City 会按顺序查看每个文件，并检查它是否有导出的 `onRequest`（或 `onGet`、`onPost`、`onPut`、`onPatch` 和 `onDelete`）函数。如果找到该函数，则按照该顺序将函数添加到中间件执行链中。
 
-`routeLoader$` and `routeAction$` are also considered part of the middleware and they execute after the `on*` functions and before the default exported component.
+`routeLoader$` 和 `routeAction$` 也被视为中间件的一部分，它们在 `on*` 函数之后执行，并在默认导出组件之前执行。
 
-## Component as an HTML Endpoint
+## 组件作为 HTML 端点
 
-You can think of component rendering as an implicit HTML endpoint. Therefore if `index.tsx` has a default export component, then the component implicitly becomes an endpoint in the middleware chain. Because component rendering is part of the middleware chain this allows you to intercept component rendering, for example as part of authentication, logging or other cross-cutting concerns. 
+您可以将组件渲染视为隐式的 HTML 端点。因此，如果 `index.tsx` 有一个默认导出组件，则该组件隐式成为中间件链中的一个端点。由于组件渲染是中间件链的一部分，这使您可以拦截组件渲染，例如作为身份验证、日志记录或其他横切关注点的一部分。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/component/index.tsx">
 ```tsx
@@ -86,7 +86,7 @@ export default component$(() => {
 });
 
 function isLoggedIn() {
-  return true; // Mock login as true
+  return true; // 模拟登录为 true
 }
 ```
 </CodeSandbox>
@@ -94,43 +94,43 @@ function isLoggedIn() {
 
 ## `RequestEvent`
 
-All middleware functions are passed a `RequestEvent` object which can be used to control the flow of HTTP response. For example, you can read/write cookies, headers, redirect, produce responses and exit the middleware chain early. Middleware functions are executed in the order as described above, from the topmost `layout.tsx` to the last `index.tsx`. 
+所有中间件函数都会传递一个 `RequestEvent` 对象，该对象可用于控制 HTTP 响应的流程。例如，您可以读取/写入 cookie、头信息、重定向、生成响应并提前退出中间件链。中间件函数按照上述顺序执行，从最顶层的 `layout.tsx` 到最后一个 `index.tsx`。
 
 
 ### `next()`
 
-Use the `next()` function to execute the next middleware function in the chain. This is the default behavior when a middleware function returns normally, without an explicit call to `next()`. One can use the `next()` function to achieve a wrapping behavior around the next middleware function.
+使用 `next()` 函数执行链中的下一个中间件函数。当中间件函数正常返回且没有显式调用 `next()` 时，这是默认行为。可以使用 `next()` 函数在下一个中间件函数周围实现包装行为。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/next/index.tsx">
 ```tsx /next()/
 import { type RequestHandler } from '@builder.io/qwik-city';
 
-// Generic function `onRequest` is executed first
+// 泛型函数 `onRequest` 首先执行
 export const onRequest: RequestHandler = async ({ next, sharedMap, json }) => {
   const log: string[] = [];
   sharedMap.set('log', log);
 
   log.push('onRequest start');
-  await next(); // Execute next middleware function (onGet)
+  await next(); // 执行下一个中间件函数（onGet）
   log.push('onRequest end');
 
   json(200, log);
 };
 
-// Specific functions such as `onGet` are executed next
+// 其次执行特定的函数，例如 `onGet`
 export const onGet: RequestHandler = async ({ next, sharedMap }) => {
   const log = sharedMap.get('log') as string[];
 
   log.push('onGET start');
-  // execute next middleware function
-  // (in our case, there are no more middleware functions nor components.)
+  // 执行下一个中间件函数
+  // （在我们的例子中，没有更多的中间件函数或组件。）
   await next();
   log.push('onGET end');
 };
 ```
 </CodeSandbox>
 
-In general, a normal (non-exception) return of a function will execute the next function in the chain. However, throwing an error from the function will stop the execution chain. This is typically used for authentication or authorization and returning a `401` or `403` HTTP status code. Because the `next()` is implicit, to prevent calling the next middleware function in the chain it is necessary to `throw`.
+通常情况下，函数的正常（非异常）返回将执行链中的下一个函数。但是，如果从函数中抛出错误，将停止执行链。这通常用于身份验证或授权，并返回 `401` 或 `403` HTTP 状态码。由于 `next()` 是隐式的，为了防止调用链中的下一个中间件函数，必须使用 `throw`。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/throw/index.tsx">
 ```tsx /next()/
@@ -142,10 +142,10 @@ export const onRequest: RequestHandler = async ({ next, sharedMap, json }) => {
 
   log.push('onRequest');
   if (isLoggedIn()) {
-    // normal behavior call next middleware
+    // 正常行为调用下一个中间件
     await next();
   } else {
-    // If not logged in throw to prevent implicit call to the next middleware.
+    // 如果未登录，则抛出以阻止对下一个中间件的隐式调用。
     throw json(404, log);
   }
 };
@@ -156,14 +156,14 @@ export const onGet: RequestHandler = async ({ sharedMap }) => {
 };
 
 function isLoggedIn() {
-  return false; // always return false as mock example
+  return false; // 始终返回 false 作为模拟示例
 }
 ```
 </CodeSandbox>
 
 ### `sharedMap`
 
-Use `sharedMap` as a way to share data between middleware functions. The `sharedMap` is scoped to HTTP request. A common use case is to use `sharedMap` to store user details so that it can be used by other middleware functions, `routeLoader$()` or components.
+使用 `sharedMap` 在中间件函数之间共享数据。`sharedMap` 的作用域限定为 HTTP 请求。常见用例是使用 `sharedMap` 存储用户详细信息，以便其他中间件函数、`routeLoader$()` 或组件可以使用它。
 
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/sharedMap/index.tsx">
@@ -194,9 +194,9 @@ export const onRequest: RequestHandler = async ({
 };
 
 function loadUserFromCookie(cookie: Cookie): User | null {
-  // this is where you would check cookie for user.
+  // 这是您将检查 cookie 的位置。
   if (cookie) {
-    // just return mock user for this demo.
+    // 仅为此演示返回模拟用户。
     return {
       username: `Mock User`,
       email: `mock@users.com`,
@@ -223,8 +223,8 @@ export default component$(() => {
 
 ### `headers`
 
-Use `headers` to set response headers associated with the current request.
-(For reading request headers see [`request.headers`](#request).) Middleware can manually add response headers to the response, using the `headers` property.
+使用 `headers` 设置与当前请求关联的响应头。
+（要读取请求头，请参见 [`request.headers`](#request)。）中间件可以手动向响应添加响应头，使用 `headers` 属性。
 
 
 
@@ -243,7 +243,7 @@ export const onGet: RequestHandler = async ({ headers, json }) => {
 
 ### `cookie`
 
-Use `cookie` to set and retrieve cookie information for a request. Middleware can manually read and set cookies, using the `cookie` function. This might be useful for setting a session cookie, such as a JWT token, or a cookie to track a user.
+使用 `cookie` 设置和检索请求的 cookie 信息。中间件可以手动读取和设置 cookie，使用 `cookie` 函数。这可能对于设置会话 cookie（例如 JWT 令牌）或跟踪用户的 cookie 很有用。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/cookie/index.tsx">
 ```tsx
@@ -260,7 +260,7 @@ export const onGet: RequestHandler = async ({ cookie, json }) => {
 
 ### `method`
 
-Returns current HTTP request method: `GET`, `POST`, `PATCH`, `PUT`, `DELETE`.
+返回当前的 HTTP 请求方法：`GET`、`POST`、`PATCH`、`PUT`、`DELETE`。
 
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/method/index.tsx">
@@ -276,7 +276,7 @@ export const onRequest: RequestHandler = async ({ method, json }) => {
 ### `url`
 
 
-Returns current HTTP request URL. (Use `useLocation()` if you need the current URL in a component. The `url` is meant for middleware functions.)
+返回当前的 HTTP 请求 URL。（如果需要在组件中获取当前 URL，请使用 `useLocation()`。`url` 用于中间件函数。）
 
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/url/index.tsx">
@@ -293,7 +293,7 @@ export const onGet: RequestHandler = async ({ url, json }) => {
 ### `basePathname`
 
 
-Returns the current base pathname URL of where the application is mounted. Typically this is `/` but it can be different if the application is mounted in a sub-path. See vite `qwikCity({root: '/my-sub-path-location'})`.
+返回应用程序挂载的当前基本路径名 URL。通常为 `/`，但如果应用程序挂载在子路径中，则可能不同。请参见 vite `qwikCity({root: '/my-sub-path-location'})`。
 
 
 
@@ -311,7 +311,7 @@ export const onGet: RequestHandler = async ({ basePathname, json }) => {
 
 ### `params`
 
-Retrieve the "params" of the URL. For example `params.myId` will allow you to retrieve the `myId` from this route definition `/base/[myId]/something`.
+检索 URL 的 "params"。例如，`params.myId` 将允许您从此路由定义 `/base/[myId]/something` 中检索 `myId`。
 
 
 
@@ -327,7 +327,7 @@ export const onGet: RequestHandler = async ({ params, json }) => {
 
 ### `query`
 
-Use `query` to retrieve the URL query parameters. (This is a shorthand for `url.searchParams`.) It is provided for the middleware functions, and components should use `useLocation()` API.
+使用 `query` 检索 URL 查询参数。（这是 `url.searchParams` 的简写。）它提供给中间件函数使用，组件应使用 `useLocation()` API。
 
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/query/index.tsx" url="/src/routes/demo/qwikcity/middleware/query/?someKey=someValue">
@@ -344,11 +344,11 @@ export const onGet: RequestHandler = async ({ query, json }) => {
 
 ### `parseBody()`
 
-Use `parseBody()` to parse form data submitted to the URL.
+使用 `parseBody()` 解析提交到 URL 的表单数据。
 
-This method will check the request headers for a `Content-Type` header and parse the body accordingly. It supports `application/json`, `application/x-www-form-urlencoded`, and `multipart/form-data` content types.
+此方法将检查请求头中的 `Content-Type` 头，并相应地解析主体。它支持 `application/json`、`application/x-www-form-urlencoded` 和 `multipart/form-data` 内容类型。
 
-If the `Content-Type` header is not set, it will return `null`.
+如果未设置 `Content-Type` 头，它将返回 `null`。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/parseBody/index.tsx">
 ```tsx
@@ -374,7 +374,7 @@ export const onPost: RequestHandler = async ({ parseBody, json }) => {
 
 ### `cacheControl`
 
-Convenience API for setting the cache header.
+设置缓存头的便捷 API。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/cacheControl/index.tsx">
 ```tsx
@@ -395,7 +395,7 @@ export const onGet: RequestHandler = async ({
 
 ### `platform`
 
-Deployment platform (Azure, Bun, Cloudflare, Deno, Google Cloud Run, Netlify, Node.js, Vercel, etc...) specific API.
+部署平台（Azure、Bun、Cloudflare、Deno、Google Cloud Run、Netlify、Node.js、Vercel 等）特定的 API。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/platform/index.tsx">
 ```tsx
@@ -410,7 +410,7 @@ export const onGet: RequestHandler = async ({ platform, json }) => {
 
 ### `locale()`
 
-Set or retrieve the current locale.
+设置或检索当前区域设置。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/locale/index.tsx">
 ```tsx
@@ -431,7 +431,7 @@ export const onGet: RequestHandler = async ({ locale, json }) => {
 
 ### `status()`
 
-Set the status of the response independently of writing the response, useful for streaming. Endpoints can manually change the HTTP status code of the response, using the `status()` method.
+独立于写入响应设置响应的状态，对于流式传输很有用。端点可以手动更改响应的 HTTP 状态码，使用 `status()` 方法。
 
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/status/index.tsx">
@@ -449,9 +449,9 @@ export const onGet: RequestHandler = async ({ status, getWritableStream }) => {
 </CodeSandbox>
 
 
-### `redirect()` 
+### `redirect()`
 
-Redirect to a new URL. Notice the importance of throwing to prevent other middleware functions from running. The `redirect()` method will automatically set the `Location` header to the redirect URL.
+重定向到新的 URL。请注意，抛出错误以防止其他中间件函数运行的重要性。`redirect()` 方法将自动将 `Location` 头设置为重定向的 URL。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/redirect/index.tsx">
 ```tsx
@@ -464,11 +464,11 @@ export const onGet: RequestHandler = async ({ redirect, url }) => {
   );
 };
 ```
-</CodeSandbox>
+  </CodeSandbox>
 
 ### `error()`
 
-Set an error response.
+设置错误响应。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/error/index.tsx">
 ```tsx
@@ -483,7 +483,7 @@ export const onGet: RequestHandler = async ({ error }) => {
 
 ### `text()`
 
-Send a text-based response. Creating a text endpoint is as simple as calling the `text(status, string)` method. The `text()` method will automatically set the `Content-Type` header to `text/plain; charset=utf-8`.
+发送基于文本的响应。只需调用 `text(status, string)` 方法即可创建文本端点。`text()` 方法将自动将 `Content-Type` 头设置为 `text/plain; charset=utf-8`。
 
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/text/index.tsx">
@@ -500,7 +500,7 @@ export const onGet: RequestHandler = async ({ text }) => {
 
 ### `html()`
 
-Send an HTML response.
+发送 HTML 响应。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/html/index.tsx">
 ```tsx
@@ -524,7 +524,7 @@ export const onGet: RequestHandler = async ({ html }) => {
 
 ### `json()`
 
-Creating a JSON endpoint is as simple as calling the `json(status, object)` method. The `json()` method will automatically set the `Content-Type` header to `application/json; charset=utf-8` and JSON stringify the data.
+只需调用 `json(status, object)` 方法即可创建 JSON 端点。`json()` 方法将自动将 `Content-Type` 头设置为 `application/json; charset=utf-8` 并对数据进行 JSON 字符串化。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/json/index.tsx">
 ```tsx
@@ -538,7 +538,7 @@ export const onGet: RequestHandler = async ({ json }) => {
 
 ### `send()`
 
-Creating a raw endpoint is as simple as calling the `send(Response)` method. The `send()` method takes a standard `Response` object, which can be created using the `Response` constructor.
+只需调用 `send(Response)` 方法即可创建原始端点。`send()` 方法接受标准的 `Response` 对象，可以使用 `Response` 构造函数创建该对象。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/send/index.tsx">
 ```tsx
@@ -558,7 +558,7 @@ export const onGet: RequestHandler = async (requestEvent) => {
 
 ### `exit()`
 
-Throw to stop the execution of the middleware functions.
+抛出以停止中间件函数的执行。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/exit/index.tsx">
 ```tsx
@@ -572,7 +572,7 @@ export const onGet: RequestHandler = async ({ exit }) => {
 
 ### `env`
 
-Retrieve environmental property in a platform-independent way.
+以与平台无关的方式检索环境属性。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/env/index.tsx">
 ```tsx
@@ -592,7 +592,7 @@ export const onGet: RequestHandler = async ({ env, json }) => {
 ### `getWritableStream()`
 
 
-Set stream response.
+设置流式响应。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/getWritableStream/index.tsx">
 ```tsx
@@ -617,11 +617,10 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 ```
 </CodeSandbox>
 
-
 ### `headerSent`
 
 
-Check to see if the header has been set.
+检查是否已设置头。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/headerSent/index.tsx">
 ```tsx
@@ -643,7 +642,7 @@ export const onRequest: RequestHandler = async ({ status }) => {
 
 ### `request`
 
-Get the HTTP request object. Useful for getting hold of the request data such as the headers.
+获取 HTTP 请求对象。用于获取请求数据，例如头信息。
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/request/index.tsx">
 ```tsx

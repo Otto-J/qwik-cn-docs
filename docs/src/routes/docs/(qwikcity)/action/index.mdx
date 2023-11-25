@@ -1,6 +1,6 @@
 ---
 title: RouteAction$ | QwikCity
-description: Learn about actions in QwikCity, allowing form submissions, and performing side effects such as writing to a database or sending an email.
+description: 了解在 QwikCity 中的操作，允许表单提交，并执行诸如写入数据库或发送电子邮件等副作用。
 contributors:
   - manucorporat
   - cunzaizhuyi
@@ -19,18 +19,18 @@ contributors:
 
 # `routeAction$()`
 
-Actions allow to handle form submissions, allowing to perform side effects such as writing to a database or sending an email.
+操作允许处理表单提交，允许执行诸如写入数据库或发送电子邮件等副作用。
 
-Actions can also return data back to the client/browser, allowing to update the UI accordingly, i.e. showing a success message after a form submission.
+操作还可以将数据返回给客户端/浏览器，从而可以相应地更新 UI，例如在表单提交后显示成功消息。
 
-Actions can be declared using the `routeAction$()` or `globalAction$()` exported from `@builder.io/qwik-city`.
+可以使用 `@builder.io/qwik-city` 中导出的 `routeAction$()` 或 `globalAction$()` 来声明操作。
 
 ```tsx {4,16} /useAddUser/ /firstName/#a /lastName/#b /email/#c title="src/routes/layout.tsx"
 import { component$ } from '@builder.io/qwik';
 import { routeAction$, Form } from '@builder.io/qwik-city';
 
 export const useAddUser = routeAction$(async (data, requestEvent) => {
-  // This will only run on the server when the user submits the form (or when the action is called programmatically)
+  // 仅在用户提交表单时（或以编程方式调用操作时）在服务器上运行
   const userID = await db.users.add({
     firstName: data.firstName,
     lastName: data.lastName,
@@ -49,23 +49,23 @@ export default component$(() => {
       <Form action={action}>
         <input name="firstName" />
         <input name="lastName" />
-        <button type="submit">Add user</button>
+        <button type="submit">添加用户</button>
       </Form>
       {action.value?.success && (
-        // When the action is done successfully, the `action.value` property will contain the return value of the action
-        <p>User {action.value.userID} added successfully</p>
+        // 当操作成功完成时，`action.value` 属性将包含操作的返回值
+        <p>用户 {action.value.userID} 添加成功</p>
       )}
     </>
   );
 });
 ```
 
-> Since actions are not executed during rendering, they can have side effects such as writing to a database, or sending an email. An action only runs when called explicitly.
+> 由于操作在渲染期间不会执行，因此它们可以具有诸如写入数据库或发送电子邮件等副作用。操作仅在显式调用时运行。
 
 
-## Using actions with `<Form/>`
+## 使用 `<Form/>` 进行操作
 
-The best way to call an action is using the `<Form/>` component exported in `@builder.io/qwik-city`.
+调用操作的最佳方法是使用 `@builder.io/qwik-city` 中导出的 `<Form/>` 组件。
 
 ```tsx title="src/routes/index.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -84,24 +84,24 @@ export default component$(() => {
   return (
     <Form action={action}>
       <input name="name" />
-      <button type="submit">Add user</button>
-      {action.value?.success && <p>User added successfully</p>}
+      <button type="submit">添加用户</button>
+      {action.value?.success && <p>用户添加成功</p>}
     </Form>
   );
 });
 ```
 
-Under the hood, the `<Form/>` component uses a native HTML `<form>` element, so it will work without JavaScript.
+在幕后，`<Form/>` 组件使用原生的 HTML `<form>` 元素，因此它可以在没有 JavaScript 的情况下工作。
 
-When JS is enabled, the `<Form/>` component will intercept the form submission and trigger the action in SPA mode, allowing to have a full SPA experience.
+当启用 JS 时，`<Form/>` 组件将拦截表单提交并在 SPA 模式下触发操作，从而实现完整的 SPA 体验。
 
-> This is to clarify that the server re-renders the whole page and re-executes everything, so if you have any [routeLoader$](/docs/route-loader/) they will be executed too.
+> 这是为了澄清服务器重新渲染整个页面并重新执行所有内容，因此如果您有任何 [routeLoader$](/docs/route-loader/)，它们也将被执行。
 
-[Complex forms](/docs/advanced/complex-forms) can be created using dot notation.
+可以使用点表示法创建[复杂的表单](/docs/advanced/complex-forms)。
 
-## Using actions programmatically
+## 以编程方式使用操作
 
-Actions can also be triggered programmatically using the `action.submit()` method, i.e. you don't need a `<Form/>` component, but you can trigger the action from a button click or any other event, just like you would do with a function.
+也可以使用 `action.submit()` 方法以编程方式触发操作，即不需要 `<Form/>` 组件，而是可以从按钮点击或任何其他事件中触发操作，就像使用函数一样。
 
 ```tsx {18} title="src/routes/index.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -125,21 +125,21 @@ export default component$(() => {
           console.log(value);
         }}
       >
-        Add user
+        添加用户
       </button>
-      {action.value?.success && <p>User added successfully</p>}
+      {action.value?.success && <p>用户添加成功</p>}
     </section>
   );
 });
 ```
 
-In the example above, the `addUser` action is triggered when the user clicks the button. The `action.submit()` method returns a `Promise` that resolves when the action is done.
+在上面的示例中，当用户点击按钮时，将触发 `addUser` 操作。`action.submit()` 方法返回一个 `Promise`，当操作完成时解析。
 
-## Actions with Event Handlers
+## 事件处理程序中的操作
 
-We can use the `onSubmitCompleted$` event handler after an action is executed successfully and returns some data. It is particularly useful when you need to perform additional tasks, such as resetting UI elements or updating the application state, once an action has been completed successfully.
+可以在操作成功执行并返回一些数据后使用 `onSubmitCompleted$` 事件处理程序。当需要执行其他任务（例如重置 UI 元素或更新应用程序状态）时，这特别有用，一旦操作成功完成。
 
-Here's an example of the `onSubmitCompleted$` handler used to edit an item in a EditForm component of a todo app.
+以下是在待办事项应用程序的 EditForm 组件中使用 `onSubmitCompleted$` 处理程序的示例。
 
 ```tsx title="src/components/EditForm.tsx"
 import { component$, type Signal, useSignal } from '@builder.io/qwik';
@@ -170,16 +170,16 @@ const EditForm = component$(
             name="text"
             id={`edit-${item.id}`}
           />
-          {/* Sends item.id with form data on submission. */}
+          {/* 在提交时将 item.id 与表单数据一起发送 */}
           <input type="hidden" name="id" value={item.id} />
           <button type="submit">
-            Submit
+            提交
           </button>
         </Form>
 
         <div>
           <button onClick$={() => (editingIdSignal.value = '')}>
-            Cancel
+            取消
           </button>
         </div>
       </div>
@@ -190,13 +190,13 @@ const EditForm = component$(
 export default EditForm;
 ```
 
-In this example, `onSubmitCompleted$` is used to reset the editingIdSignal value to an empty string once the form submission is completed successfully. This allows the application to update its state and return to the default view.
+在此示例中，`onSubmitCompleted$` 用于在表单提交成功完成后将 `editingIdSignal` 值重置为空字符串。这样，应用程序可以更新其状态并返回默认视图。
 
-## Validation and type safety
+## 验证和类型安全
 
-Qwik comes with built-in support for [Zod](https://zod.dev/), a TypeScript-first schema validation that can be used directly with actions, using the `zod$()` function.
+Qwik 提供了对 [Zod](https://zod.dev/) 的内置支持，Zod 是一种基于 TypeScript 的模式验证，可以直接与操作一起使用，使用 `zod$()` 函数。
 
-Actions + [Zod](https://zod.dev/) allows to create type safe forms, where the data is validated server side before the action is executed.
+操作 + [Zod](https://zod.dev/) 允许创建类型安全的表单，在执行操作之前在服务器端验证数据。
 
 ```tsx {16-20} /firstName/#a /lastName/#b title="src/routes/index.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -204,7 +204,7 @@ import { routeAction$, zod$, z, Form } from '@builder.io/qwik-city';
 
 export const useAddUser = routeAction$(
   async (user) => {
-    // The "user" is strongly typed: { firstName: string, lastName: string }
+    // "user" 具有强类型：{ firstName: string, lastName: string }
     const userID = await db.users.add({
       firstName: user.firstName,
       lastName: user.lastName,
@@ -214,7 +214,7 @@ export const useAddUser = routeAction$(
       userID,
     };
   },
-  // Zod schema is used to validate that the FormData includes "firstName" and "lastName"
+  // 使用 Zod 模式验证 FormData 是否包含 "firstName" 和 "lastName"
   zod$({
     firstName: z.string(),
     lastName: z.string(),
@@ -230,32 +230,32 @@ export default component$(() => {
         <input name="lastName" />
 
         {action.value?.failed && <p>{action.value.fieldErrors?.firstName}</p>}
-        <button type="submit">Add user</button>
+        <button type="submit">添加用户</button>
       </Form>
       {action.value?.success && (
-        <p>User {action.value.userID} added successfully</p>
+        <p>用户 {action.value.userID} 添加成功</p>
       )}
     </>
   );
 });
 ```
 
-When submitting data to a `routeAction()`, the data is validated against the Zod schema. If the data is invalid, the action will put the validation error in the `routeAction.value` property.
+在向 `routeAction()` 提交数据时，数据将根据 Zod 模式进行验证。如果数据无效，则操作将在 `routeAction.value` 属性中放置验证错误。
 
-Please refer to the [Zod documentation](https://zod.dev/) for more information on how to use Zod schemas.
+有关如何使用 Zod 模式的更多信息，请参阅 [Zod 文档](https://zod.dev/)。
 
-### Advanced event based validation
+### 高级基于事件的验证
 
-The constructor of ```zod$``` can also take a function, as the first argument is zod itself, so you can use this directly to build the schema. 
-The second parameter is the RequestEvent to construct an event-based zod schema.
-Especially in combination with ```refine``` and ```superDefine``` in zod, the only limit is your imagination.
+`zod$` 的构造函数也可以接受一个函数，因为第一个参数是 zod 本身，所以可以直接使用它来构建模式。
+第二个参数是 RequestEvent，用于构建基于事件的 zod 模式。
+特别是与 zod 中的 `refine` 和 `superDefine` 结合使用时，唯一的限制就是你的想象力。
 
 
-```tsx {5-5} /ev/#a  title="Advanced event based validation"
+```tsx {5-5} /ev/#a  title="高级基于事件的验证"
 export const useAddUser = routeAction$(
   async (user) => {
-    // The "user" is still strongly typed, but firstname 
-    // is now optional: { firstName?: string | undefined, lastName: string }
+    // "user" 仍然具有强类型，但是 firstname 现在是可选的：
+    // { firstName?: string | undefined, lastName: string }
     const userID = await db.users.add({
       firstName: user.firstName,
       lastName: user.lastName,
@@ -265,9 +265,9 @@ export const useAddUser = routeAction$(
       userID,
     };
   },
-  // Zod schema is used to validate that the FormData includes "firstName" and "lastName"
+  // 使用 Zod 模式验证 FormData 是否包含 "firstName" 和 "lastName"
   zod$((z, ev) => {
-    // The first name is optional if the url contains the query parameter "firstname=optional"
+    // 如果 url 包含查询参数 "firstname=optional"，则 firstName 是可选的
     const firstName =
       ev.url.searchParams.get("firstname") === "optional"
         ? z.string().optional()
@@ -281,42 +281,42 @@ export const useAddUser = routeAction$(
 );
 ```
 
-## HTTP request and response
+## HTTP 请求和响应
 
-`routeAction$` and `globalAction$` have access to the `RequestEvent` object which includes information about the current HTTP request and response.
+`routeAction$` 和 `globalAction$` 可以访问 `RequestEvent` 对象，该对象包含有关当前 HTTP 请求和响应的信息。
 
-This allows actions to access the request headers, cookies, url and environment variables within the `routeAction$` function.
+这使得操作可以访问请求标头、cookie、URL 和环境变量。
 
 ```tsx /requestEvent/ title="src/routes/product/[user]/index.tsx"
 import { routeAction$ } from '@builder.io/qwik-city';
 
-// The second argument of the action is the `RequestEvent` object
+// 操作的第二个参数是 `RequestEvent` 对象
 export const useProductRecommendations = routeAction$(
   async (_data, requestEvent) => {
-    console.log('Request headers:', requestEvent.request.headers);
-    console.log('Request cookies:', requestEvent.cookie);
-    console.log('Request url:', requestEvent.url);
-    console.log('Request params:', requestEvent.params);
+    console.log('请求标头:', requestEvent.request.headers);
+    console.log('请求 cookie:', requestEvent.cookie);
+    console.log('请求 URL:', requestEvent.url);
+    console.log('请求参数:', requestEvent.params);
     console.log('MY_ENV_VAR:', requestEvent.env.get('MY_ENV_VAR'));
   }
 );
 
 ```
 
-## Action Failures
+## 操作失败
 
-In order to return non-success values, the action must use the `fail()` method.
+为了返回非成功值，操作必须使用 `fail()` 方法。
 
 ```tsx /fail/
 import { routeAction$, zod$, z } from '@builder.io/qwik-city';
 
 export const useAddUser = routeAction$(
   async (user, { fail }) => {
-    // `user` is typed { name: string }
+    // `user` 的类型为 { name: string }
     const userID = await db.users.add(user);
     if (!userID) {
       return fail(500, {
-        message: 'User could not be added',
+        message: '无法添加用户',
       });
     }
     return {
@@ -329,7 +329,7 @@ export const useAddUser = routeAction$(
 );
 ```
 
-Failures are stored in the `action.value` property, just like the success value. However, the `action.value.failed` property is set to `true` when the action fails. Futhermore, failure messages can be found in the `fieldErrors` object according to properties defined in your Zod schema.
+失败信息存储在 `action.value` 属性中，就像成功值一样。但是，当操作失败时，`action.value.failed` 属性设置为 `true`。此外，失败消息可以在 `fieldErrors` 对象中找到，根据在 Zod 模式中定义的属性。
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -340,26 +340,26 @@ export default component$(() => {
   return (
     <Form action={action}>
       <input name="name" />
-      <button type="submit">Add user</button>
+      <button type="submit">添加用户</button>
       {action.value?.failed && <p>{action.value.fieldErrors.name}</p>}
-      {action.value?.userID && <p>User added successfully</p>}
+      {action.value?.userID && <p>用户添加成功</p>}
     </Form>
   );
 });
 ```
 
-Thanks to Typescript type discrimination, you can use the `action.value.failed` property to discriminate between success and failure.
+借助 TypeScript 类型辨别，可以使用 `action.value.failed` 属性来区分成功和失败。
 
-## Previous form state
+## 上一个表单状态
 
-When an action is triggered, the previous state is stored in the `action.formData` property. This is useful to display a loading state while the action is running.
+当触发操作时，先前的状态存储在 `action.formData` 属性中。这对于在操作运行时显示加载状态非常有用。
 
 ```tsx {12} /action.formData/
 import { component$ } from '@builder.io/qwik';
 import { routeAction$, Form, zod$, z } from '@builder.io/qwik-city';
 
 export const useAddUser = routeAction$(async (user) => {
-  // handle action...
+  // 处理操作...
 });
 
 export default component$(() => {
@@ -367,23 +367,23 @@ export default component$(() => {
   return (
     <Form action={action}>
       <input name="name" value={action.formData?.get('name')} />
-      <button type="submit">Add user</button>
+      <button type="submit">添加用户</button>
     </Form>
   );
 });
 ```
 
-The `action.formData` is especially useful as it allows to keep the form data filled by the user even on a page refresh, allowing to have a full SPA experience, even with JS disabled.
+`action.formData` 特别有用，因为它允许在页面刷新时保持用户填写的表单数据，即使在禁用 JS 的情况下，也可以实现完整的 SPA 体验。
 
-## Route vs Global actions
+## 路由 vs 全局操作
 
-Actions can be declared using the `routeAction$()` or `globalAction$()` exported from `@builder.io/qwik-city`, the only difference between the two is that `routeAction$()` is scoped to a route, while `globalAction$()` is globally available across the whole app.
+可以使用 `@builder.io/qwik-city` 中导出的 `routeAction$()` 或 `globalAction$()` 来声明操作，两者之间的唯一区别是 `routeAction$()` 作用于路由范围，而 `globalAction$()` 在整个应用程序范围内全局可用。
 
-We recommend starting with `routeAction$()` and only use `globalAction$()` when you need to share an action across multiple routes, or if you wish to use the action in a component that is not a route.
+建议从 `routeAction$()` 开始，仅在需要在多个路由之间共享操作时使用 `globalAction$()`，或者如果希望在不是路由的组件中使用操作时使用 `globalAction$()`。
 
 ### `routeAction$()`
 
-`routeAction$()` can only be declared inside the `src/routes` folder, in a `layout.tsx` or `index.tsx` file, and they MUST be exported, just like a `routeLoader$()`. Since `routeAction$()`s are only accessible within the route it's declared, they are recommended when the action needs to access some user data, or it's a protected route. Think about it like a "private" action.
+`routeAction$()` 只能在 `src/routes` 文件夹中的 `layout.tsx` 或 `index.tsx` 文件中声明，并且它们必须被导出，就像 `routeLoader$()` 一样。由于 `routeAction$()` 只能在声明它的路由内部访问，因此当操作需要访问某些用户数据或是受保护的路由时，建议使用它。可以将其视为“私有”操作。
 
 ```tsx title="src/routes/form/index.tsx"
 import { routeAction$ } from '@builder.io/qwik-city';
@@ -395,7 +395,7 @@ export const useChangePassword = routeAction$((data) => {
 
 ### `globalAction$()`
 
-`globalAction$()` can be declared anywhere in the `src` folder. Since `globalAction$()` are globally available, they are recommended when the action needs to be shared across multiple routes, or when the action doesn't need to access any user data. For example, a `useLogin` action that logs in a user. Think about it like a "public" action.
+`globalAction$()` 可以在 `src` 文件夹的任何位置声明。由于 `globalAction$()` 是全局可用的，因此建议在操作需要在多个路由之间共享时使用它，或者当操作不需要访问任何用户数据时使用它。例如，一个用于登录用户的 `useLogin` 操作。可以将其视为“公共”操作。
 
 ```tsx title="src/components/login/login.tsx"
 import { globalAction$ } from '@builder.io/qwik-city';

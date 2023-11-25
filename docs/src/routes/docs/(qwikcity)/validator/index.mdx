@@ -1,13 +1,13 @@
 ---
-title: Validators | QwikCity
+title: 验证器 | QwikCity
 contributors:
   - wtlin1228
   - harishkrishnan24
 ---
 
-# Data Validators
+# 数据验证器
 
-Data validators in QwikCity are essential for validating request events and data for actions and loaders. These validations occur on the server-side before the execution of the associated action or loader. Similar to the `zod$()` function, Qwik provides a dedicated `validator$()` function for this purpose.
+在 QwikCity 中，数据验证器对于验证请求事件和动作、加载器的数据是必不可少的。这些验证在执行相关的动作或加载器之前在服务器端进行。与 `zod$()` 函数类似，Qwik 提供了一个专用的 `validator$()` 函数来实现这个目的。
 
 ```tsx {12-22} /validator$/#a
 import {
@@ -35,16 +35,16 @@ export const useAction = routeAction$(
 );
 ```
 
-When submitting a request to a `routeAction()`, the request event and data undergo validation against the defined validator. If the validation fails, the action will place the validation error in the `routeAction.value` property.
+当向 `routeAction()` 提交请求时，请求事件和数据会根据定义的验证器进行验证。如果验证失败，动作将在 `routeAction.value` 属性中放置验证错误。
 
 ```tsx
 export default component$(() => {
   const action = useAction();
 
-  // action value is undefined before submitting
+  // 在提交之前，动作的值是 undefined
   if (action.value) {
     if (action.value.failed) {
-      // action failed if query string has no secret
+      // 如果查询字符串没有 secret，则动作失败
       action.value satisfies { failed: true; message: string };
     } else {
       action.value satisfies { searchResult: string };
@@ -52,14 +52,14 @@ export default component$(() => {
   }
 
   return (
-    <button onClick$={() => action.submit({ search: "foo" })}>Submit</button>
+    <button onClick$={() => action.submit({ search: "foo" })}>提交</button>
   );
 });
 ```
 
-## Multiple validators
+## 多个验证器
 
-Actions and loaders can have multiple validators, which are executed in reverse order. In the following example, validators execute in the order `validator3` -> `validator2` -> `validator1`.
+动作和加载器可以有多个验证器，它们按照相反的顺序执行。在下面的示例中，验证器的执行顺序是 `validator3` -> `validator2` -> `validator1`。
 
 ```tsx {9-11}
 const validator1 = validator$(/*...*/)
@@ -72,11 +72,11 @@ export const useAction = routeAction$(
   },
   validator1,
   validator2,
-  validator3, // will be executed first
+  validator3, // 将首先执行
 );
 ```
 
-If `validator3` has a `data` property in its success return object, this data will be passed to the next validator, `validator2`. If you don't want to override the original submitted data, avoid putting the `data` property in the success return object.
+如果 `validator3` 在其成功返回对象中有一个 `data` 属性，这个数据将传递给下一个验证器 `validator2`。如果你不想覆盖原始提交的数据，请避免将 `data` 属性放在成功返回对象中。
 
 ```tsx /message: "hi, I am validator3"/#a /message: "hi, I am validator2"/#b /message: "hi, I am validator1"/#c
 export const useAction = routeAction$(
@@ -106,7 +106,7 @@ export const useAction = routeAction$(
   }),
   // validator3
   validator$((ev, data) => {
-    console.log(data); // Your submitted data
+    console.log(data); // 您提交的数据
     return {
       success: true,
       data: {
@@ -117,13 +117,13 @@ export const useAction = routeAction$(
 );
 ```
 
-## Return object
+## 返回对象
 
-Data validators expect specific properties in their return objects.
+数据验证器在其返回对象中期望特定的属性。
 
-### Successful validation
+### 验证成功
 
-The `success` property must be true for a successful validation.
+对于成功的验证，`success` 属性必须为 true。
 
 ```ts
 interface Success {
@@ -132,7 +132,7 @@ interface Success {
 }
 ```
 
-### Failed validation
+### 验证失败
 
 ```ts
 interface Fail {
@@ -142,7 +142,7 @@ interface Fail {
 }
 ```
 
-Validator behaves like using the `fail()` method in the action or loader when it returns a failed object.
+当验证器返回一个失败的对象时，它的行为类似于在动作或加载器中使用 `fail()` 方法。
 
 ```tsx /status/#a /errorObject/#b
 const status = 500;
@@ -162,9 +162,9 @@ export const useAction = routeAction$(
 );
 ```
 
-## Use `validator$()` with `zod$()` together in actions
+## 在动作中同时使用 `validator$()` 和 `zod$()`
 
-For actions, the typed data validator `zod$()` should be the second argument of `routeAction$`, followed by other data validators `validator$()`s.
+对于动作来说，类型化的数据验证器 `zod$()` 应该是 `routeAction$` 的第二个参数，后面是其他的数据验证器 `validator$()`。
 
 ```tsx {5-7}
 export const useAction = routeAction$(

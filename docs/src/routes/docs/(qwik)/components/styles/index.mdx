@@ -1,5 +1,5 @@
 ---
-title: Styles | Components
+title: 样式 | 组件
 contributors:
   - manucorporat
   - zanettin
@@ -16,15 +16,15 @@ contributors:
   - mhevery
 ---
 
-# Styles
+# 样式
 
-Qwik does not enforce a specific styling approach, you can style your Qwik app using any method you prefer, such as CSS, CSS-in-JS, CSS modules...
+Qwik 不强制使用特定的样式方法，您可以使用任何您喜欢的方法来为 Qwik 应用程序添加样式，例如 CSS、CSS-in-JS、CSS 模块...
 
-## CSS Modules
+## CSS 模块
 
-Qwik supports [CSS Modules](https://github.com/css-modules/css-modules) out of the box thanks to [Vite](https://vitejs.dev/guide/features.html#css-modules).
+Qwik 借助 [Vite](https://vitejs.dev/guide/features.html#css-modules) 的支持，原生支持 [CSS 模块](https://github.com/css-modules/css-modules)。
 
-To use CSS modules, simply create a `.module.css` file. For example, `MyComponent.module.css` and import it in your component.
+要使用 CSS 模块，只需创建一个 `.module.css` 文件，例如 `MyComponent.module.css`，并在组件中导入它。
 
 ```css /container/#a title="src/components/MyComponent/MyComponent.module.css"
 .container {
@@ -32,7 +32,7 @@ To use CSS modules, simply create a `.module.css` file. For example, `MyComponen
 }
 ```
 
-Then, import the CSS module in your component.
+然后，在组件中导入 CSS 模块。
 
 ```tsx {2} /styles/ /container/#a title="src/components/MyComponent/MyComponent.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -43,15 +43,15 @@ export default component$(() => {
 });
 ```
 
-Remember that Qwik uses `class` instead of `className` for CSS classes.
+请记住，Qwik 使用 `class` 而不是 `className` 来表示 CSS 类。
 
-To assign multiple classes qwik accepts also Arrays, Objects or a mix of them:
+要为 qwik 分配多个类，也可以接受数组、对象或混合使用它们的方式：
 ```tsx title="src/components/MyComponent/MyComponent.tsx"
 import { component$ } from '@builder.io/qwik';
 import styles from './MyComponent.module.css';
 
 export default component$((props) => {
-  // Array syntax example
+  // 数组语法示例
   return <div class={[
     styles.container, 
     'p-8', 
@@ -59,7 +59,7 @@ export default component$((props) => {
     { active: true}
   ]}>Hello world</div>;
 
-  // Object syntax example
+  // 对象语法示例
   return <div class={{  
     'text-green-500': props.isHighAttention,
     'p-4': true
@@ -67,19 +67,19 @@ export default component$((props) => {
 });
 ```
 
-## Global styles
+## 全局样式
 
-Many apps use a global stylesheet to do browser resets and/or defining global styles. This is a good practice, but it is not recommended to use it for styling your components. Qwik is optimized to let the browser just download the styles that are needed for the current view. If you use a global stylesheet, all the styles will be downloaded on the first load, even if they are not needed for the current view.
+许多应用程序使用全局样式表进行浏览器重置和/或定义全局样式。这是一种好的做法，但不建议将其用于为组件添加样式。Qwik 优化了浏览器，只下载当前视图所需的样式。如果使用全局样式表，所有样式将在首次加载时下载，即使当前视图不需要它们。
 
 ```tsx
 import './global.css';
 ```
 
-> Automatically, Qwik will try to inline this file in production mode if the amount of CSS is less than 10KB. If the file is larger than 10KB, it will be loaded as a separate file.
+> 在生产模式下，Qwik 会尝试将此文件内联，如果 CSS 的大小小于 10KB。如果文件大小超过 10KB，它将作为单独的文件加载。
 
 ## CSS-in-JS
 
-Qwik has first-class CSS-in-JS support using [styled-vanilla-extract](https://github.com/wmertens/styled-vanilla-extract), which provides a extremely efficient css-in-js solution without any runtime!
+Qwik 使用 [styled-vanilla-extract](https://github.com/wmertens/styled-vanilla-extract) 提供了一流的 CSS-in-JS 支持，它提供了一种非常高效的无运行时的 CSS-in-JS 解决方案！
 
 ```tsx title="style.css.ts"
 import { style } from 'styled-vanilla-extract/qwik';
@@ -105,19 +105,19 @@ export const Cmp = component$(() => {
 npm run qwik add styled-vanilla-extract
 ```
 
-Please refer to the [docs of our official integration](/docs/integrations/styled-vanilla-extract/index.mdx) for more information.
+有关更多信息，请参阅[官方集成文档](/docs/integrations/styled-vanilla-extract/index.mdx)。
 
-> **How about emotion or other CSS-in-JS libs?** While extremely popular, emotion and other CSS-in-JS libs are not the best choice for Qwik. [They are not optimized for runtime performance and they don't have a good SSR streaming support](https://dev.to/srmagura/why-were-breaking-up-wiht-css-in-js-4g9b), leading to a degraded server and client performance.
+> **Emotion 或其他 CSS-in-JS 库怎么样？** 虽然非常流行，但 Emotion 和其他 CSS-in-JS 库并不是 Qwik 的最佳选择。[它们没有针对运行时性能进行优化，也没有良好的 SSR 流式支持](https://dev.to/srmagura/why-were-breaking-up-wiht-css-in-js-4g9b)，导致服务器和客户端性能下降。
 
 ## Styled-components
 
-Styled components is a popular tool in React-land to write CSS-in-JS. Thanks to the same [styled-vanilla-extract](https://github.com/wmertens/styled-vanilla-extract) plugin, you can write your styles with styled-components syntax in Qwik with zero-runtime cost!
+Styled-components 是 React 领域中流行的 CSS-in-JS 工具。借助相同的 [styled-vanilla-extract](https://github.com/wmertens/styled-vanilla-extract) 插件，您可以在 Qwik 中使用 styled-components 语法编写样式，而无需运行时成本！
 
 ```shell
 npm run qwik add styled-vanilla-extract
 ```
 
-Like this:
+像这样：
 
 ```tsx title="styles.css.ts"
 import { styled } from 'styled-vanilla-extract/qwik';
@@ -139,9 +139,9 @@ export const Cmp = component$(() => {
 });
 ```
 
-## Scoped CSS
+## 作用域 CSS
 
-To use scoped CSS, you can use the `useStylesScoped$()` hook exported from `@builder.io/qwik`.
+要使用作用域 CSS，您可以使用从 `@builder.io/qwik` 导出的 `useStylesScoped$()` 钩子。
 
 ```tsx {4-8} title="src/components/MyComponent/MyComponent.tsx"
 import { component$, useStylesScoped$ } from '@builder.io/qwik';
@@ -156,7 +156,7 @@ export default component$(() => {
 });
 ```
 
-You can also import an external CSS file. For that you need to add the `?inline` query parameter to the import of the CSS file, and pass the default export of the CSS file to the `useStyleScoped$()` hook.
+您还可以导入外部 CSS 文件。为此，您需要在 CSS 文件的导入中添加 `?inline` 查询参数，并将 CSS 文件的默认导出传递给 `useStyleScoped$()` 钩子。
 
 ```css title="src/components/MyComponent/MyComponent.css"
 .container {
@@ -176,9 +176,9 @@ export default component$(() => {
 ```
 
 
-### `:global()` selector
+### `:global()` 选择器
 
-Using `useStylesScoped$` will scope all child selectors in a ruleset to the component. If you need to style child components rendered through a `<Slot />`, you will need to break out of the scoped styles using the `:global()` selector.
+使用 `useStylesScoped$` 将使规则集中的所有子选择器作用于组件。如果您需要为通过 `<Slot />` 渲染的子组件设置样式，您需要使用 `:global()` 选择器来跳出作用域样式。
 
 ```tsx
 import { useStylesScoped$, component$ } from '@builder.io/qwik';
@@ -202,16 +202,15 @@ export const List = component$(() => {
 });
 ```
 
-This will render a css selector of `.list.⭐️8vzca0-0 > *:nth-child(3)`, allowing you to target child components. This could be considered the equivalent of using `::ng-deep` in Angular.
+这将渲染一个 `.list.⭐️8vzca0-0 > *:nth-child(3)` 的 CSS 选择器，允许您定位子组件。这可以被视为在 Angular 中使用 `::ng-deep` 的等效方式。
 
-> Beware that this may have unintended effects that cascade down your component tree.
-
+> 请注意，这可能会产生意想不到的效果，会影响组件树的级联。
 
 ## `useStyles$()`
 
-A lazy-loadable reference to component's styles.
+组件样式是对组件样式的延迟加载引用。
 
-Component styles allow Qwik to lazy load the style information for the component only when needed. (And avoid double loading it in case of SSR hydration.)
+组件样式允许 Qwik 仅在需要时加载组件的样式信息。（并避免在 SSR 水合时重复加载样式。）
 
 ```tsx
 import { useStyles$, component$ } from '@builder.io/qwik';
@@ -230,50 +229,50 @@ export const CmpStyles = component$(() => {
 }
 ```
 
-> Notice that in order to import CSS as a string in Vite, you need to add the `?inline` query parameter to the import, like this: `import styles from './code-block.css?inline';`
+> 请注意，在 Vite 中以字符串形式导入 CSS，您需要在导入中添加 `?inline` 查询参数，例如：`import styles from './code-block.css?inline';`
 
 
-## CSS Preprocessors
+## CSS 预处理器
 
-Thanks to [Vite](https://vitejs.dev/guide/features.html#css-pre-processors), Qwik supports CSS preprocessors like Sass, Less, Stylus, and PostCSS.
+借助 [Vite](https://vitejs.dev/guide/features.html#css-pre-processors)，Qwik 支持 Sass、Less、Stylus 和 PostCSS 等 CSS 预处理器。
 
-There is no need to install Qwik-specific plugins for them, but the corresponding pre-processor itself must be installed:
+您无需为它们安装 Qwik 特定的插件，但必须安装相应的预处理器本身：
 
 ```bash
-# .scss and .sass
+# .scss 和 .sass
 npm add -D sass
 
 # .less
 npm add -D less
 
-# .styl and .stylus
+# .styl 和 .stylus
 npm add -D stylus
 ```
 
-Check [Vite's docs](https://vitejs.dev/guide/features.html#css-pre-processors) for more information.
+有关更多信息，请查阅 [Vite 的文档](https://vitejs.dev/guide/features.html#css-pre-processors)。
 
 ## Tailwind
 
-To use Tailwind in your app, you can add it to your app with our built-in integration:
+要在应用程序中使用 Tailwind，请使用我们内置的集成方式将其添加到应用程序中：
 
 ```shell
 npm run qwik add tailwind
 ```
 
-Check out [the integration docs](/docs/integrations/tailwind/index.mdx) for more information.
+有关更多信息，请查看[集成文档](/docs/integrations/tailwind/index.mdx)。
 
 ## PostCSS
 
-It is also possible to use PostCSS in your app with our built-in integration:
+您还可以使用我们内置的集成方式在应用程序中使用 PostCSS：
 
 ```shell
 npm run qwik add postcss
 ```
 
-Important: Since we are using vite, the configuration should look as follows to work:
+重要提示：由于我们使用的是 vite，配置应如下所示才能正常工作：
 
 ```shell
-// Configuration with vite
+// 使用 vite 的配置
 module.exports = {
   plugins: {
     autoprefixer: {},
@@ -287,7 +286,7 @@ module.exports = {
 }
 ```
 
-Now you will be able to use CSS with nesting-rules like the following ones:
+现在，您将能够使用类似以下的带有嵌套规则的 CSS：
 
 ```css
 body {
@@ -301,11 +300,11 @@ body {
 }
 ```
 
-Check out [the integration docs](/docs/integrations/postcss/index.mdx) for more information.
+有关更多信息，请查看[集成文档](/docs/integrations/postcss/index.mdx)。
 
-## Why not inline styles using the `<style>` tag?
+## 为什么不使用 `<style>` 标签内联样式？
 
-A naive way to ensure that a component has the correct styles loaded is to inline the style information into a component like so.
+一种简单的确保组件加载正确样式的方法是将样式信息内联到组件中，如下所示。
 
 ```tsx
 export const MyComponent = () => {
@@ -318,14 +317,14 @@ export const MyComponent = () => {
 }
 ```
 
-The problem with this approach is that we will load styles twice.
+这种方法的问题在于我们会加载两次样式。
 
-1. The styles are inserted into the HTML as part of the SSR.
-2. Then when the component is invalidated and needs to be re-rendered, the styles are loaded again because they are inlined.
+1. 样式作为 SSR 的一部分插入到 HTML 中。
+2. 然后，当组件失效并需要重新渲染时，样式会再次加载，因为它们是内联的。
 
-What is needed is to load the styles independently from the component. This is what [`useStyles$()`](/docs/(qwik)/components/styles/index.mdx#usestyles) is for. There are two scenarios:
+所需的是独立加载样式，而不是与组件一起加载样式。这就是 [`useStyles$()`](/docs/(qwik)/components/styles/index.mdx#usestyles) 的作用。有两种情况：
 
-1. The component is rendered on the server and the styles are inserted into `<head>` as part of the SSR.
-   - Adding a new instance of a component to the application does not require that we load the styles as they are already included as part of SSR.
-2. The component is rendered on the client for the first time. In that case, the new component does not have styles in the `<head>` as the component was not part of SSR.
-   - Adding a new component that was not part of SSR requires that styles are loaded and inserted into `<head>`.
+1. 组件在服务器上呈现，并且样式作为 SSR 的一部分插入到 `<head>` 中。
+   - 将新的组件实例添加到应用程序不需要加载样式，因为它们已经作为 SSR 的一部分包含在内。
+2. 组件在客户端上首次呈现。在这种情况下，新组件在 `<head>` 中没有样式，因为该组件不是 SSR 的一部分。
+   - 添加一个不是 SSR 的一部分的新组件需要加载样式并将其插入到 `<head>` 中。

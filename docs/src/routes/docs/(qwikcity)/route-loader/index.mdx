@@ -14,35 +14,35 @@ contributors:
 
 # `routeLoader$()`
 
-Route Loaders load data in the server so it becomes available to use inside Qwik Components. They trigger when SPA/MPA navigation happens so they can be invoked by Qwik Components during rendering.
+路由加载器在服务器上加载数据，以便在 Qwik 组件内部使用。它们在 SPA/MPA 导航发生时触发，因此可以在渲染过程中由 Qwik 组件调用。
 
-Route Loaders can only be declared inside the `src/routes` folder, in a `layout.tsx` or `index.tsx` file, and they MUST be exported.
+路由加载器只能在 `src/routes` 文件夹中的 `layout.tsx` 或 `index.tsx` 文件中声明，并且必须导出。
 
 ```tsx /routeLoader$/ /useProductData/#a title="src/routes/product/[productId]/index.tsx"
 import { component$ } from '@builder.io/qwik';
 import { routeLoader$ } from '@builder.io/qwik-city';
 
 export const useProductDetails = routeLoader$(async (requestEvent) => {
-  // This code runs only on the server, after every navigation
+  // 此代码仅在服务器上运行，每次导航后执行
   const res = await fetch(`https://.../products/${requestEvent.params.productId}`);
   const product = await res.json();
   return product as Product;
 });
 
 export default component$(() => {
-  // In order to access the `routeLoader$` data within a Qwik Component, you need to call the hook.
+  // 要在 Qwik 组件中访问 `routeLoader$` 数据，需要调用该钩子。
   const signal = useProductDetails(); // Readonly<Signal<Product>>
-  return <p>Product name: {signal.value.product.name}</p>;
+  return <p>产品名称：{signal.value.product.name}</p>;
 });
 ```
 
-Route Loaders are perfect to fetch data from a database or an API. For example you can use them to fetch data from a CMS, a weather API, or a list of users from your database.
+路由加载器非常适合从数据库或 API 获取数据。例如，您可以使用它们从 CMS、天气 API 或数据库中获取用户列表等数据。
 
-> You should not use a `routeLoader$` to create a REST API, for that you’d be better off using an [Endpoint](/docs/endpoints/), which allows you to have tight control over the response headers and body.
+> 您不应该使用 `routeLoader$` 创建 REST API，对此，最好使用 [Endpoint](/docs/endpoints/)，它允许您对响应头和正文具有严格的控制。
 
-## Multiple `routeLoader$`s
+## 多个 `routeLoader$`
 
-Multiple `routeLoader$`s are allowed across the whole application, and they can be used in any Qwik Component. **You can even declare multiple `routeLoader$`s in the same file**.
+整个应用程序中允许使用多个 `routeLoader$`，它们可以在任何 Qwik 组件中使用。**您甚至可以在同一个文件中声明多个 `routeLoader$`**。
 
 
 ```tsx title="src/routes/layout.tsx"
@@ -70,17 +70,17 @@ export default component$(() => {
 ```tsx title="src/components/footer.tsx"
 import { component$ } from '@builder.io/qwik';
 
-// Import the loader from the layout
+// 从 layout 中导入加载器
 import { useProductData } from '../routes/layout.tsx';
 
 export const Footer = component$(() => {
-  // Consume the loader data
+  // 使用加载器数据
   const signal = useProductData();
-  return <footer>Product name: {signal.value.product.name}</footer>;
+  return <footer>产品名称：{signal.value.product.name}</footer>;
 });
 ```
 
-The above example shows using `useProductData()` in two different components across different files. This is intentional behavior.
+上面的示例展示了在不同文件中的两个不同组件中使用 `useProductData()`。这是有意为之的行为。
 
 ```tsx title="src/routes/admin/index.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -103,36 +103,36 @@ export default component$(() => {
   const currentUser = useCurrentUser();
   return (
     <section>
-      <h1>Admin</h1>
+      <h1>管理员</h1>
       {loginStatus.value.isUserLoggedIn ? (
-        <p>Welcome {currentUser.value.user.name}</p>
+        <p>欢迎 {currentUser.value.user.name}</p>
       ) : (
-        <p>You are not logged in</p>
+        <p>您尚未登录</p>
       )}
     </section>
   );
 });
 ```
 
-The above example shows two `routeLoader$`s being used in the same file. A generic `useLoginStatus` loader is used to check if the user is logged in, and a more specific `useCurrentUser` loader is used to retrieve the user data.
+上面的示例展示了在同一个文件中使用两个 `routeLoader$`。一个通用的 `useLoginStatus` 加载器用于检查用户是否已登录，而一个更具体的 `useCurrentUser` 加载器用于检索用户数据。
 
 ## RequestEvent
 
-Just like [middleware](/docs/middleware/) or [endpoint](/docs/endpoints/) `onRequest` and `onGet`, `routeLoader$`s have access to the [`RequestEvent`](/docs/middleware#requestevent) API which includes information about the current HTTP request.
+与 [middleware](/docs/middleware/) 或 [endpoint](/docs/endpoints/) 的 `onRequest` 和 `onGet` 一样，`routeLoader$` 具有访问 [`RequestEvent`](/docs/middleware#requestevent) API 的能力，其中包含有关当前 HTTP 请求的信息。
 
-This information comes in handy when the loader needs to conditionally return data based on the request, or it needs to override the response status, headers or body manually.
+当加载器需要根据请求条件返回数据，或者需要手动覆盖响应状态、头部或正文时，这些信息非常有用。
 
 ```tsx /requestEvent/ title="src/routes/product/[user]/index.tsx"
 import { routeLoader$ } from '@builder.io/qwik-city';
 
 export const useProductRecommendations = routeLoader$(async (requestEvent) => {
-  console.log('Request headers:', requestEvent.request.headers);
-  console.log('Request cookies:', requestEvent.cookie);
-  console.log('Request url:', requestEvent.url);
-  console.log('Request method:', requestEvent.method);
-  console.log('Request params:', requestEvent.params);
+  console.log('请求头部：', requestEvent.request.headers);
+  console.log('请求 cookie：', requestEvent.cookie);
+  console.log('请求 URL：', requestEvent.url);
+  console.log('请求方法：', requestEvent.method);
+  console.log('请求参数：', requestEvent.params);
 
-  // Use request details to fetch personalized data
+  // 使用请求详细信息获取个性化数据
   const res = fetch(`https://.../recommendations?user=${requestEvent.params.user}`);
   const recommendedProducts = (await res.json()) as Product[];
 
@@ -140,9 +140,9 @@ export const useProductRecommendations = routeLoader$(async (requestEvent) => {
 });
 ```
 
-## Access the `routeLoader$` data within another `routeLoader$`
+## 在另一个 `routeLoader$` 中访问 `routeLoader$` 数据
 
-You can access the data from one `routeLoader$` inside another `routeLoader$` using the `requestEvent.resolveValue` method.
+您可以使用 `requestEvent.resolveValue` 方法在另一个 `routeLoader$` 中访问一个 `routeLoader$` 的数据。
 
 ```tsx /requestEvent/ title="src/routes/product/[productId]/index.tsx"
 import { routeLoader$ } from '@builder.io/qwik-city';
@@ -154,10 +154,10 @@ export const useProductDetails = routeLoader$(async (requestEvent) => {
 });
 
 export const useProductRecommendations = routeLoader$(async (requestEvent) => {
-  // Resolve the product details from the other loader
+  // 从其他加载器中解析产品详细信息
   const product = await requestEvent.resolveValue(useProductDetails);
 
-  // Use the product details to fetch personalized data
+  // 使用产品详细信息获取个性化数据
   const res = fetch(`https://.../recommendations?product=${product.id}`);
   const recommendedProducts = (await res.json()) as Product[];
 
@@ -165,15 +165,15 @@ export const useProductRecommendations = routeLoader$(async (requestEvent) => {
 });
 ```
 
-> The same API can be used to access the data from a `routeAction$` or a `globalAction$`.
+> 相同的 API 可用于访问 `routeAction$` 或 `globalAction$` 中的数据。
 
-## Failed values with `routeLoader$`
+## 使用 `routeLoader$` 的失败值
 
-`routeLoader$`s can use the `fail` method to return a failed value, which is a special value that indicates that the loader didn't succeed loading the expected data.
+`routeLoader$` 可以使用 `fail` 方法返回一个失败值，这是一个特殊的值，表示加载器未能成功加载预期的数据。
 
-In addition, the `fail` function allows `routeLoader$` to override the HTTP status code, for example retuning 404.
+此外，`fail` 函数允许 `routeLoader$` 覆盖 HTTP 状态码，例如返回 404。
 
-This is useful when the loader needs to return an "error" value that is not `undefined`, but it also needs to indicate that the data failed to load.
+当加载器需要返回一个不是 `undefined` 的“错误”值，但又需要指示数据加载失败时，这非常有用。
 
 ```tsx /requestEvent.fail/ /errorMessage/#a title="src/routes/product/[productId]/index.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -182,9 +182,9 @@ import { routeLoader$ } from '@builder.io/qwik-city';
 export const useProductDetails = routeLoader$(async (requestEvent) => {
   const product = await db.from('products').filter('id', 'eq', requestEvent.params.productId);
   if (!product) {
-    // Return a failed value to indicate that product was not found
+    // 返回一个失败值，表示未找到产品
     return requestEvent.fail(404, {
-      errorMessage: 'Product not found'
+      errorMessage: '未找到产品'
     });
   }
   return {
@@ -196,18 +196,18 @@ export default component$(() => {
   const product = useProductDetails();
 
   if (product.value.errorMessage) {
-    // Render UI for failed value
+    // 渲染失败值的 UI
     return <div>{product.value.errorMessage}</div>;
   }
-  return <div>Product name: {product.value.productName}</div>;
+  return <div>产品名称：{product.value.productName}</div>;
 });
 ```
 
-## Handling Relative URLs in Loaders
+## 处理加载器中的相对 URL
 
-In the server-side execution environment, it's crucial to convert relative URLs to absolute URLs for proper functionality. This can be achieved by prefixing the relative URL with the `origin` from the `useLocation()` function.
+在服务器端执行环境中，将相对 URL 转换为绝对 URL 是非常重要的，以确保其正常功能。可以通过使用 `useLocation()` 函数的 `origin` 前缀来实现。
 
-```tsx /location.url.origin + relativeUrl/ title="Make Absolute URL"
+```tsx /location.url.origin + relativeUrl/ title="将相对 URL 转换为绝对 URL"
 import { component$ } from '@builder.io/qwik';
 import { useLocation } from '@builder.io/qwik-city';
 
@@ -218,17 +218,17 @@ export default component$(() => {
 
   return (
     <section>
-      <div>Relative URL: {relativeUrl}</div>
-      <div>Absolute URL: {absoluteUrl}</div>
+      <div>相对 URL：{relativeUrl}</div>
+      <div>绝对 URL：{absoluteUrl}</div>
     </section>
   );
 });
 ```
 
-## Performance considerations
+## 性能考虑
 
-Route Loaders are executed on the server, after every navigation. This means that they are executed every time a user navigates to a page in a SPA or MPA, and they are executed even if the user is navigating to the same page.
+路由加载器在服务器上，在每次导航后执行。这意味着无论用户导航到 SPA 或 MPA 中的哪个页面，它们都会执行，并且即使用户导航到同一个页面，它们也会执行。
 
-Loaders execute after the Qwik Middlewares handlers (`onRequest`, `onGet`, `onPost`, etc), and before the Qwik Components are rendered. This allows the loaders to start fetching data as soon as possible, reducing latency.
+加载器在 Qwik 中间件处理程序（`onRequest`、`onGet`、`onPost` 等）之后执行，Qwik 组件渲染之前执行。这使得加载器能够尽早开始获取数据，从而减少延迟。
 
 

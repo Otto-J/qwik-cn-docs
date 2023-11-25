@@ -1,26 +1,26 @@
 ---
-title: Environment variables | Qwik City
-description: Qwik apps can read environment variables in two main ways build-time variables and server-side variables.
+title: 环境变量 | Qwik City
+description: Qwik 应用程序可以通过两种主要方式读取环境变量：构建时变量和服务器端变量。
 contributors:
   - manucorporat
   - the-r3aper7
 ---
 
-# Environment variables
+# 环境变量
 
-Qwik apps can read environment variables in two main ways: **build-time variables** and **server-side variables**.
+Qwik 应用程序可以通过两种主要方式读取环境变量：**构建时变量**和**服务器端变量**。
 
-> `process.env` is a Node.js only API, and should be avoided at all costs.
+> `process.env` 是一个仅适用于 Node.js 的 API，应该尽量避免使用。
 
-## Build-time variables
+## 构建时变量
 
-Build-time variables are powered by [Vite](https://vitejs.dev/guide/env-and-mode.html). They are defined in `.env` files and are available **in the browser and in the server-side code**.
+构建时变量由 [Vite](https://vitejs.dev/guide/env-and-mode.html) 提供支持。它们在 `.env` 文件中定义，并且可以在**浏览器和服务器端代码中使用**。
 
-> **IMPORTANT! DO NOT** use `import.meta.env.PUBLIC_*` to store any sensitive information, such as API keys, secrets, passwords, etc. **Only public data**.
+> **重要！请勿**使用 `import.meta.env.PUBLIC_*` 存储任何敏感信息，如 API 密钥、密码等。**仅限公共数据**。
 
-Notice that build-time variables should be considered as **public**, since they will be hardcoded in the browser build, which can be easily read by anyone.
+请注意，构建时变量应被视为**公共**变量，因为它们将被硬编码在浏览器构建中，任何人都可以轻松读取。
 
-Build-time variables are prefixed by default with `PUBLIC_` and can be accessed with with `import.meta.env.PUBLIC_*`.
+构建时变量默认以 `PUBLIC_` 为前缀，并且可以通过 `import.meta.env.PUBLIC_*` 访问。
 
 ```tsx title=".env" /PUBLIC_API_URL/#a
 PUBLIC_API_URL=https://api.example.com
@@ -30,20 +30,20 @@ PUBLIC_API_URL=https://api.example.com
 import { component$ } from '@builder.io/qwik';
 
 export default component$(() => {
-  // `import.meta.env.PUBLIC_*` variables can be read anywhere, including browser
+  // `import.meta.env.PUBLIC_*` 变量可以在任何地方读取，包括浏览器中
   return <div>PUBLIC_API_URL: {import.meta.env.PUBLIC_API_URL}</div>
 })
 ```
 
-> `import.meta.env.PUBLIC_*` variables can be read anywhere, but do not put any sensitive information in them, since they will be visible to the client.
+> `import.meta.env.PUBLIC_*` 变量可以在任何地方读取，但请不要在其中放置任何敏感信息，因为它们将对客户端可见。
 
-## Server-side variables
+## 服务器端变量
 
-Server-side variables are fundamentally runtime variables that are only available in the server-side code.
+服务器端变量本质上是仅在服务器端代码中可用的运行时变量。
 
-They are not known at build-time and are not available in the browser, so they can be considered as **private**.
+它们在构建时未知，并且在浏览器中不可用，因此可以视为**私有**变量。
 
-Server-side variables can only be accessed in server-only APIs that expose the `RequestEvent` object, such as `routeLoader$()`, `routeAction$()`, `server$()` and endpoint handlers such as `onGet`, `onPost`, `onRequest` etc.
+服务器端变量只能在仅在服务器端暴露 `RequestEvent` 对象的服务器端 API 中访问，例如 `routeLoader$()`、`routeAction$()`、`server$()` 和端点处理程序，如 `onGet`、`onPost`、`onRequest` 等。
 
 ```tsx /DB_PRIVATE_KEY/ title="src/routes/index.tsx"
 import {
@@ -70,19 +70,19 @@ export const useLoader = routeLoader$(async (requestEvent) => {
 });
 
 export const serverFunction = server$(function () {
-  // `this` is the `RequestEvent` object
+  // `this` 是 `RequestEvent` 对象
   console.log(this.env.get('DB_PRIVATE_KEY'));
 });
 ```
 
-### Defining server-side variables
+### 定义服务器端变量
 
-During development server-side variables can be defined in the `.env.local` file, this file is ignored by git by default, so it is safe to put sensitive information in it.
+在开发过程中，可以在 `.env.local` 文件中定义服务器端变量，该文件默认被 Git 忽略，因此可以安全地将敏感信息放入其中。
 
 ```env title=".env.local"
 DB_PRIVATE_KEY=123456789
 ```
 
-> Make sure you never commit `.env.local` files to git.
+> 确保永远不要将 `.env.local` 文件提交到 Git。
 
-During production, **setting server-side variables is very platform specific**. Most of the platforms allow you to set environment variables from their dashboard, or CLI. Please, refer to your platform (cloudflare, vercel, netlify) documentation for more information.
+在生产环境中，**设置服务器端变量非常依赖于具体的平台**。大多数平台允许您从其仪表板或 CLI 设置环境变量。有关更多信息，请参阅您所使用的平台（cloudflare、vercel、netlify）的文档。
