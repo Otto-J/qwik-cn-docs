@@ -1,30 +1,30 @@
 ---
-title: Complex Forms | Advanced
-description: Learn how to create complex forms with arrays and objects.
+title: 复杂表单 | 高级
+description: 学习如何使用数组和对象创建复杂表单。
 contributors:
   - ulic75
   - hamatoyogi
 ---
 
-# Complex Forms
+# 复杂表单
 
-## What are Complex Forms?
+## 什么是复杂表单？
 
-Complex forms would typically contain data in a structure that is more than just simple key/value pairs. For example, a list of people who each have their own email, phone and street address. This would essentially be an array of objects.
+复杂表单通常包含的数据结构不仅仅是简单的键值对。例如，一个包含每个人自己的电子邮件、电话和街道地址的人员列表。这本质上是一个对象数组。
 
-## Input naming
+## 输入命名
 
-### Objects
+### 对象
 
-Nested items can be created by seperating the items with `.` (dot) in the name. For example, `person.name` would be converted to `{ person: { name: 'sam' } }`.
+通过在名称中使用 `.`（点）来创建嵌套项。例如，`person.name` 将被转换为 `{ person: { name: 'sam' } }`。
 
-### Arrays
+### 数组
 
-Arrays, either top level or nested are created by specifying the zero-based index in the name.  For example `person.pets.0` would be converted to `{ person: { pets: [ 'cat' ] } }`.
+通过在名称中指定从零开始的索引来创建数组，可以是顶级的也可以是嵌套的。例如，`person.pets.0` 将被转换为 `{ person: { pets: [ 'cat' ] } }`。
 
-### Example
+### 示例
 
-The key to creating a complex form is in the naming of the inputs. Below would be an example of the list described above:
+创建复杂表单的关键在于输入的命名。下面是上述列表的示例：
 ```html
 <form>
   <input name="person.0.name" value="Sam">
@@ -46,9 +46,9 @@ The key to creating a complex form is in the naming of the inputs. Below would b
 </form>
 ```
 
-#### Output object
+#### 输出对象
 
-The after submiting the form the data would be parsed in an object like this:
+提交表单后，数据将被解析为如下的对象：
 ```json
 {
   "person": [
@@ -77,16 +77,16 @@ The after submiting the form the data would be parsed in an object like this:
 }
 ```
 
-## Using with Actions
+## 与 Actions 结合使用
 
-Complex forms can be validated using zod$ with routeAction$ and globalAction$. Continuing with the previous examples it would look like this:
+可以使用 zod$、routeAction$ 和 globalAction$ 来验证复杂表单。继续上面的示例，代码如下：
 
 ```tsx
 export const action = routeAction$(
   async (person) => {
     return { success: true, person, };
   },
-  // Zod schema is used to validate the FormData
+  // 使用 Zod 模式验证 FormData
   zod$({
     person: z.array(
       z.object({

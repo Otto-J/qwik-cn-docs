@@ -1,43 +1,42 @@
 ---
-title: 🧪 Qwik Labs | Overview
+title: 🧪 Qwik Labs | 概述
 contributors:
   - mhevery
 ---
 
-# 🧪 Qwik Labs Overview
+# 🧪 Qwik Labs 概述
 
-Qwik Labs is an incubator for ideas not yet ready for production. It's a place where we can publish our "work in progress" so the community can try it out and provide feedback, without any guarantees that the feature is stable or will make it into production. 
+Qwik Labs 是一个孵化器，用于尚未准备好投入生产的想法。这是一个我们可以发布我们的“正在进行中”的工作的地方，以便社区可以尝试并提供反馈，但不能保证该功能稳定或能够投入生产。
 
-Given that these are ideas in their initial stages, chances are they will significantly change over their lifetime, so they should not be relied upon in production. 
+鉴于这些是初期阶段的想法，它们在其生命周期内很可能会发生重大变化，因此不应依赖于它们进行生产。
 
-USE AT YOUR OWN RISK.
+请自行承担风险。
 
-> **DISCLAIMER:** Qwik Labs is a place to experiment, as such:
-> - We make no guarantees about the stability of the API: _we can break it at any point._
-> - It is not ready for production: _we want you to try it and give us feedback so that we can improve._
-> - No guarantees that the feature will ever make it to production: _it can be abandoned at any point._
+> **免责声明：** Qwik Labs 是一个实验的地方，因此：
+> - 我们不保证 API 的稳定性：_我们可以在任何时候更改它。_
+> - 它尚未准备好投入生产：_我们希望您尝试并给我们反馈，以便我们可以改进。_
+> - 不能保证该功能将会投入生产：_它可以在任何时候被放弃。_
 >
-> **Expect lots of breaking changes as the features are being developed!!!**
+> **由于功能正在开发中，预计会有很多重大变更！！！**
 
-## Stages
+## 阶段
 
-Each Qwik Labs feature can roughly be thought of as going through these stages:
-1. `proposal`: An RFC proposal no code yet
-2. `prototyping`: An experimental stage where we explore the API, algorithm and approaches. Missing features, probably not in a usable state.
-3. `implementation`: We know what needs to be built and are going through the built out process.
-4. `alpha`: We think the project is ready to receive feedback from the community. Try it out and let us know what works and what does not.
-5. `beta`: We think the project is ready to graduate to the main repo and be used in production.
+每个 Qwik Labs 功能大致可以分为以下阶段：
+1. `proposal`：一个尚未编写代码的 RFC 提案
+2. `prototyping`：一个实验阶段，我们在探索 API、算法和方法。可能缺少功能，可能不可用。
+3. `implementation`：我们知道需要构建什么，并正在进行构建过程。
+4. `alpha`：我们认为项目已经准备好接收社区的反馈。请尝试并告诉我们哪些功能有效，哪些功能无效。
+5. `beta`：我们认为项目已经准备好毕业并在主要仓库中使用。
 
-## Installation
+## 安装
 
-Qwik labs are distributed as a separate node package. Because Qwik Labs is "work in progress" the node package is not published to NPM but instead as a github URL. The package is continually updated and so it will always contains the latest build. (You may read up on installing node packages [here](https://docs.npmjs.com/cli/v8/commands/npm-install).)
-
+Qwik Labs 以一个独立的 Node 包进行分发。由于 Qwik Labs 是“正在进行中”的工作，该 Node 包未发布到 NPM，而是作为一个 GitHub URL 进行发布。该包会持续更新，因此它始终包含最新的构建。（您可以在[这里](https://docs.npmjs.com/cli/v8/commands/npm-install)阅读有关安装 Node 包的信息。）
 
 ```sh
 npm install github:BuilderIo/qwik-labs-build#main
 ```
 
-Or just add this to your `package.json`
+或者只需将以下内容添加到您的 `package.json` 文件中：
 
 ```javascript
 {

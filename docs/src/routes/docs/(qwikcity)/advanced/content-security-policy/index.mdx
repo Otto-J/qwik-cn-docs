@@ -1,52 +1,52 @@
 ---
-title: Content Security Policy | Advanced
-description: Learn how to create a content security policy (CSP) to keep your Qwik app safe.
+title: 内容安全策略 | 高级
+description: 学习如何创建内容安全策略（CSP）以保护您的 Qwik 应用程序安全。
 contributors:
   - tzdesign
   - jordanw66
   - hamatoyogi
 ---
 
-# Content Security Policy
+# 内容安全策略
 
-## What is CSP?
+## 什么是 CSP？
 
-[Content Security Policy (CSP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross-Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft, to site defacement, to malware distribution.
+[内容安全策略（CSP）](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CSP) 是一种增加的安全层，有助于检测和缓解某些类型的攻击，包括跨站脚本（XSS）和数据注入攻击。这些攻击可用于从数据盗窃到网站篡改，再到恶意软件分发。
 
-## Steps to integrate
+## 集成步骤
 
-### Add a route plugin
+### 添加路由插件
 
-To add the middleware plugin to your application, simply add a file named ```plugin@your-plugin-name.ts``` to the routes folder. 
-This file will be loaded with every request, allowing you to add headers, modify the response, and more.
+要将中间件插件添加到您的应用程序中，只需在 routes 文件夹中添加一个名为 `plugin@your-plugin-name.ts` 的文件。
+该文件将在每个请求中加载，允许您添加标头、修改响应等。
 
-```bash  {3} /plugin@csp\.ts/ title="Add the plugin"
+```bash  {3} /plugin@csp\.ts/ title="添加插件"
 src/
 └── routes/
-    ├── plugin@csp.ts         # The plugin which runs on every request (route middleware)
+    ├── plugin@csp.ts         # 在每个请求上运行的插件（路由中间件）
     ├── contact/
     │   └── index.mdx         # https://example.com/contact
     ├── about/
     │   └── index.md          # https://example.com/about
     ├── index.mdx             # https://example.com/
     │
-    └── layout.tsx            # This layout is used for all pages
+    └── layout.tsx            # 用于所有页面的布局
 ```
 
-#### Example
+#### 示例
 
-> This template provides very permissive backward-compatible defaults. 
-> It is highly recommended that you customize it to better suit your specific use case.
-> As this is an advanced topic, you should take a closer look at [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) or [web.dev](https://web.dev/csp/) to get a better understanding of CSP.
-> Please note that in dev mode the Vite scripts have no nonce and will report. For this reason, the example will not add csp in dev mode.
+> 此模板提供了非常宽松的向后兼容默认值。
+> 强烈建议您根据自己的特定用例进行自定义。
+> 由于这是一个高级主题，您应该仔细阅读 [MDN](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CSP) 或 [web.dev](https://web.dev/csp/)，以更好地理解 CSP。
+> 请注意，在开发模式下，Vite 脚本没有 nonce，并且会报告错误。因此，示例不会在开发模式下添加 csp。
 
 ```typescript title="src/routes/plugin@csp.ts"
 import type { RequestHandler } from "@builder.io/qwik-city";
 import { isDev } from "@builder.io/qwik/build";
 
 export const onRequest: RequestHandler = event => {
-  if (isDev) return; // Will not return CSP headers in dev mode
-  const nonce = Date.now().toString(36); // Your custom nonce logic here
+  if (isDev) return; // 在开发模式下不返回 CSP 标头
+  const nonce = Date.now().toString(36); // 在此处添加您的自定义 nonce 逻辑
   event.sharedMap.set("@nonce", nonce);
   const csp = [
     `default-src 'self' 'unsafe-inline'`,
@@ -63,7 +63,7 @@ export const onRequest: RequestHandler = event => {
 };
 ```
 
-### Add it to the service worker as well
+### 同样添加到 Service Worker
 
 ```tsx {12,22} /nonce/ title="src/root.ts"
 import { component$, useServerData } from "@builder.io/qwik";
@@ -94,9 +94,9 @@ export default component$(() => {
 });
 ```
 
-### Custom scripts
+### 自定义脚本
 
-If you have custom script tags that you need to add the nonce to, you can use the `useServerData` hook to get the nonce from the server and add it to your script tags.
+如果您有需要添加 nonce 的自定义脚本标签，您可以使用 `useServerData` 钩子从服务器获取 nonce，并将其添加到您的脚本标签中。
 
 ```tsx {2,5} /nonce/ title="src/components/some-component.tsx"
 export default component$(() => {
@@ -110,6 +110,6 @@ export default component$(() => {
 ```
 
 
-## Validate your CSP
+## 验证您的 CSP
 
-There is a great tool to validate your CSP: [https://csp-evaluator.withgoogle.com/](https://csp-evaluator.withgoogle.com/)
+有一个很好的工具可以验证您的 CSP：[https://csp-evaluator.withgoogle.com/](https://csp-evaluator.withgoogle.com/)
