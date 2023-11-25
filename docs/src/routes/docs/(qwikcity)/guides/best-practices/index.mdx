@@ -1,6 +1,6 @@
 ---
-title: Best Practices | Guides
-description: Learn the best practices for Qwik, a guide for understanding how to use Qwik to its full potential.
+title: 最佳实践 | 指南
+description: 学习 Qwik 的最佳实践，了解如何充分发挥 Qwik 的潜力。
 contributors:
   - mhevery
   - the-r3aper7
@@ -16,14 +16,14 @@ contributors:
   - hamatoyogi
 ---
 
-# Best Practices
+# 最佳实践
 
-## Inline operations in templates
+## 在模板中使用内联操作
 
-Qwik optimizer can better optimize the reactivity of the application if the operations are inlined in the template.
+如果操作在模板中进行内联，Qwik 优化器可以更好地优化应用的响应性。
 
-```tsx title="Suboptimal implementation"
-// Don't do this!
+```tsx title="次优实现"
+// 不要这样做！
 export default component$(() => {
   const signal = useSignal(0);
   const isBiggerThanZero = signal.value > 0 ? 'Bigger than zero' : 'Smaller than zero';
@@ -37,9 +37,9 @@ export default component$(() => {
 });
 ```
 
-The above implementation will cause the whole template to be re-rendered when the signal changes. This is because the `isBiggerThanZero` is not inlined in the template.
+上述实现会导致整个模板在信号变化时重新渲染。这是因为 `isBiggerThanZero` 没有在模板中进行内联。
 
-```tsx title="Optimal Implementation"
+```tsx title="最佳实现"
 export default component$(() => {
   const signal = useSignal(0);
   return (
@@ -55,14 +55,14 @@ export default component$(() => {
 });
 ```
 
-## Avoid registering DOM events in `useVisibleTask$()`
+## 避免在 `useVisibleTask$()` 中注册 DOM 事件
 
-Qwik allows to register event listeners in a declarative way, using the `useOn()` or using JSX.
+Qwik 允许以声明式方式注册事件监听器，可以使用 `useOn()` 或者使用 JSX。
 
-When using `useVisibleTask` to programmatically register events, we are downloading and executing JavaScript eagerly, even if the event is not triggered.
+当使用 `useVisibleTask` 来以编程方式注册事件时，即使事件未触发，我们也会急切地下载和执行 JavaScript。
 
-```tsx title="Suboptimal implementation"
-// Don't do this!
+```tsx title="次优实现"
+// 不要这样做！
 useVisibleTask$(({ cleanup }) => {
   const listener = (event) => {
     const mouseEvent = event as MouseEvent;
@@ -76,39 +76,39 @@ useVisibleTask$(({ cleanup }) => {
 });
 ```
 
-The above implementation causes more JavaScript to load eagerly, rather than responding precisely to user events. Increased upfront JavaScript loading results in slower app performance.
+上述实现会导致更多的 JavaScript 急切加载，而不是精确响应用户事件。前端 JavaScript 加载增加会导致应用性能变慢。
 
-Instead, use the `useOnDocument()` hook to register events on the `document` object, this way Qwik will not execute any JS until the event is triggered.
+相反，使用 `useOnDocument()` 钩子在 `document` 对象上注册事件，这样 Qwik 就不会在事件触发之前执行任何 JavaScript。
 
-```tsx title="Optimal Implementation"
+```tsx title="最佳实现"
 useOnDocument(
   'mousemove',
   $((event) => {
     const mouseEvent = event as MouseEvent;
     console.log(mouseEvent.x, mouseEvent.y);
-    // No manual clean up required!
+    // 不需要手动清理！
   })
 );
 ```
 
-When in doubt, instead of `useVisibleTask$()` use:
-- `useOn()`: listen to events on the root element of `the current component`.
-- `useOnWindow()`: listen to events on the `window` object.
-- `useOnDocument()`: listen to events on the `document` object.
+如果不确定时，可以使用以下替代 `useVisibleTask$()` 的方法：
+- `useOn()`: 在 `当前组件的根元素` 上监听事件。
+- `useOnWindow()`: 在 `window` 对象上监听事件。
+- `useOnDocument()`: 在 `document` 对象上监听事件。
 
 
-## Avoid accessing the location from the `window` object
+## 避免直接从 `window` 对象访问 location
 
-Don't access `window.location` directly, use `useLocation()` hook instead.
+不要直接访问 `window.location`，而是使用 `useLocation()` 钩子。
 
-```tsx title="Suboptimal implementation"
-// Don't do this!
+```tsx title="次优实现"
+// 不要这样做！
 useVisibleTask$(()=> {
     if (window.location.href).includes('foo') {
-        //... do the thing
+        //... 做某事
     }
 })
-// or
+// 或者
 if (typeof window !== "undefined") {
     const queryParams = new URLSearchParams(window.location.search);
     const query: Record<string, string> = {};
@@ -119,32 +119,32 @@ if (typeof window !== "undefined") {
 }
 ```
 
-Many actions related to location information can be executed during the initial server-side render, resulting in pure HTML without any JavaScript overhead.
+许多与位置信息相关的操作可以在初始服务器端渲染期间执行，生成纯 HTML，没有任何 JavaScript 开销。
 
-By forcing this logic to run on the client side, it introduces increased upfront JavaScript and leads to eager loading.
+通过强制将此逻辑在客户端上运行，会引入更多的前端 JavaScript 加载，并导致急切加载。
 
-Using the `if typeof window !== "undefined"` pattern may cause the code to be skipped. On the server, the code block will be skipped since the window is always undefined.
+使用 `if typeof window !== "undefined"` 模式可能会导致代码被跳过。在服务器端，由于 window 总是 undefined，代码块将被跳过。
 
-While developers may be accustomed to code running twice, Qwik eliminates this necessity by providing a more efficient approach.
+虽然开发人员可能习惯于代码运行两次，但 Qwik 通过提供更高效的方法来消除这种必要性。
 
-```tsx title="Optimal Implementation"
-// Do this!
+```tsx title="最佳实现"
+// 这样做！
 const location = useLocation();
 
 if (location.url.href.includes('foo')) {
-  // Do the thing
+  // 做某事
 }
 
 doTheThing(location.url.searchParams);
 ```
 
-### Exception
+### 异常情况
 
-When using SSG for purely static files, it's inevitable to rely on the server without current location information during the build time.
+当使用 SSG 仅用于纯静态文件时，在构建时无法依赖服务器获取当前位置信息。
 
-However, exercise caution! If the required information (such as query parameters) isn't needed until a user event occurs, incorporate the check within your event handling code.
+然而，要小心！如果所需信息（如查询参数）直到用户事件发生时才需要，将检查包含在事件处理代码中。
 
-This approach helps to prevent eager loading of JavaScript and improves performance.
+这种方法有助于防止 JavaScript 的急切加载，提高性能。
 
-> See: [useLocation() Docs](/docs/(qwikcity)/api/index.mdx#uselocation)
+> 参考：[useLocation() 文档](/docs/(qwikcity)/api/index.mdx#uselocation)
 

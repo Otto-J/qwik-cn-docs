@@ -1,6 +1,6 @@
 ---
-title: Static Site Generation (SSG) Overview | Guides
-description: Learn how static site generation (SSG) works in Qwik City.
+title: 静态站点生成（SSG）概述 | 指南
+description: 了解在 Qwik City 中静态站点生成（SSG）的工作原理。
 contributors:
   - adamdbradley
   - AnthonyPAlicea
@@ -8,74 +8,74 @@ contributors:
   - hamatoyogi
 ---
 
-# Static Site Generation (SSG) Overview
+# 静态站点生成（SSG）概述
 
-Static Site Generation, or commonly referred to as "SSG", is the process of pre-rendering site webpages into static HTML files. The benefit is that when a visitor requests the webpage, the response is a pre-generated HTML file (a static file), and doesn't require the webpage's HTML to "rebuild" on the visitor's browser, or dynamically created by your server (more on this later).
+静态站点生成，通常称为“SSG”，是将网站页面预渲染为静态 HTML 文件的过程。其好处在于，当访问者请求网页时，响应是一个预生成的 HTML 文件（静态文件），不需要在访问者的浏览器上“重新构建”网页的 HTML，也不需要由服务器动态创建（稍后会详细介绍）。
 
-Additionally, due to Qwik's underlying architecture, page performance also benefits by not requiring a Javascript "hydration" step, which can significantly lower performance and slow down user interactivity. By pre-rendering static `index.html` files with SSG, and combined with Qwik's [resumability](../../../(qwik)/concepts/resumable/index.mdx), static site generation offers many performance benefits over legacy solutions.
+此外，由于 Qwik 的底层架构，静态站点生成还可以通过不需要 JavaScript 的“hydration”步骤来提高页面性能，这可以显著降低性能并减慢用户的交互速度。通过使用 SSG 预渲染静态的 `index.html` 文件，并结合 Qwik 的[可恢复性](../../../(qwik)/concepts/resumable/index.mdx)，静态站点生成相对于传统解决方案提供了许多性能优势。
 
-## SSG vs. Server-Side Rendered (SSR)
+## SSG vs. 服务器端渲染（SSR）
 
-Qwik City is capable of taking a Qwik application, no matter if it's a "webapp" or "website", and generate static HTML. Once it's generated as HTML, Qwik is fundamentally able to skip rebuilding the app by using [resumability](../../../(qwik)/concepts/resumable/index.mdx), since the app was already generated as HTML. Both Static Site Generation (SSG) and Server-Side Rendering (SSR) use the same process to generate the HTML. The main difference between the SSG and SSR however, is "when" the HTML is generated.
+Qwik City 能够接受 Qwik 应用程序（无论是“webapp”还是“website”），并生成静态 HTML。一旦生成为 HTML，Qwik 就能够通过使用[可恢复性](../../../(qwik)/concepts/resumable/index.mdx)跳过重新构建应用程序，因为应用程序已经生成为 HTML。静态站点生成（SSG）和服务器端渲染（SSR）使用相同的过程来生成 HTML。然而，SSG 和 SSR 之间的主要区别在于 HTML 的生成“时间”。
 
-In a traditional setup, SSG pre-renders each webpage at build-time, while SSR render's each webpage on-demand for each HTTP request. SSG only needs to generate the HTML one time per build, which is great for webpages where multiple visitors should see the same content. In contrast, SSR is great when the webpage may be different for each visitor, and would need to render custom HTML for each individual HTTP request.
+在传统的设置中，SSG 在构建时预渲染每个网页，而 SSR 在每个 HTTP 请求时渲染每个网页。SSG 只需要每次构建时生成一次 HTML，这对于多个访问者应该看到相同内容的网页非常有用。相比之下，SSR 对于每个访问者可能不同的网页非常有用，并且需要为每个单独的 HTTP 请求渲染自定义的 HTML。
 
-For example, SSG is ideal for a blog or docs site, where all the content should be the same for multiple visitors. While SSR may work fine for a blog, it may be an unnecessary strain for your HTTP servers to render the blog content for every visitor, even though they'd all end up seeing the same HTML.
+例如，SSG 对于博客或文档站点非常理想，因为所有内容对于多个访问者应该是相同的。虽然 SSR 对于博客可能也可以正常工作，但对于 HTTP 服务器来说，为每个访问者渲染博客内容可能是一种不必要的负担，尽管他们最终都会看到相同的 HTML。
 
-However, an account dashboard would commonly have different content for each signed-in user. In this setup, each user should get their own rendered HTML with their account information, rather than everyone seeing the exact same content. This is where SSR would be preferred.
+然而，账户仪表板通常对于每个已登录用户都有不同的内容。在这种设置中，每个用户都应该获得自己的渲染 HTML，其中包含他们的账户信息，而不是每个人都看到完全相同的内容。这就是 SSR 更受欢迎的地方。
 
-Ideally, the more you can do with static site generation the better, since that'll have less costs to your servers and faster response times.
+理想情况下，您能够尽可能多地使用静态站点生成，因为这将减少服务器成本并提高响应时间。
 
-With Qwik City however, the decision to use SSG or SSR, does not have to be one or the other decision. Instead, your own implementation can choose to have some route paths use SSG, while some other pages use SSR. It's entirely up to you and your requirements.
+然而，在 Qwik City 中，使用 SSG 还是 SSR 的决策不必是二选一的决策。相反，您自己的实现可以选择让某些路由路径使用 SSG，而其他页面使用 SSR。这完全取决于您和您的需求。
 
-## Static Site Generation Config
+## 静态站点生成配置
 
-Static site generation is created from the built in adapter, to create an adapter run:
+静态站点生成是通过内置的适配器创建的，要创建适配器，请运行：
 
 ```shell
 npm run qwik add static
 ```
 
-Select `Adapter: Static site (.html files)`. Done!
+选择 `Adapter: Static site (.html files)`。完成！
 
-### Changes
+### 更改
 
-Running the above command will make the following changes to your project:
+运行上述命令将自动对您的项目进行以下更改：
 
-- A `build.server` script will be automatically added to your `package.json` file.
-- A `adapters/static/vite.config.ts` file will be created.
+- 一个 `build.server` 脚本将自动添加到您的 `package.json` 文件中。
+- 将创建一个 `adapters/static/vite.config.ts` 文件。
 
-Your build files will be generated into the `dist` folder.
+您的构建文件将生成到 `dist` 文件夹中。
 
-You can build your static site using:
+您可以使用以下命令构建静态站点：
 
 ```shell
 npm run build
 ```
 
-### SSG Config
+### SSG 配置
 
-The `adapters/static/vite.config.ts` file also includes the SSG config, which would be custom for each implementation.
+`adapters/static/vite.config.ts` 文件还包括 SSG 配置，每个实现都可以自定义。
 
 #### `origin`
 
-The URL `origin`, which is a combination of the scheme (protocol) and hostname (domain). For example, `https://qwik.builder.io` has the protocol `https://` and domain `qwik.builder.io`. However, the `origin` does _not_ include a `pathname`.
+URL 的 `origin`，它是方案（协议）和主机名（域名）的组合。例如，`https://qwik.builder.io` 的协议是 `https://`，域名是 `qwik.builder.io`。然而，`origin` 不包括 `pathname`。
 
-The `origin` is used to provide a full URL during Static Site Generation (SSG), and to simulate a complete URL rather than just the `pathname`. For example, in order to render a correct canonical tag URL or URLs within the `sitemap.xml`, the `origin` must be provided too.
+在静态站点生成（SSG）期间，`origin` 用于提供完整的 URL，并模拟完整的 URL 而不仅仅是 `pathname`。例如，为了渲染正确的 canonical 标签 URL 或 `sitemap.xml` 中的 URL，必须提供 `origin`。
 
-If the site also starts with a pathname other than `/`, please use the `base` option in the Vite config options (the `basePathname` option in the Qwik City config options is deprecated).
+如果站点还以 `/` 之外的路径开始，请在 Vite 配置选项中使用 `base` 选项（Qwik City 配置选项中的 `basePathname` 选项已弃用）。
 
 #### `outDir`
 
-The `outDir` is a file system output directory where the static files should be written. In the example above, it's using Node's [fileURLToPath](https://nodejs.org/api/url.html#urlfileurltopathurl) to create an absolute file system path to write the static HTML files to.
+`outDir` 是一个文件系统输出目录，用于写入静态文件。在上面的示例中，它使用 Node 的 [fileURLToPath](https://nodejs.org/api/url.html#urlfileurltopathurl) 来创建一个绝对的文件系统路径，以便将静态 HTML 文件写入其中。
 
-### Javascript Runtimes
+### JavaScript 运行时
 
-For a Javascript project, it's quite common for the build's runtime to be built on top of [Node.js](https://nodejs.org/en/docs/). However, the core of Qwik City static site generation isn't tied to using only Node.js, which is why the `qwikCityGenerate()` function is imported from `@builder.io/qwik-city/static/node`. By scoping the generate function to a specific runtime, such as Node.js, this gives Qwik City the flexibility to also generate SSG from other runtimes in the future, such as [Deno](https://deno.land/) or [Bun](https://bun.sh/).
+对于 JavaScript 项目来说，构建的运行时通常是构建在 [Node.js](https://nodejs.org/en/docs/) 之上的。然而，Qwik City 静态站点生成的核心并不仅限于使用 Node.js，这就是为什么从 `@builder.io/qwik-city/static/node` 导入 `qwikCityGenerate()` 函数的原因。通过将生成函数限定在特定的运行时（例如 Node.js）范围内，Qwik City 也可以在将来从其他运行时（如 [Deno](https://deno.land/) 或 [Bun](https://bun.sh/)）生成 SSG。
 
-## Dynamic SSG Routes
+## 动态 SSG 路由
 
-So far, we've only discussed how to generate static HTML files for a single route path. However, in most cases, you'll want to generate HTML files for multiple route paths that has dynamic params. For example, a product site may have a route path for each product, such as `/product/:id`. In this case, you'll want to generate HTML files for each product page, which would require generating HTML files for each product ID.
+到目前为止，我们只讨论了如何为单个路由路径生成静态 HTML 文件。然而，在大多数情况下，您可能希望为具有动态参数的多个路由路径生成 HTML 文件。例如，产品站点可能对每个产品都有一个路由路径，例如 `/product/:id`。在这种情况下，您将希望为每个产品页面生成 HTML 文件，这将需要为每个产品 ID 生成 HTML 文件。
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -85,12 +85,12 @@ import { loadProductIds } from './load-product-ids';
 export default component$(() => {
   const { params } = useLocation();
 
-  return <p>Example: {params.id}</p>;
+  return <p>示例：{params.id}</p>;
 });
 
 export const onStaticGenerate: StaticGenerateHandler = async ({ env }) => {
-  // example of loading params for this use case
-  // every implementation will be different
+  // 加载此用例的参数示例
+  // 每个实现都会有所不同
   const ids = await loadProductIds({
     apiKey: env.get('API_KEY'),
   });
@@ -103,12 +103,11 @@ export const onStaticGenerate: StaticGenerateHandler = async ({ env }) => {
 };
 ```
 
-In the above example, the `onStaticGenerate()` function is loading the product IDs from a `loadProductIds()` function by requesting an API behind an API key retrieved from an environment variable.
-This function would be custom for each implementation, but the general idea is that you'll need to load the data for each product ID, and then generate HTML files for each product ID.
+在上面的示例中，`onStaticGenerate()` 函数通过从环境变量中检索的 API 密钥请求 API 来自 `loadProductIds()` 函数加载产品 ID。这个函数对于每个实现来说都是自定义的，但是一般的想法是您需要为每个产品 ID 加载数据，然后为每个产品 ID 生成 HTML 文件。
 
-The `onStaticGenerate` function should be exported from the top-level of the module, and should return an object with a `params` property. The `params` property should be an array of objects, where each object is a set of params for the route path. For example, if the route path is `/product/:id`, then the `params` array should be an array of objects with an `id` property.
+`onStaticGenerate` 函数应该从模块的顶层导出，并且应该返回一个带有 `params` 属性的对象。`params` 属性应该是一个对象数组，其中每个对象是路由路径的一组参数。例如，如果路由路径是 `/product/:id`，那么 `params` 数组应该是一个带有 `id` 属性的对象数组。
 
-The directory structure for this example would be:
+此示例的目录结构如下：
 
 ```bash
 src/
@@ -118,4 +117,4 @@ src/
             └── index.tsx
 ```
 
-Notice that the `index.tsx` file is inside a directory named `[id]`. This is a special directory name that tells Qwik City to generate HTML files for each `id` param. The `index.tsx` file is the default file that Qwik City will use when generating HTML files for a route path.
+请注意，`index.tsx` 文件位于名为 `[id]` 的目录中。这是一个特殊的目录名称，告诉 Qwik City 为每个 `id` 参数生成 HTML 文件。
