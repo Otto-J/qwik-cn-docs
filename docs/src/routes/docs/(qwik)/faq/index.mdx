@@ -1,5 +1,5 @@
 ---
-title: Frequently Asked Questions | Introduction
+title: 常见问题 | 介绍
 contributors:
   - tidiview
   - adamdbradley
@@ -30,43 +30,43 @@ contributors:
   - PatrickJS
 ---
 
-# FAQ
+# 常见问题
 
-## Is _@QwikDev_ a sentient AI?
+## _@QwikDev_ 是一个有意识的 AI 吗？
 
-Yes, and I am very funny too! [follow me](https://twitter.com/QwikDev)
+是的，而且我还非常有趣！[关注我](https://twitter.com/QwikDev)
 
-## Why is it called Qwik?
+## 为什么叫 Qwik？
 
-Originally it was called _qoot_, but we thought it would be too hard to search for. One friend of ours, [@patrickjs\_\_](https://twitter.com/PatrickJS__), came up with Qwik and after an internal poll at [builder.io](https://www.builder.io/), we changed it!
+最初它被称为 _qoot_，但我们认为这个名字很难搜索。我们的一位朋友 [@patrickjs\_\_](https://twitter.com/PatrickJS__) 提出了 Qwik 这个名字，经过 [builder.io](https://www.builder.io/) 的内部投票，我们决定采用这个名字！
 
-## How is Qwik different from other frameworks?
+## Qwik 与其他框架有什么不同？
 
-Qwik is the first framework that has similar DX (Developer Experience) as _React_, _Vue_, or _Svelte_ in how you author components, while delivering **Live HTML** that is instantly interactive. Qwik achieves this property by completely removing the need for hydration. Instead, Qwik applications immediately execute the event handlers on user interaction, without having to bootstrap all the app state. This technique is called [Resumability](../concepts/resumable/index.mdx).
+Qwik 是第一个在组件编写方面与 _React_、_Vue_ 或 _Svelte_ 具有相似 DX（开发者体验）的框架，同时提供即时交互的 **实时 HTML**。Qwik 通过完全消除水合作用来实现这一特性。相反，Qwik 应用程序会在用户交互时立即执行事件处理程序，而无需引导所有应用程序状态。这种技术被称为[可恢复性](../concepts/resumable/index.mdx)。
 
-The outcome is that developers write extremely performant applications by default, without even worrying about it. Applications built with Qwik are fast regardless of the number of components or complexity, they are O(1) (constant time) in terms of JS payload.
+结果是，开发人员无需担心，即使不做任何额外的工作，他们编写的应用程序也会自动具有极高的性能。使用 Qwik 构建的应用程序无论组件数量或复杂性如何，都具有出色的性能，它们在 JS 负载方面是 O(1)（常数时间）的。
 
-## Why another framework?
+## 为什么需要另一个框架？
 
-The short answer is that Qwik solves a problem that other frameworks can't solve. Qwik has instant-on startup performance no matter how complex the application is. Qwik apps deliver the same amount of initial JS regardless of the amount of components. [Qwik is the first open-source O(1) framework](https://www.builder.io/blog/our-current-frameworks-are-on-we-need-o1).
+简短的答案是，Qwik 解决了其他框架无法解决的问题。无论应用程序有多复杂，Qwik 都具有即时启动性能。Qwik 应用程序的初始 JS 量不受组件数量的影响。[Qwik 是第一个开源的 O(1) 框架](https://www.builder.io/blog/our-current-frameworks-are-on-we-need-o1)。
 
-## What is Qwik City?
+## Qwik City 是什么？
 
-[Qwik City](../../(qwikcity)/qwikcity/index.mdx) is just an extra set of APIs on top of Qwik. Think of it like _Qwik_ as the core, and _City_ as the extra APIs (routing, data loading, endpoints, etc.). We call it a meta-framework for Qwik. Qwik City is to Qwik, what Next.js is to React, what Nuxt is to Vue, or SvelteKit to Svelte.
+[Qwik City](../../(qwikcity)/qwikcity/index.mdx) 只是 Qwik 之上的一组额外的 API。可以将其视为 _Qwik_ 是核心，_City_ 是额外的 API（路由、数据加载、端点等）。我们将其称为 Qwik 的元框架。Qwik City 对于 Qwik 来说就像 Next.js 对于 React、Nuxt 对于 Vue、SvelteKit 对于 Svelte 一样。
 
-## Is Qwik hard to learn?
+## Qwik 难学吗？
 
-Qwik is designed with React (and other JSX based frameworks) in mind, ensuring it is [effortless to learn](/docs/(qwikcity)/guides/react-cheat-sheet/index.mdx) and promotes rapid productivity. Developing components is pretty much the same as React, and routing is inspired by Nextjs and others.
+Qwik 是以 React（和其他基于 JSX 的框架）为设计目标的，确保学习起来[轻松无压力](/docs/(qwikcity)/guides/react-cheat-sheet/index.mdx)，并提高开发效率。开发组件与 React 几乎相同，而路由则受到 Next.js 和其他框架的启发。
 
-However, there are fundamentally [new concepts](../concepts/think-qwik/index.mdx) to learn, such as [Resumability](../concepts/resumable/index.mdx) and fine-grained reactivity, but we think the learning curve is not steep.
+然而，还有一些[新概念](../concepts/think-qwik/index.mdx)需要学习，例如[可恢复性](../concepts/resumable/index.mdx)和细粒度的响应性，但我们认为学习曲线并不陡峭。
 
-We also have an interactive [tutorial](../../tutorial/welcome/overview/) to get you started.
+我们还有一个互动的[教程](../../tutorial/welcome/overview/)，可以帮助你入门。
 
-## What are all those `$` signs?
+## 那些 `$` 符号是什么意思？
 
-You might have noticed there are more [`$`](../advanced/dollar/index.mdx) signs than usual in Qwik apps, such as: [`component$()`](/docs/(qwik)/components/overview/index.mdx#component), [`useTask$()`](/docs/(qwik)/components/tasks/index.mdx#usetask), and `<div onClick$={() => console.log('click')} />`. It serves as a marker for a lazy-load boundary. Qwik breaks your application into small chunks; these pieces are smaller than the component itself. For event handlers, hooks, etc. The `$` signals to both the [optimizer](../advanced/optimizer/index.mdx) and the developer when it's happening.
+你可能已经注意到在 Qwik 应用程序中有比平常更多的 [`$`](../advanced/dollar/index.mdx) 符号，例如：[`component$()`](/docs/(qwik)/components/overview/index.mdx#component)、[`useTask$()`](/docs/(qwik)/components/tasks/index.mdx#usetask) 和 `<div onClick$={() => console.log('click')} />`。它们用作懒加载边界的标记。Qwik 将应用程序分解为小块；这些块比组件本身更小。对于事件处理程序、钩子等，`$` 同时向[优化器](../advanced/optimizer/index.mdx)和开发人员发出信号。
 
-**Example:**
+**示例：**
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -77,7 +77,7 @@ export default component$(() => {
 });
 ```
 
-Thanks to the `$` syntax, the component above is split into:
+由于 `$` 语法，上面的组件被拆分为：
 
 ```js title="app.js"
 import { componentQrl, qrl } from '@builder.io/qwik';
@@ -108,61 +108,61 @@ export const App_component_AkbU84a8zes = () => {
 export const App_component_p_onClick_01pEgC10cpw = () => console.log('hello');
 ```
 
-> Note: The `$` is not related to `jQuery`, Svelte or any other framework.
+> 注意：`$` 与 `jQuery`、Svelte 或任何其他框架无关。
 
-## Does Qwik download JS when the user interacts?
+## Qwik 在用户交互时会下载 JS 吗？
 
-Nope. In production, Qwik uses a lot of information generated during SSR (Server-Side Rendering) to start [pre-populating the cache](../../(qwikcity)/advanced/speculative-module-fetching/index.mdx) with only the bits of interactivity available on the current page as soon as possible. This way, when the user clicks or interacts, the JS is already in the cache.
+不会。在生产环境中，Qwik 使用 SSR（服务器端渲染）期间生成的大量信息，尽快地开始[预填充缓存](../../(qwikcity)/advanced/speculative-module-fetching/index.mdx)，仅将当前页面上的交互部分作为可用部分预先加载到缓存中。这样，当用户点击或交互时，JS 已经在缓存中了。
 
-## If Qwik still requests the JS, then what's the difference?
+## 如果 Qwik 仍然请求 JS，那有什么区别？
 
-Pre-populating the cache is not the same as parsing and executing JS, and Qwik does not execute JS until the user interacts.
+预填充缓存与解析和执行 JS 不同，Qwik 在用户交互之前不执行 JS。
 
-In addition, [Speculative Module Fetching](../../(qwikcity)/advanced/speculative-module-fetching/index.mdx) enables Qwik to prioritize the important parts of interactivity before the less important parts.
+此外，[预取模块](../../(qwikcity)/advanced/speculative-module-fetching/index.mdx)使得 Qwik 可以优先处理重要的交互部分，然后再处理不太重要的部分。
 
-For example, the "*Buy Now*" button is more important than the "*Add to Cart*" button, so Qwik will prefetch the "*Buy Now*" button first, and then the "*Add to Cart*" button.
+例如，“*立即购买*”按钮比“*添加到购物车*”按钮更重要，因此 Qwik 会首先预取“*立即购买*”按钮，然后再预取“*添加到购物车*”按钮。
 
-Qwik does not need to prefetch everything to start running, while other frameworks do need to download the whole critical path before they can start running because of [hydration](https://www.builder.io/blog/hydration-is-pure-overhead).
+Qwik 不需要预取所有内容才能开始运行，而其他框架需要在开始运行之前下载整个关键路径，因为[水合作用](https://www.builder.io/blog/hydration-is-pure-overhead)的原因。
 
-## Are Qwik apps slow on slow networks?
+## Qwik 应用在网络较慢的情况下会变慢吗？
 
-Not at all! Thanks to [Speculative Module Fetching](../../(qwikcity)/advanced/speculative-module-fetching/index.mdx) Qwik apps are not more affected by slow networks than other frameworks. In fact, because of the fine-grained bundling and resumability, Qwik apps can become interactive with much less JS, effectively making them faster on slow networks.
+完全不会！由于 [预取模块](../../(qwikcity)/advanced/speculative-module-fetching/index.mdx)，Qwik 应用在网络较慢的情况下不会比其他框架受到更大的影响。事实上，由于细粒度的打包和可恢复性，Qwik 应用在较少的 JS 下就可以实现交互，从而在网络较慢的情况下更快。
 
-## Does Qwik generate too many small files?
+## Qwik 会生成太多小文件吗？
 
-In dev mode Qwik generates a lot of small files because it uses the Dev [Vite.js](https://vitejs.dev/) server, but in production mode Qwik bundles files in a more efficient way.
+在开发模式下，Qwik 会生成很多小文件，因为它使用 Dev [Vite.js](https://vitejs.dev/) 服务器，但在生产模式下，Qwik 会以更高效的方式打包文件。
 
-## Why does Qwik use JSX? Is it React under the hood?
+## 为什么 Qwik 使用 JSX？它是 React 底层实现吗？
 
-Nope, React is not used at all. Qwik uses JSX as the template syntax.
+不是的，Qwik 根本不使用 React。Qwik 使用 JSX 作为模板语法。
 
-Notice that JSX is not React. In fact, JSX is only syntax without semantics. We chose JSX for several reasons:
+请注意，JSX 不是 React。实际上，JSX 只是语法，没有语义。我们选择 JSX 有几个原因：
 
-- **Familiar syntax:** It does not reinvent the wheel but leverages existing JS for loops, conditions, etc. [JSX spec is a surprisingly short read](https://facebook.github.io/jsx/)
-- **Ecosystem**: Well supported by IDEs, linters, security auditing tools, debugging tools, and highlighters.
-- **Similar to HTML**: JSX is visually and conceptually similar to HTML, a tree. Other template systems like _html templates_ (lit-html) are not trees but arrays of tokens, making it harder to build on top and transform.
-- **Popular**: By any margin, JSX is the most widely used template syntax in the world.
+- **熟悉的语法：** 它不是重复造轮子，而是利用现有的 JS 循环、条件等。[JSX 规范非常简短](https://facebook.github.io/jsx/)
+- **生态系统：** 得到 IDE、代码检查工具、安全审计工具、调试工具和高亮显示器的良好支持。
+- **类似于 HTML：** JSX 在视觉上和概念上与 HTML 类似，都是树形结构。而其他模板系统（如 _html templates_（lit-html））不是树形结构，而是令人难以构建和转换的令牌数组。
+- **流行：** 无论如何，JSX 都是世界上使用最广泛的模板语法。
 
-## Does Qwik use vDOM (Virtual DOM)?
+## Qwik 使用虚拟 DOM（vDOM）吗？
 
-The answer is somewhere in between:
+答案介于两者之间：
 
-You can think of it as a spectrum:
-- On one extreme is React which uses vDOM for everything all the time. (Good argument can be made that [vDOM is slow](https://svelte.dev/blog/virtual-dom-is-pure-overhead).)
-- On the other extreme is SolidJS which does not use vDOM at all. (Resulting in a very impressive performance.)
+你可以将其视为一个光谱：
+- 一个极端是 React，它始终使用 vDOM。（可以说 [vDOM 是慢的](https://svelte.dev/blog/virtual-dom-is-pure-overhead)。）
+- 另一个极端是 SolidJS，它根本不使用 vDOM。（导致非常出色的性能。）
 
-Qwik uses vDOM only sometimes, and other times it does what SolidJS does (direct DOM update.)
+Qwik 有时使用 vDOM，其他时候则像 SolidJS 那样（直接更新 DOM）。
 
-The way to think about it is as follows:
+思考方式如下：
 
-If the change in state does not have a structural change then Qwik will most likely not use vDOM. For example: 
-```ts title="No DOM structure change, only update value"
+如果状态的更改没有结构性变化，那么 Qwik 很可能不会使用 vDOM。例如：
+```ts title="没有 DOM 结构变化，只是更新值"
 export const NoStructuralChange = component$(() => {
   const count = useSignal(0);
 
   return (
     <>
-    {/* This will not cause vDOM to activate. (No DOM structure change, only update text value) */}
+    {/* 这不会触发 vDOM。（没有 DOM 结构变化，只是更新文本值） */}
      <div>Count: {count.value}</div>
      <button onClick$={() => count.value++}>+1</button>
     </>
@@ -170,8 +170,8 @@ export const NoStructuralChange = component$(() => {
 });
 ```
 
-Qwik will use vDOM when the change is structural. In the following example the DOM structure needs to be updated (replace `<h1>` with `<button>`) and so vDOM will be used for rendering:
-```ts title="DOM structure change"
+当发生结构性变化时，Qwik 会使用 vDOM。在下面的示例中，DOM 结构需要更新（将 `<h1>` 替换为 `<button>`），因此将使用 vDOM 进行渲染：
+```ts title="DOM 结构变化"
 export const StructuralChange = component$(() => {
   const isLoggedIn = useSignal(false);
   return (
@@ -183,120 +183,120 @@ export const StructuralChange = component$(() => {
 
 ```
 
-The big thing to understand (and the reason vDOM is not a performance problem in Qwik) is that in React when you invalidate a root component the vDOM for the whole tree gets created. In Qwik, the decision is made on a per-component basis.  And only for components that have structural change AND are actually changing their structure. If a component is structural (vDOM) but no change in structure is detected, then Qwik skips the component. You can think of it as auto-memoization of all components, this means that vDOM is only employed when the view is changing structurally. This is rare because in most cases the view only changes its values. 
+需要理解的重要事情（以及 vDOM 在 Qwik 中不会成为性能问题的原因）是，在 React 中，当你使根组件无效时，整个树的 vDOM 都会被创建。在 Qwik 中，决策是基于每个组件的基础上进行的。只有具有结构性变化且实际上正在更改其结构的组件才会使用 vDOM。如果组件是结构性的（vDOM），但没有检测到结构性变化，那么 Qwik 将跳过该组件。你可以将其视为所有组件的自动记忆化，这意味着只有在视图发生结构性变化时才会使用 vDOM。这种情况很少见，因为在大多数情况下，视图只会更改其值。
 
-> In short, Qwik uses vDOM, but significantly less than React in comparable situations.
+> 简而言之，Qwik 使用 vDOM，但在可比较的情况下远远少于 React。
 
-### Why use vDOM despite its negative reputation?
-1. Because vDOM has attractive DX properties, especially when you need dynamic components. 
-2. Because non-vDOM solution would require executing code at least once on startup to learn about the component structure. (Something which Qwik explicitly avoids.)
+### 为什么在具有负面声誉的情况下使用 vDOM？
+1. 因为 vDOM 具有吸引人的 DX 特性，特别是当你需要动态组件时。
+2. 因为非 vDOM 解决方案需要在启动时至少执行一次代码，以了解组件结构。这是 Qwik 明确避免的事情。
 
-For example:
+例如：
 
-```ts title="Dynamic components"
+```ts title="动态组件"
 const DynamicList = [ CompA, CompB, ...];
 export const DynamicExample = component$(() => {
   const idx = Math.floor(Math.random() * DynamicList.length);
   const Component = DynamicList[idx];
-  {/* Dynamically chose which component to render */}
+  {/* 动态选择要渲染的组件 */}
   return <Component/>; 
 })
 ```
-The above code `<Component/>` is super easy to understand. We are dynamically choosing a component to place there. But in [Solid](https://www.solidjs.com/docs/latest/api#dynamic), [Svelte](https://svelte.dev/tutorial/svelte-component), [Vue](https://v2.vuejs.org/v2/guide/components-dynamic-async.html), and [Angular](https://angular.io/api/common/NgTemplateOutlet), this gets complex (see links).
+上面的代码 `<Component/>` 非常容易理解。我们动态选择要放置的组件。但在 [Solid](https://www.solidjs.com/docs/latest/api#dynamic)、[Svelte](https://svelte.dev/tutorial/svelte-component)、[Vue](https://v2.vuejs.org/v2/guide/components-dynamic-async.html) 和 [Angular](https://angular.io/api/common/NgTemplateOutlet) 中，这变得复杂（请参阅链接）。
 
-We have the best of both worlds by using vDOM sparingly. During creation, we employ SSR, and most client updates are non-structural. When structural updates are necessary, they are localized to the specific component without affecting its children, thus containing any potential slowdown caused by vDOM.
+通过谨慎使用 vDOM，我们拥有了最佳的两个世界。在创建过程中，我们使用 SSR，大多数客户端更新都是非结构性的。当需要结构性更新时，它们仅限于特定组件，而不会影响其子组件，从而限制了 vDOM 可能引起的任何潜在的减速。
 
 
-## Is there a Router for Qwik?
+## Qwik 有路由器吗？
 
-Yes! [Qwik City](../../(qwikcity)/qwikcity/index.mdx) includes a directory-based router, inspired by Next.js and others.
+有！[Qwik City](../../(qwikcity)/qwikcity/index.mdx) 包括一个基于目录的路由器，受 Next.js 和其他框架的启发。
 
-## Do I need a server to deploy Qwik apps?
+## 部署 Qwik 应用程序需要服务器吗？
 
-You can easily deploy a Qwik app in any [serverless environment thanks to our adapters](/docs/deployments/index.mdx). We also support a [vanilla-node adapter](/docs/deployments/node/index.mdx) for Node.js-based servers, such as Express.
+你可以在任何[无服务器环境中轻松部署 Qwik 应用程序](/docs/deployments/index.mdx)。我们还支持[原生 Node 适配器](/docs/deployments/node/index.mdx)，用于基于 Node.js 的服务器，如 Express。
 
-If there is no need for SSR, you can deploy your Qwik app as a static site thanks to our [SSG (Static Site Generation) adapter](/docs/(qwikcity)/guides/static-site-generation/index.mdx).
+如果不需要 SSR，你可以将 Qwik 应用程序部署为静态站点，感谢我们的[SSG（静态站点生成）适配器](/docs/(qwikcity)/guides/static-site-generation/index.mdx)。
 
-## Which is faster: SPAs (Single-Page Application) or MPAs (Multi-Page Application)?
+## 哪个更快：SPA（单页应用）还是 MPA（多页应用）？
 
-It depends. For SPAs, most of the cost is paid upfront by downloading everything at the beginning of the session. So when a user interacts with the app, the cost is minimal.
+这取决于情况。对于 SPA，大部分成本都是在会话开始时下载所有内容。因此，当用户与应用程序交互时，成本很小。
 
-MPAs are extremely fast to load as they don't need to download as much JS as their SPA counterparts. However, when the user navigates, it usually requires a full page reload. A full page reload is usually super fast because browsers are extremely fast to download and parse HTML, but the MPA approach is not ideal for every project since sometimes, it's ideal to keep state between navigation, and SPA does that very well.
+MPA 的加载速度非常快，因为它们不需要下载与 SPA 相同数量的 JS。但是，当用户导航时，通常需要完整的页面重新加载。完整的页面重新加载通常非常快，因为浏览器非常快地下载和解析 HTML，但是 MPA 的方法并不适用于每个项目，因为有时最好在导航之间保持状态，而 SPA 可以很好地实现这一点。
 
-Qwik is a unique framework that is both an MPA and an SPA at the same time.
+Qwik 是一种独特的框架，同时是 MPA 和 SPA。
 
-## Can Qwik do SPA?
+## Qwik 能做 SPA 吗？
 
-Of course! [Qwik City](/docs/(qwikcity)/qwikcity/index.mdx) includes the `<Link>` component which triggers an SPA navigation.
-With Qwik, developers don't need to choose between an SPA or an MPA, every app is both at the same time.
+当然可以！[Qwik City](/docs/(qwikcity)/qwikcity/index.mdx) 包括 `<Link>` 组件，它触发 SPA 导航。
+使用 Qwik，开发人员不需要在 SPA 和 MPA 之间进行选择，每个应用程序同时具备这两个功能。
 
-MPA vs SPA is no longer an architectural decision taken at the beginning of the project, but a decision made for every link.
+MPA 和 SPA 不再是项目开始时的架构决策，而是每个链接的决策。
 
-## Can Qwik do Static Site Generation (SSG)?
+## Qwik 能做静态站点生成（SSG）吗？
 
-Yes! It's part of all Qwik City starters. Learn how to do [Static Site Generation here](/docs/(qwikcity)/guides/static-site-generation/index.mdx).
+可以！这是所有 Qwik City 起始模板的一部分。了解如何进行[静态站点生成](/docs/(qwikcity)/guides/static-site-generation/index.mdx)。
 
-## But... with other frameworks I can also create an MPA or an SPA?
+## 但是... 使用其他框架，我也可以创建 MPA 或 SPA 吗？
 
-Not quite, other frameworks suggest removing all the `<Scripts>` at the root to generate an MPA, effectively removing all the interactivity along with the SPA navigation.
+不完全是这样，其他框架建议删除根部的所有 `<Scripts>` 以生成 MPA，从而连同 SPA 导航一起删除所有交互性。
 
-And if scripts are _not_ removed, then each full-page reload becomes very expensive, because every page reload means that the framework needs to hydrate the entire page. Qwik, however, does not have a [hydration cost](https://www.builder.io/blog/hydration-is-pure-overhead) for each page load.
+如果不删除脚本，则每次完整页面重新加载都会非常昂贵，因为每次页面重新加载都意味着框架需要对整个页面进行水合。然而，Qwik 对于每个页面加载都没有[水合成本](https://www.builder.io/blog/hydration-is-pure-overhead)。
 
-## Will migrating to Qwik require a lot of effort?
+## 迁移到 Qwik 需要付出很大的努力吗？
 
-It depends. If you are coming from React, porting your components to Qwik should be straight forward. But on top of that, thanks to [`Qwik React`](/docs/integrations/react/index.mdx), you can use all of the React ecosystem, so you can use any of your React components, and any React library in a Qwik app.
+这取决于情况。如果你来自 React，将你的组件迁移到 Qwik 应该是直接的。此外，由于 [`Qwik React`](/docs/integrations/react/index.mdx)，你可以使用 React 生态系统的所有功能，因此可以在 Qwik 应用程序中使用任何 React 组件和任何 React 库。
 
-## Can I enjoy the rich React ecosystem?
+## 我可以享受丰富的 React 生态系统吗？
 
-Yes! Qwik can run React components natively, [check out the docs](/docs/integrations/react/index.mdx).
+可以！Qwik 可以原生运行 React 组件，[查看文档](/docs/integrations/react/index.mdx)。
 
-You will be amazed!
+你会感到惊讶！
 
-## Does Qwik do partial hydration?
+## Qwik 是否支持部分水合？
 
-No. Partial hydration (or island architecture), popularized by [Astro](https://astro.build/), is about breaking the app into islands of interactivity to avoid [full-page hydration](https://www.builder.io/blog/hydration-is-pure-overhead), where all existing components in the page need to be downloaded and executed.
+不支持。部分水合（或岛屿架构）是由 [Astro](https://astro.build/) 推广的一种将应用程序分解为交互性岛屿的方法，以避免[完整页面水合](https://www.builder.io/blog/hydration-is-pure-overhead)，其中需要下载和执行页面中的所有现有组件。
 
-For this to work, developers need to manually define the islands, and then manually describe in which situations they should be hydrated. The islands also cannot communicate with each other.
+为了使其工作，开发人员需要手动定义岛屿，然后手动描述何时应该进行水合。岛屿之间也无法相互通信。
 
-Instead, Qwik components do not hydrate at all. Qwik achieves this through a powerful serialization system that serializes only the necessary state in the reactivity graph. This way, the app can resume without eagerly running any JS.
+相反，Qwik 组件根本不进行水合。Qwik 通过一个强大的序列化系统实现了这一点，该系统仅序列化响应性图中所需的状态。这样，应用程序可以在不急切运行任何 JS 的情况下恢复。
 
-We think resumability scales without the negative trade-offs of partial hydration.
+我们认为可恢复性在没有部分水合的负面交换的情况下可以扩展。
 
-## In which languages is Qwik written?
+## Qwik 使用哪些语言编写？
 
-Most of Qwik is written in TypeScript, a superset of JavaScript that adds optional static typing and other features. However, the Qwik compiler (or optimizer) is written in Rust, a language that is very fast and memory efficient.
+Qwik 的大部分是使用 TypeScript 编写的，TypeScript 是一种添加了可选静态类型和其他功能的 JavaScript 超集。然而，Qwik 编译器（或优化器）是用 Rust 编写的，Rust 是一种非常快速和内存高效的语言。
 
-## Does Qwik have a community?
+## Qwik 有社区吗？
 
-Yes! there is a growing community of Qwik developers at [Discord](https://qwik.builder.io/chat) and [GitHub](https://github.com/BuilderIO/qwik). They are making amazing contributions to the framework, building sites at scale, and helping each other. [Join us](https://qwik.builder.io/chat).
+有！在 [Discord](https://qwik.builder.io/chat) 和 [GitHub](https://github.com/BuilderIO/qwik) 上有一个不断壮大的 Qwik 开发者社区。他们为框架做出了很多贡献，构建了大规模的网站，并相互帮助。[加入我们](https://qwik.builder.io/chat)。
 
-## Is Qwik an "Alex Russell Approved" framework?
+## Qwik 是 "Alex Russell 批准" 的框架吗？
 
-Yes! Alex Russell ([@slightlylate](https://twitter.com/slightlylate)), known for his contributions to PWAs, W3C TAG, WC, TC39 & ES6, Chrome Frame, Dojo, and more, is often highly critical of JavaScript frameworks. Nonetheless, [he approves of Qwik](https://infrequently.org/2023/02/the-market-for-lemons/#fn-alex-approved-1).
+是的！Alex Russell（[@slightlylate](https://twitter.com/slightlylate)）是众所周知的 PWA、W3C TAG、WC、TC39 和 ES6、Chrome Frame、Dojo 等的贡献者，他经常对 JavaScript 框架持高度批评态度。尽管如此，[他批准了 Qwik](https://infrequently.org/2023/02/the-market-for-lemons/#fn-alex-approved-1)。
 
-## Is Qwik production ready?
+## Qwik 已经准备好用于生产了吗？
 
-Yes! Qwik is already at version 1.1. Qwik has been in development for 3 years now. We are confident that Qwik is ready for production, and there are no expected breaking changes.
+是的！Qwik 已经达到了 1.1 版本。Qwik 已经开发了 3 年了。我们相信 Qwik 已经准备好用于生产，并且不会有预期的重大变化。
 
-[Builder.io](https://www.builder.io/) and a lot of teams are already using Qwik in production, so you will not be alone.
+[Builder.io](https://www.builder.io/) 和许多团队已经在生产中使用 Qwik，所以你不会孤单。
 
-## Is it true that Qwik serializes too much data in the HTML?
+## Qwik 在 HTML 中序列化了太多的数据，是真的吗？
 
-False. Qwik serializes only the data that is needed for the current page. If a page has 1000 components but only one is interactive the amount of data serialized is proportional to the amount of interactivity, not the amount of components.
+不是的。Qwik 仅序列化当前页面所需的数据。如果一个页面有 1000 个组件，但只有一个是交互式的，那么序列化的数据量与交互性的数量成比例，而不是组件的数量。
 
-## Who builds Qwik?
+## 谁构建了 Qwik？
 
-An amazing team of contributors around the world living in [Discord](https://qwik.builder.io/chat), and a few full time developers at [Builder.io](https://www.builder.io/): [Misko](https://twitter.com/mhevery), [Adam](https://twitter.com/adamdbradley) and [Manu Almeida](https://twitter.com/manucorporat).
+一个由全球各地的贡献者组成的令人惊奇的团队，他们在 [Discord](https://qwik.builder.io/chat) 上生活，并且还有一些全职开发人员在 [Builder.io](https://www.builder.io/)：[Misko](https://twitter.com/mhevery)、[Adam](https://twitter.com/adamdbradley) 和 [Manu Almeida](https://twitter.com/manucorporat)。
 
-## Is Qwik open source?
+## Qwik 是开源的吗？
 
-Yes, [MIT](https://github.com/BuilderIO/qwik/blob/main/LICENSE) and [dependency-free](https://github.com/BuilderIO/qwik/blob/main/packages/qwik/package.json), installing Qwik will not bloat your node_modules nor your lawyers.
+是的，[MIT](https://github.com/BuilderIO/qwik/blob/main/LICENSE) 许可证，且[无依赖](https://github.com/BuilderIO/qwik/blob/main/packages/qwik/package.json)，安装 Qwik 不会使你的 node_modules 或律师臃肿。
 
-## Does Qwik have any downsides?
+## Qwik 有什么缺点吗？
 
-Yes. Every framework, possessing its own strengths and weaknesses, involves a trade off.
+是的。每个框架都有自己的优点和缺点，都涉及权衡。
 
-1. As a relatively new JS framework, Qwik's community and ecosystem are still under development and while growing rapidly, you might not find ALL the possible community projects, patterns, and best practices you're used to from more popular frameworks yet.
-2. Qwik can load JS apps of any scale - instantly, so its main advantage over current technologies is on initial page load and time to interactive. If your use case is a single page app and you don't mind the time it takes your app to load, adopting Qwik at this stage might not offer you immediate benefits.
+1. 作为一个相对较新的 JS 框架，Qwik 的社区和生态系统仍在发展中，尽管发展迅速，但你可能还没有找到你从更受欢迎的框架中习惯的所有可能的社区项目、模式和最佳实践。
+2. Qwik 可以加载任何规模的 JS 应用程序 - 瞬间加载，因此它相对于当前技术的主要优势在于初始页面加载和交互时间。如果你的用例是单页面应用程序，并且不介意应用程序加载所需的时间，那么在这个阶段采用 Qwik 可能不会立即给你带来好处。
 
-We are constantly working on improving the developer experience and capabilities to make Qwik more delightful to use for any use case, so stay tuned.
+我们不断努力改进开发者体验和功能，使 Qwik 对于任何用例都更加令人愉快，因此请继续关注。
