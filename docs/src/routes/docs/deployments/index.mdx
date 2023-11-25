@@ -1,5 +1,5 @@
 ---
-title: 部署 | 指南
+title: Deployments | Guides
 contributors:
   - adamdbradley
   - samijaber
@@ -7,60 +7,60 @@ contributors:
   - mhevery
 ---
 
-# 部署
+# Deployments
 
-当你需要部署你的应用程序时，Qwik 提供了现成的集成，使得这个过程非常简单！
+When it's time to deploy your application, Qwik comes with ready-to-use integration that make this so easy!
 
 ```shell
 npm run qwik add
 ```
 
-## 适配器和中间件
+## Adapters and Middleware
 
-Qwik City 中间件是将服务器渲染框架（如 Cloudflare、Netlify、Vercel、Express 等）与 Qwik City 元框架连接起来的胶水代码。
+Qwik City middleware is a glue code that connects server rendering framework (such as Cloudflare, Netlify, Vercel, Express etc.) with the Qwik City meta-framework.
 
-## 生产构建
+## Production build
 
-当项目添加了新的集成时，会在 `package.json` 文件中添加一个 `build.server` 脚本。该脚本用于将项目构建为生产环境。
+When a new integration is added to the project, a `build.server` script is added to the `package.json` file. This script is used to build the project for production.
 
-你只需要运行以下命令：
+The only thing you need to do is to run the following command:
 
 ```shell
 npm run build
 ```
 
-> 在幕后，`build` 脚本将执行 `build.server` 和 `build.client` 脚本。
+> Under the hood, the `build` script will execute, `build.server` and `build.client` scripts.
 
-## 高级用法
+## Advanced
 
-`requestHandler()` 实用程序是上述每个中间件包使用的工具，用于将其请求/响应转换为 Qwik City 使用的标准格式。可以使用此函数为特定的服务器框架提供中间件。
+The `requestHandler()` utility is what each of the above middleware bundles uses in order to translate their request/response to a standard format for Qwik City to use. This function can be used to provide middleware for specific server frameworks.
 
-如果缺少中间件并且希望添加它，请查看如何使用 `requestHandler()` 实用程序处理上述每个中间件源代码的请求。更好的是，我们非常欢迎您的中间件贡献！[欢迎提交 PR](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/middleware)！
+If there's middleware missing and you'd like it added, take a look at how the `requestHandler()` utility is used to handle requests for each of the middleware source-code above. Better yet, we'd love to have your middleware contributions! [PR's are welcome](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/middleware)!
 
-## 添加新的部署
+## Add A New Deployment
 
-感谢您有兴趣为 Qwik 添加部署集成！我们非常乐意帮助您入门。在我们深入之前，如果已经有了您正在寻找的部署方式，我们非常欢迎您为其做出贡献。如果该部署方式尚不可用，让我们来添加它！
+Thanks for your interest in adding a deployment integration to Qwik! We're more than happy to help you get started. Before we get too far, if there's already a deployment for what you're looking for, we'd [love to have you contribute to it](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/adapters). If the deployment is not already available, let's add it!
 
-首先，最好是复制一个现有的适配器和中间件，并根据您的需求进行修改。部署由几个不同的部分组成：
+To start it's probably best to copy an existing adapters and middleware and modify it to fit your needs. A deployment is made up of a few different parts:
 
-### 添加适配器
+### Add An Adapter
 
-适配器是用于特殊构建配置所需的 Vite 配置的总结术语。每个服务器，无论是云服务还是自定义服务器，都有自己独特的构建配置，用于特定输出服务器使用。例如，[Cloudflare](/docs/deployments/cloudflare-pages/index.mdx)、[Netlify](/docs/deployments/netlify-edge/index.mdx) 和 [Node.js 服务器](/docs/deployments/node/index.mdx) 都有自己的构建配置。
+An adapter is the term used to summarize the Vite config that needed for the special build configuration. Each server, whether it's a cloud-service or a custom server, has its own unique build configuration for a specific output the server uses. For example, [Cloudflare](/docs/deployments/cloudflare-pages/index.mdx), [Netlify](/docs/deployments/netlify-edge/index.mdx) and [Node.js Server](/docs/deployments/node/index.mdx) each have their own build configurations.
 
-适配器实际上是一个扩展基本配置的 Vite 配置。基本配置对于所有适配器都是相同的，适配器配置是每个服务器的独特部分。
+The adapter is really a Vite config, that's extending the base config. The base config is the same for all adapters, and the adapter config is the unique part for each server.
 
-- [适配器源代码](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/adapters)
+- [Adapters Source](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/adapters)
 
-### 添加中间件
+### Add Middleware
 
-中间件是将服务器渲染框架（如 Cloudflare、Netlify、Vercel、Express 等）与 Qwik City 元框架连接起来的胶水代码。每个中间件负责处理来自服务器的请求和响应，并将其转换为 Qwik City 使用的标准格式。
+Middleware is the glue code that connects the server rendering framework (such as Cloudflare, Netlify, Vercel, Express etc.) with the Qwik City meta-framework. Each middleware is responsible for handling the request and response from the server and translating it to a standard format for Qwik City to use. 
 
-幸运的是，Qwik City 使用了标准化的 [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request) 和 [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) 接口，因此中间件通常非常简洁。
+Luckily Qwik City uses the standardized [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request) and [Response](https://developer.mozilla.org/en-US/docs/Web/API/Response) interfaces, so the middleware is usually pretty minimal.
 
-对于中间件，你会注意到每个中间件都调用了通用的 `@builder.io/qwik-city/middleware/request-handler` 包。每个中间件的工作是将请求和响应转换为 Qwik City 请求处理程序包使用的标准格式。
+For middleware, you'll notice that each one calls the common `@builder.io/qwik-city/middleware/request-handler` package. The job of each middleware is to translate the request and response to the standardized format that Qwik City request handler package uses.
 
-- [中间件源代码](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/middleware)
+- [Middleware Source](https://github.com/BuilderIO/qwik/tree/main/packages/qwik-city/middleware)
 
-### 添加到 Starter CLI
+### Add To The Starter CLI
 
-下一步是将新的适配器添加到 Starter CLI。对于这一步，最好在 [Discord](https://qwik.builder.io/chat) 上联系核心团队以帮助您入门。CLI 是添加新适配器的绝佳位置，因为它是测试新适配器并确保其按预期工作的绝佳方式。
+The next step is to add the new adapter to the Starter CLI. For this step it's probably best to ping the core team on [Discord](https://qwik.builder.io/chat) to help you get started. The CLI is a great place to add the new adapter, because it's a great way to test the new adapter and make sure it's working as expected.

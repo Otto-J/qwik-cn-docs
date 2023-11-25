@@ -1,6 +1,6 @@
 ---
-title: API 参考 | Qwik City
-description: Qwik City API 参考。
+title: API reference | Qwik City
+description: Qwik City API reference.
 contributors:
   - manucorporat
   - adamdbradley
@@ -18,64 +18,64 @@ contributors:
   - hamatoyogi
 ---
 
-# API 参考
+# API reference
 
 ## `useContent()`
 
-[`useContent()`](/docs/(qwikcity)/api/index.mdx#usecontent) 函数用于检索当前路由的最近内容信息。返回的对象包括：
+The [`useContent()`](/docs/(qwikcity)/api/index.mdx#usecontent) function retrieves the nearest content information for the current route. The returned object includes:
 
 ```ts
 headings: ContentHeading[] | undefined;
 menu: ContentMenu | undefined;
 ```
 
-`headings` 数组包含有关 markdown 文件的 `<h1>` 到 `<h6>` [html 标题元素](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements) 的数据。
+The `headings` array includes data about a markdown file's `<h1>` to `<h6>` [html heading elements](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements).
 
-菜单是使用 `menu.md` 文件声明的上下文数据。有关文件格式和位置的更多信息，请参见[菜单文件定义](/docs/(qwikcity)/advanced/menu/index.mdx)。
+Menus are contextual data declared with `menu.md` files. See [menus file definition](/docs/(qwikcity)/advanced/menu/index.mdx) for more information on the file format and location.
 
 ## `useDocumentHead()`
 
-使用 `useDocumentHead()` 函数读取文档的[头部元数据](/docs/(qwikcity)/pages/index.mdx#head-export)。
+Use the `useDocumentHead()` function to read the document [head metadata](/docs/(qwikcity)/pages/index.mdx#head-export).
 
-`useDocumentHead()` 检索只读的 `DocumentHead` 对象，其中包括：
+`useDocumentHead()` retrieves a readonly `DocumentHead` object that includes:
 
 ```ts
 export interface DocumentHead {
   /**
-   * 表示文档的 `<title>` 元素。
+   * Represents the `<title>` element of the document.
    */
   readonly title?: string;
   /**
-   * 用于在头部手动设置 meta 标签。此外，`data` 属性可用于设置任意数据，
-   * `<head>` 组件稍后
-   * 可以使用该数据生成 `<meta>` 标签。
+   * Used to manually set meta tags in the head. Additionally, the `data`
+   * property could be used to set arbitrary data which the `<head>` component
+   * could later use to generate `<meta>` tags.
    */
   readonly meta?: readonly DocumentMeta[];
   /**
-   * 用于在头部手动添加 `<link>` 元素。
+   * Used to manually append `<link>` elements to the `<head>`.
    */
   readonly links?: readonly DocumentLink[];
   /**
-   * 用于在头部手动添加 `<style>` 元素。
+   * Used to manually append `<style>` elements to the `<head>`.
    */
   readonly styles?: readonly DocumentStyle[];
   /**
-   * 包含自定义数据的任意对象。当从 
-   * markdown 文件创建文档头部时，不被识别为已知元名称（例如 title、description、author 等）的 
-   * frontmatter 属性将存储在此属性中。
+   * Arbitrary object containing custom data. When the document head is created from
+   * markdown files, the frontmatter attributes that are not recognized as a well-known
+   * meta names (such as title, description, author, etc...), are stored in this property.
    */
   readonly frontmatter?: Readonly<Record<string, any>>;
 }
 ```
 
-所有的起始器都包含一个 `<RouterHead>` 组件，该组件负责生成文档的 `<head>` 元素。它使用 `useDocumentHead()` 函数检索当前头部元数据并渲染相应的 `<meta>`、`<link>`、`<style>` 和 `<title>` 元素。
+All starters include a `<RouterHead>` component that is responsible for generating the `<head>` element of the document. It uses the `useDocumentHead()` function to retrieve the current head metadata and render the appropriate `<meta>`, `<link>`, `<style>` and `<title>` elements.
 
 ```tsx title="src/components/router-head/router-head.tsx"
 import { component$ } from '@builder.io/qwik';
 import { useDocumentHead } from '@builder.io/qwik-city';
 
 /**
- * RouterHead 组件位于文档的 `<head>` 元素内部。
+ * The RouterHead component is placed inside of the document `<head>` element.
  */
 export const RouterHead = component$(() => {
   const head = useDocumentHead();
@@ -105,38 +105,38 @@ export const RouterHead = component$(() => {
 
 ## `useLocation()`
 
-使用 [`useLocation()`](/docs/(qwikcity)/api/index.mdx#uselocation) 函数检索当前位置的 `RouteLocation` 对象。
+Use the [`useLocation()`](/docs/(qwikcity)/api/index.mdx#uselocation) function to retrieve a `RouteLocation` object for the current location.
 
-`useLocation()` 允许开发人员了解当前的 URL、参数以及应用程序当前是否正在导航，这对于显示加载指示器很有用。
+`useLocation()` allows developers to know the current URL, params as well as if the app is currently navigating, which is useful for showing a loading indicator.
 
 ```tsx
 export interface RouteLocation {
   /**
-   * 从 URL 中提取的路由参数。
+   * Route params extracted from the URL.
    */
   readonly params: Record<string, string>;
   /**
-   * 当前的 URL。
+   * The current URL.
    */
   readonly url: URL;
   /**
-   * 如果应用程序当前正在导航，则为 true。
+   * True if the app is currently navigating.
    */
   readonly isNavigating: boolean;
 }
 ```
 
-[`useLocation()`](/docs/(qwikcity)/api/index.mdx#uselocation) 的返回值类似于 `document.location`，但在没有全局 `location` 对象的服务器上使用是安全的，并且它是响应式的，因此可以进行跟踪。
+The return value of [`useLocation()`](/docs/(qwikcity)/api/index.mdx#uselocation) is similar to `document.location`, but it is safe to use on the server where there is no global `location` object, and it's reactive so it can be tracked.
 
-### 路径路由参数
+### Path Route Parameters
 
-`useLocation()` 将[路由参数](/docs/(qwikcity)/routing/index.mdx)编码为参数。
+`useLocation()` encodes the [Route Parameters](/docs/(qwikcity)/routing/index.mdx) as params.
 
-假设你有：
+Assume you have:
 
-- 文件：`src/routes/sku/[skuId]/index.tsx`
-- 用户导航到：`https://example.com/sku/1234`
-- 然后可以通过 `useLocation().params.skuId` 检索到 `skuId`
+- File: `src/routes/sku/[skuId]/index.tsx`
+- User navigates to: `https://example.com/sku/1234`
+- Then the `skuId` can be retrieved through `useLocation().params.skuId`
 
 ```tsx /useLocation/ title="src/routes/sku/[skuId]/index.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -156,7 +156,7 @@ export default component$(() => {
 });
 ```
 
-上述代码将生成：
+The above code would generate:
 
 ```html
 <h1>SKU</h1>
@@ -164,15 +164,15 @@ export default component$(() => {
 <p>skuId: 1234</p>
 ```
 
-> 请注意，`useLocation` 是一个只读 API，不应尝试更改返回的 `loc` 对象的值。而是查看 `useNavigate()` API。
+> Notice that `useLocation` is a read-only API, you should never attempt to mutate the values of the `loc` object returned. Instead look into the `useNavigate()` API.
 
 ## `useNavigate()`
 
-`useNavigate()` 函数允许以编程方式导航到下一页，而无需用户点击或导致整个页面重新加载。这是 `<Link>` 组件内部使用的 API，用于支持 SPA 导航。
+The `useNavigate()` function allows to programmatically navigate to the next page without involving a user click or causing a full-page reload. This is the API used by the `<Link>` component internally to support SPA navigation.
 
-此函数返回一个 `nav()` 函数，可用于“推送”到新路径。
+This function returns a `nav()` function that can be used to "push" to a new path.
 
-此外，`useNavigate` 可用于通过调用不带参数的 `nav()` 函数来刷新当前页面。
+Also, `useNavigate` can be used to SPA refresh the current page, by calling the `nav()` function without arguments.
 
 ```tsx {12,21} /useNavigate/
 import { component$ } from '@builder.io/qwik';
@@ -185,33 +185,33 @@ export default component$(() => {
     <>
       <button
         onClick$={async () => {
-          // SPA 导航到 /dashboard
+          // SPA navigate to /dashboard
           await nav('/dashboard');
         }}
       >
-        转到仪表板
+        Go to dashboard
       </button>
 
       <button
         onClick$={async() => {
-          // 刷新页面：不带参数调用
+          // refresh page: call without arguments
           await nav();
         }}
       >
-        刷新页面
+        Refresh page
       </button>
     </>
   );
 });
 ```
 
-此组件将有一个按钮，当点击时，Qwik City 将导航到 `/dashboard`，而不会导致页面重新加载。
+This component will have a button then when clicked, Qwik City will navigate to `/dashboard` without causing a page to reload.
 
-> 请注意，为了 SEO 和可访问性，最好使用 `<Link>` 组件而不是 `useNavigate()` 以编程方式在某些用户交互后导航到新页面。
+> Notice that for SEO, and accessibility it's better to use the `<Link>` component instead of `useNavigate()` programmatically to navigate to a new page after some user interaction.
 
 ## `routeLoader$()`
 
-`routeLoader$()` 函数用于在给定的页面/中间件或布局中声明新的服务器加载程序。Qwik City 将执行给定路由匹配的所有声明的加载程序。稍后，Qwik 组件可以通过导入它们并调用返回的自定义 hook 函数来检索数据。
+The `routeLoader$()` function is used to declare a new Server Loader in the given page/middleware or layout. Qwik City will execute all the declared loaders for the given route match. Qwik Components can later reference the loaders, by importing them and calling the returned custom hook function in order to retrieve the data.
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -229,27 +229,27 @@ export default component$(() => {
 });
 ```
 
-请参阅[路由加载程序](/docs/(qwikcity)/route-loader/index.mdx)部分了解更多信息。
+Please refer to the [Route Loader](/docs/(qwikcity)/route-loader/index.mdx) section for more information.
 
 ## `routeAction$()`
 
-`routeAction$()` 函数用于在给定的页面/中间件或布局中声明新的服务器操作。Qwik City 仅在某些用户交互（例如按钮点击或表单提交）后执行调用的操作。
+The `routeAction$()` function is used to declare a new Server Action in the given page/middleware or layout. Qwik City will execute only the invoked action after some user interaction (such as a button click or a form submission).
 
-请参阅[服务器操作](/docs/(qwikcity)/action/index.mdx)部分了解更多信息。
+Please refer to the [Server Actions](/docs/(qwikcity)/action/index.mdx) section for more information.
 
 ## `<QwikCityProvider>`
 
-`QwikCityProvider` 组件在现有文档中初始化 Qwik City，为 Qwik City 提供必要的上下文，例如 [`useContent()`](/docs/(qwikcity)/api/index.mdx#usecontent) 和 `useLocation()`。
+The `QwikCityProvider` component initializes Qwik City in the existing document, providing the necessary context for Qwik City to work, such as [`useContent()`](/docs/(qwikcity)/api/index.mdx#usecontent) and `useLocation()`.
 
-此组件通常位于应用程序的根部，大多数起始器中都可以在 `src/root.tsx` 文件中找到：
+This component is usually located at the very root of your application, in most of the starters you will find it in the `src/root.tsx` file:
 
 ```tsx title="src/root.tsx"
 export default component$(() => {
   /**
-   * QwikCity 站点的根始终以 <QwikCityProvider> 组件开始，
-   * 紧接着是文档的 <head> 和 <body>。
+   * The root of a QwikCity site always start with the <QwikCityProvider> component,
+   * immediately followed by the document's <head> and <body>.
    *
-   * 不要删除 `<head>` 和 `<body>` 元素。
+   * Don't remove the `<head>` and `<body>` elements.
    */
 
   return (
@@ -268,25 +268,25 @@ export default component$(() => {
 });
 ```
 
-> `QwikCityProvider` 不会渲染任何 DOM 元素，甚至不会匹配的路由，它只是初始化 Qwik City 核心逻辑，因此不应在同一个应用程序中使用多次。
+> `QwikCityProvider` does not render any DOM element, not even the matched route, it merely initializes Qwik City core logic, because of this reason, it should not be used more than once in the same app.
 
 ## `<RouterOutlet>`
 
-`RouterOutlet` 组件负责在给定时刻渲染匹配的路由，它使用 [`useContent()`](/docs/(qwikcity)/api/index.mdx#usecontent) 内部渲染当前页面以及所有嵌套的布局。
+The `RouterOutlet` component is responsible for rendering the matched route at a given moment, it uses internally the [`useContent()`](/docs/(qwikcity)/api/index.mdx#usecontent) to render the current page, as well as all the nested layouts.
 
-此组件通常作为 `<body>` 的子元素，大多数起始器中都可以在 `src/root.tsx` 文件中找到（参考 `QwikCityProvider` 的示例）。
+This component is usually located as a child of `<body>`, in most of the starters you will find it in the `src/root.tsx` file (refer to the example in `QwikCityProvider`).
 
 ## `<Form>`
 
-`Form` 组件是原生 `<form>` 元素的包装器，旨在与[服务器操作](/docs/(qwikcity)/action/index.mdx#using-actions-with-form)一起使用。
+The `Form` component is a wrapper around the native `<form>` element, and it's designed to work side by side with [Server Actions](/docs/(qwikcity)/action/index.mdx#using-actions-with-form).
 
-由于此组件使用原生的 `<form>` 元素，因此它可以在启用或禁用 JavaScript 的任何浏览器中使用。此外，它通过捕获 `submit` 事件并阻止默认行为来增强原生的 `<form>` 元素，因此它将像单页应用程序（SPA）而不是完整页面重新加载一样运行。
+Since this component uses the native `<form>` element, it will work with any browser with and without JavaScript enabled, in addition, it enhances the native `<form>` element by capturing the `submit` event and preventing the default behavior, so it will behave like an SPA (Single Page Application) instead of a full page reload.
 
 ```tsx title="src/routes/login/index.tsx"
 import { component$ } from '@builder.io/qwik';
 import { Form, routeAction$ } from '@builder.io/qwik-city';
 
-// 当表单提交时将调用此操作
+// this action will be called when the form is submitted
 export const useLoginAction = routeAction$((data, { cookies, redirect }) => {
   if (validate(data.username, data.password)) {
     cookies.set('auth', getAuthToken(data.username));
@@ -301,7 +301,7 @@ export default component$(() => {
     <Form action={login}>
       <input type="text" name="username" />
       <input type="password" name="password" />
-      <button type="submit">登录</button>
+      <button type="submit">Login</button>
     </Form>
   );
 });
@@ -309,11 +309,11 @@ export default component$(() => {
 
 ## `<Link>`
 
-`Link` 组件类似于 `<a>` 锚点元素，但不会导致整个页面重新加载，而是作为单页导航（SPA）进行导航。这在需要导航而不丢失当前状态时非常有用。
+The `Link` component works like the `<a>` anchor element, but instead of causing a full page to reload, it will navigate as a SPA (Single Page Navigation). This is useful if you need to navigate without losing your current state.
 
-> 请注意，Qwik 中的整页重新加载非常便宜，其他框架滥用 SPA 链接，因为整页重新加载需要 JS 来填充和重新执行所有内容。但 Qwik 不是这样的。我们在内部测试中发现，使用 `<a>` 通常会导致最流畅的交互。
+> Notice that full-page reloads in Qwik are extremely cheap, other frameworks abuse SPA links because a full-page reload requires JS to hydrate and re-execute everything. This is not the case for Qwik. We found in our internal testing that using `<a>` usually leads to the most snappy interactions.
 
-在幕后，`<Link>` 组件使用 [`useNavigate()`](/docs/(qwikcity)/api/index.mdx#usenavigate) API 并阻止原生 `<a>` 的默认行为：
+Under the hood, the `<Link>` component uses the [`useNavigate()`](/docs/(qwikcity)/api/index.mdx#usenavigate) API and prevents the default behavior of the native `<a>`:
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -336,7 +336,7 @@ export const Link = component$<LinkProps>((props) => {
 });
 ```
 
-### 用法
+### Usage
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -346,10 +346,10 @@ export default component$(() => {
   return (
     <div>
       <a href="/docs" class="my-link">
-        整页重新加载
+        full-page reload
       </a>
       <Link href="/docs" class="my-link">
-        SPA 导航
+        spa navigation
       </Link>
     </div>
   );

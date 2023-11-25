@@ -1,5 +1,5 @@
 ---
-title: 布局和中间件 | 指南
+title: Layout & Middleware | Guides
 contributors:
   - manucorporat
   - adamdbradley
@@ -9,18 +9,18 @@ contributors:
   - the-r3aper7
 ---
 
-# 嵌套布局
+# Nested layouts
 
-布局提供了一组路由的**嵌套 UI 和请求处理（中间件）**：
+Layouts provide **nested UI and request handling (middleware)** to a set of routes:
 
-- **共享请求处理**：通过添加 `onRequest` 方法实现。
-- **共享 UI**：通过 `export default` 一个 Qwik 组件实现。
+- **Shared request handling**: Accomplished by adding an `onRequest` method.
+- **Shared UI**: Accomplished by `export default` a Qwik component.
 
-## 示例
+## Example
 
-让我们将我们已经学到的所有概念结合起来构建一个完整的应用程序。
+Let's put together all the concepts we have learned so far to build a full app.
 
-在这个示例中，我们有一个包含两个页面的站点：`https://example.com` 和 `https://example.com/about`，我们希望为所有页面添加一个共同的页眉和页脚，页面之间唯一的区别是中间的内容。
+In the proposed example, we have a site with 2 pages: `https://example.com` and `https://example.com/about`, and we want to add a common header and footer to all the pages, the only difference between the pages is the content in the middle.
 
 ```
 ┌───────────────────────────────────────────────────┐
@@ -35,20 +35,20 @@ contributors:
 └───────────────────────────────────────────────────┘
 ```
 
-首先，我们创建三个组件：`<Header>`、`<Footer>` 和 `<Menu>`。
+First, we create three components: `<Header>`, `<Footer>`, and `<Menu>`.
 
-> 开发人员可以手动将这些组件复制粘贴到每个页面组件中，但这样做重复且容易出错，**相反，我们可以使用布局来自动重用公共部分**。
+> The developer could copy-paste these components manually into each page component, but that is repetitive and error-prone, **instead, we can use layouts to automatically reuse common parts.**
 
-### 路由目录
+### Routes directory
 
 ```bash
 src/
 ├── components/
-│   ├── header.tsx         # 页眉组件实现
-│   ├── footer.tsx         # 页脚组件实现
-│   └── menu.tsx           # 菜单组件实现
+│   ├── header.tsx         # Header component implementation
+│   ├── footer.tsx         # Footer component implementation
+│   └── menu.tsx           # Menu component implementation
 └── routes/
-    ├── layout.tsx         # 使用 <Header>、<Footer> 和 <Menu> 的布局实现
+    ├── layout.tsx         # Layout implementation using: <Header>, <Footer>, and <Menu>
     ├── about/
     │   └── index.tsx      # https://example.com/about
     └── index.tsx          # https://example.com
@@ -56,7 +56,7 @@ src/
 
 ### `src/routes/layout.tsx`
 
-它将用于 `src/routes` 目录下的所有路由。它将渲染 `Header`、`Menu` 和 `Footer` 组件，并在 `Slot` 组件下渲染嵌套路由。
+It will be used for all routes under the `src/routes` directory. It will render the `Header`, `Menu`, and `Footer` components, and also render the nested routes under the `Slot` component.
 
 ```tsx title="src/routes/layout.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -66,7 +66,7 @@ export default component$(() => {
     <>
       <Header />
       <Menu />
-      <Slot /> {/* <== 这是路由将被插入的地方 */}
+      <Slot /> {/* <== This is where the route will be inserted */}
       <Footer />
     </>
   );
@@ -75,29 +75,29 @@ export default component$(() => {
 
 ### `src/routes/index.tsx`
 
-这是站点的主要路由。它将在 `src/routes/layout.tsx` 文件的 `Slot` 组件下渲染，因此即使它没有任何 `Header`、`Menu` 或 `Footer` 组件，它仍然会与它们一起渲染。
+This is the main route for the site. It will be rendered under the `Slot` component in the `src/routes/layout.tsx` file, so even though it doesn't have any of the `Header`, `Menu`, or `Footer` components, it will still be rendered with them.
 
 ```tsx title="src/routes/index.tsx"
 import { component$ } from '@builder.io/qwik';
 
 export default component$(() => {
-  return <>主页</>;
+  return <>Home</>;
 });
 ```
 
 ### `src/routes/about/index.tsx`
 
-与 `src/routes/index.tsx` 文件相同，但用于 `about` 路由，同样它将在 `src/routes/layout.tsx` 文件的 `Slot` 组件下渲染，因此即使它没有任何 `Header`、`Menu` 或 `Footer` 组件，它仍然会与它们一起渲染。
+Same as the `src/routes/index.tsx` file, but for the `about` route, similary it will be rendered under the `Slot` component in the `src/routes/layout.tsx` file, so even though it doesn't have any of the `Header`, `Menu`, or `Footer` components, it will still be rendered with them.
 
 ```tsx title="src/routes/about/index.tsx"
 import { component$ } from '@builder.io/qwik';
 
 export default component$(() => {
-  return <>关于</>;
+  return <>About</>;
 });
 ```
 
-当我们运行应用程序时，Qwik 将在 `RootLayout` 中渲染 `About` 组件
+When we run the app, Qwik will render the `About` nested inside the `RootLayout`
 
 ```tsx
 <RootLayout>

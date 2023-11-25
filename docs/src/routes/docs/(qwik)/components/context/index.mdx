@@ -1,5 +1,5 @@
 ---
-title: 上下文 | 组件
+title: Context | Components
 contributors:
   - manucorporat
   - RATIU5
@@ -16,11 +16,11 @@ contributors:
 ---
 import CodeSandbox from '../../../../../components/code-sandbox/index.tsx';
 
-# 上下文
+# Context
 
-Qwik 提供了一个上下文 API，它解决了属性传递的问题，非常类似于 React 的函数 `useContext()`。事实上，Qwik 的上下文 API 是将数据传递给不同组件的最高效方式，减少了开销，生成了更少的代码，并允许 Qwik 更加彻底地 [摇树](https://developer.mozilla.org/en-US/docs/Glossary/Tree_shaking) 未使用的数据。
+Qwik provides a context API, which solves the problem of props drilling and it is very similar to React's functional `useContext()`. In fact, Qwik's context API is the most efficient way to pass down the data to different components, reducing overhead, generating less code, and allowing Qwik to [treeshake](https://developer.mozilla.org/en-US/docs/Glossary/Tree_shaking) unused data more heavily.
 
-Qwik 的上下文 API 由 3 个方法组成，可以从 `@builder.io/qwik` 导入：
+Qwik's context API is made of 3 methods, importable from `@builder.io/qwik`:
 
 - [`createContextId(contextName: string): ContextId`](#createcontextid)
 - [`useContextProvider(ctx: ContextId, value: VALUE): void`](#usecontextprovider)
@@ -64,11 +64,11 @@ const Child = component$(() => {
 </CodeSandbox>
 
 
-在上面的示例中，我们创建了一个名为 `docs.theme-context` 的 `ContextId`，然后使用它来为 `default` 组件提供一个 `useSignal`。然后，`Child` 组件使用 `useContext` 方法获取 `useSignal` 并渲染其值。
+In the above example, we are creating a `ContextId` with the name `docs.theme-context` and then using it to provide a `useSignal` to the `default` component. The `Child` component is then using the `useContext` method to get the `useSignal` and render its value.
 
 ## `createContextId()`
 
-此方法用于创建一个新的 `ContextId`。
+This method is used to create a new `ContextId`.
 
 ```tsx
 export interface GenericType {
@@ -78,19 +78,19 @@ export interface GenericType {
 export const QwikCityContext = createContextId<GenericType>(name: string): ContextId<GenericType>;
 ```
 
-### 参数
+### Parameters
 
-- `name`：作为上下文标识符给 `createContextId` 提供一个唯一的字符串。这将避免多个上下文时的冲突。建议使用命名约定，如 `io.builder.qwik.city`。
+- `name`: it is a unique string given to `createContextId` as an identifier of context. This will avoid conflicts when there are multiple contexts. It is advised to use a naming convention like `io.builder.qwik.city`.
 
-### 返回值
+### Returns
 
-请注意，`createContextId()` 返回的值不保存任何状态，它是一个不可变的 ID 对象，即 `{ id: 'io.builder.qwik.city' }`。它只用于描述上下文的名称和类型，就像地址或标识符一样。
+Notice that the value returned by `createContextId()` does not hold any state, it is an immutable ID object i.e. `{ id: 'io.builder.qwik.city' }`. It's only used to describe the name and type of the context, like an address or an identifier.
 
-由于它不保存任何状态，因此可以调用它并使其成为单例，并在某个共享模块中导出它。
+Since it does not hold any state, it's ok to call it and make it a singleton, and export it in some shared module.
 
 ## `useContextProvider()`
 
-此方法用于为特定组件及其后代创建上下文，使用 `ContextId` 作为上下文的键标识符。
+This method is used to create a Context for a specific component and its descendants, using the `ContextId` as the key identifier of the context.
 
 ```tsx {9, 10, 11} /QwikCityContext/#a /PlainArrayContext/#b /AppNameContext/#c title="src/components/Parent.tsx"
 import { component$, useStore, useContextProvider } from '@builder.io/qwik';
@@ -111,20 +111,20 @@ export const Parent = component$(() => {
 });
 ```
 
-### 参数
+### Parameters
 
-- `ContextId`：必须提供先前创建的上下文，它将作为提供的数据的标识符（第二个参数）。
+- `ContextId`: A previously created Context must be supplied which will serve as an identifier for the data being provided (second parameter).
 
-- `data`：可以提供任何数据类型，如 Qwik 的 useSignal、useStore、Array、Objects。
+- `data`: you can provide any data type like Qwik's useSignal, useStore, Array, Objects.
 
-### 注意事项
+### Caveats
 
-- 提供的值将不会在整个渲染树中全局可用，而只能在树中的后代组件中使用。
-- 如果在 SSR 过程中未使用上下文，则不会对其进行序列化。因此，如果您希望在客户端中可用上下文，即使在 SSR 过程中未使用它，也可以在父组件中调用 `useContext()` 强制进行序列化。
+- The provided value will not be globally available across the whole render tree, but only to descendant components in the tree.
+- If the context isn't used during SSR, it will not be serialized. So if you want to have the context available in the client even though you don't use it during SSR, you can call `useContext()` in the parent component to force it to be serialized.
 
 ## `useContext()`
 
-此方法用于获取由父组件**提供**的 `Context` 的值。
+This method is used to get the value of `Context` which is **provided** by Parent Component.
 
 ```tsx {4,5,6} /useContext/ /QwikCityContext/#a /PlainArrayContext/#b /AppNameContext/#c title="src/components/Children.tsx"
 import { component$, useContext } from '@builder.io/qwik';

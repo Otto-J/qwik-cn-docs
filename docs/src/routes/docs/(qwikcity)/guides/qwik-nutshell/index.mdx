@@ -1,24 +1,24 @@
 ---
-title: Qwik简介
-description: 在这个简短的介绍指南中了解Qwik的一般概念。
+title: Qwik in a nutshell | Introduction
+description: Learn the general concepts of Qwik in this shoet introduction guide.
 contributors:
   - manucorporat
   - AnthonyPAlicea
   - the-r3aper7
   - hamatoyogi
 ---
-# Qwik简介
+# Qwik in a nutshell
 
-## 组件
+## Components
 
-Qwik组件与React组件非常相似。它们是返回JSX的函数。然而，需要使用`component$(...)`，事件处理程序必须具有`$`后缀，使用`useSignal()`创建状态，使用`class`代替`className`等等。
+Qwik components are very similar to React components. They are functions that return JSX. However, `component$(...)` needs to be used, event handlers must have the `$` suffix, state is created using `useSignal()` , `class` is used instead of `className` and some other differences.
 
-- 组件总是使用`component$`函数声明。
-- 组件可以使用`useSignal`钩子创建响应式状态。
-- 事件处理程序使用`$`后缀声明。
-- 对于`<input>`，在Qwik中，`onChange`事件称为`onInput$`。
-- JSX更喜欢HTML属性。`class`代替`className`。`for`代替`htmlFor`。
-- 条件渲染使用三元运算符`?`和`&&`运算符，与React类似。
+- Components are always declared with the `component$` function.
+- Components can use the `useSignal` hook to create reactive state.
+- Event handlers are declared with the `$` suffix.
+- For `<input>`, the `onChange` event is called `onInput$` in Qwik.
+- JSX prefers HTML attributes. `class` instead of `className`. `for` instead of `htmlFor`.
+- Conditional rendering is done with the ternary operator `?` and the `&&` operator, just like React.
 
 
 ```tsx title="src/components/my-other-component/index.tsx"
@@ -33,22 +33,22 @@ export component$((props: { class?: ClassList }) => { // ✅
 ```tsx
 import { component$, useSignal } from '@builder.io/qwik';
 
-// 其他组件可以导入并在JSX中使用。
+// Other components can be imported and used in JSX.
 import { MyOtherComponent } from './my-other-component';
 
 interface MyComponentProps {
   step: number;
 }
 
-// 组件总是使用`component$`函数声明。
+// Components are always declared with the `component$` function.
 export const MyComponent = component$((props: MyComponentProps) => {
-  // 组件使用`useSignal`钩子创建响应式状态。
+  // Components use the `useSignal` hook to create reactive state.
   const count = useSignal(0); // { value: 0 }
   return (
     <>
       <button
         onClick$={() => {
-          // 事件处理程序具有`$`后缀。
+          // Event handlers have the `$` suffix.
           count.value = count.value + props.step;
         }}
       >
@@ -71,9 +71,9 @@ export const MyComponent = component$((props: MyComponentProps) => {
 });
 ```
 
-### 渲染项目列表
+### Rendering a list of items
 
-与React一样，您可以使用`map`函数渲染项目列表，但是列表中的每个项目必须具有唯一的`key`属性。`key`必须是字符串或数字，并且在列表中必须是唯一的。
+Like in React, you can render a list of items using the `map` function, however every item in the list must have a unique `key` property. The `key` must be a string, or number and must be unique within the list.
 
 ```tsx
 import { component$, useSignal } from '@builder.io/qwik';
@@ -93,9 +93,9 @@ export const PresidentsList = component$(() => {
 });
 ```
 
-### 重用事件处理程序
+### Reusing event handlers
 
-可以在JSX节点之间重用事件处理程序。通过使用`$(...handler...)`创建处理程序。
+Event handlers can be reused across JSX nodes. This is done by creating a handler using the `$(...handler...)`.
 
 ```tsx
 import { $, component$, useSignal } from '@builder.io/qwik';
@@ -104,11 +104,11 @@ interface MyComponentProps {
   step: number;
 }
 
-// 组件总是使用`component$`函数声明。
+// Components are always declared with the `component$` function.
 export const MyComponent = component$(() => {
   const count = useSignal(0);
 
-  // 注意事件处理程序函数周围的`$(...)`。
+  // Notice the `$(...)` around the event handler function.
   const inputHandler = $((event) => {
     console.log('input', event.target.name, event.target.value);
   });
@@ -125,12 +125,12 @@ export const MyComponent = component$(() => {
 });
 ```
 
-### 内容投影
+### Content projection
 
-内容投影通过`<Slot/>`组件完成，该组件从`@builder.io/qwik`导出。插槽可以命名，并且可以使用`q:slot`属性进行投影。
+Content projection is done by the `<Slot/>` component, which is exported from `@builder.io/qwik`. Slots can be named, and can be projected into using the `q:slot` attribute.
 
 ```tsx
-// 文件: src/components/Button/Button.tsx
+// File: src/components/Button/Button.tsx
 import { component$, Slot } from '@builder.io/qwik';
 import styles from './Button.module.css';
 
@@ -159,20 +159,20 @@ export default component$(() => {
 });
 ```
 
-### 使用钩子的规则
+### Rules of use hooks
 
-以`use`开头的方法在Qwik中是特殊的，例如`useSignal()`、`useStore()`、`useOn()`、`useTask$()`、`useLocation()`等。与React钩子非常相似。
+Methods that start with `use` are special in Qwik, such as `useSignal()`, `useStore()`, `useOn()`, `useTask$()`, `useLocation()` and so on. Very similar to React hooks.
 
-- 它们只能在`component$`内部调用。
-- 它们只能在`component$`的顶层调用，不能在条件或循环内部调用。
+- They can only be called within a component$.
+- They can only be called from the top level of a component$, not inside a conditional, or a loop.
 
-## 样式
+## Styling
 
-Qwik支持开箱即用的CSS模块，甚至支持Tailwind、全局CSS导入和使用`useStylesScoped$()`进行延迟加载的作用域CSS。CSS模块是样式化Qwik组件的推荐方式。
+Qwik supports out of the box, CSS modules, or even Tailwind, global CSS imports and lazy loading scoped CSS using `useStylesScoped$()`. CSS Modules are the recommended way to style Qwik components.
 
-### CSS模块
+### CSS Modules
 
-要使用CSS模块，只需创建一个`.module.css`文件。例如，`src/components/MyComponent/MyComponent.module.css`。
+To use CSS modules, simply create a `.module.css` file. For example, `src/components/MyComponent/MyComponent.module.css`.
 
 ```css title="src/components/MyComponent/MyComponent.module.css"
 .container {
@@ -180,7 +180,7 @@ Qwik支持开箱即用的CSS模块，甚至支持Tailwind、全局CSS导入和�
 }
 ```
 
-然后，在组件中导入CSS模块。
+Then, import the CSS module in your component.
 
 ```tsx title="src/components/MyComponent/MyComponent.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -191,19 +191,19 @@ export default component$(() => {
 });
 ```
 
-请记住，Qwik使用`class`而不是`className`来表示CSS类。
+Remember that Qwik uses `class` instead of `className` for CSS classes.
 
-## $(...)规则
+## $(...) rules
 
-以`$`结尾的`$(...)`函数和任何以`$`结尾的函数在Qwik中是特殊的，例如：`$()`、`useTask$()`、`useVisibleTask$()`...结尾的`$`表示延迟加载边界。适用于任何`$`函数的第一个参数的一些规则。它与jQuery无关。
+The `$(...)` function and any function that end with `$` are special in Qwik, such as: `$()`, `useTask$()`, `useVisibleTask$()`... The `$` at the end represents a lazy loading boundary. There are some rules that apply to the first argument of any `$` function. It is NOT related to jQuery at all.
 
-- 第一个参数必须是一个已导入的变量。
-- 第一个参数必须是同一模块顶层声明的变量。
-- 第一个参数必须是表达式中的任何变量。
-- 如果第一个参数是函数，则它只能捕获在同一模块的顶层声明的变量或其值可序列化的变量。可序列化的值包括：`string`、`number`、`boolean`、`null`、`undefined`、`Array`、`Object`、`Date`、`RegExp`、`Map`、`Set`、`BigInt`、`Promise`、`Error`、`JSX节点`、`Signal`、`Store`甚至HTMLElements。
+- The first argument must be an imported variable.
+- The first argument must be a declared variable at the top level of the same module.
+- The first argument must be an expression any variables.
+- If the first argument is a function, it can only capture variables that are declared at the top level of the same module or which value is serializable. Serializable values include: `string`, `number`, `boolean`, `null`, `undefined`, `Array`, `Object`, `Date`, `RegExp`, `Map`, `Set`, `BigInt`, `Promise`, `Error`, `JSX nodes`, `Signal`, `Store` and even HTMLElements.
 
 ```tsx
-// `$`函数的有效示例。
+// Valid examples of `$` functions.
 import { $, component$, useSignal } from '@builder.io/qwik';
 import { importedFunction } from './my-other-module';
 
@@ -212,21 +212,21 @@ export function exportedFunction() {
 }
 
 export default component$(() => {
-  // 第一个参数是一个函数。
+  // The first argument is a function.
   const valid1 = $((event) => {
     console.log('input', event.target.name, event.target.value);
   });
 
-  // 第一个参数是一个导入的标识符。
+  // The first argument is an imported identifier.
   const valid2 = $(importedFunction);
 
-  // 第一个参数是同一模块顶层声明的标识符。
+  // The first argument is an identifier declared at the top level of the same module.
   const valid3 = $(exportedFunction);
 
-  // 第一个参数是没有局部变量的表达式。
+  // The first argument is an expression without local variables.
   const valid4 = $([1, 2, { a: 'hello' }]);
 
-  // 第一个参数是捕获局部变量的函数。
+  // The first argument is a function that captures a local variable.
   const localVariable = 1;
   const valid5 = $((event) => {
     console.log('local variable', localVariable);
@@ -234,10 +234,10 @@ export default component$(() => {
 });
 ```
 
-以下是一些无效`$`函数的示例。
+Here are some examples of invalid `$` functions.
 
 ```tsx
-// `$`函数的无效示例。
+// Invalid examples of `$` functions.
 import { $, component$, useSignal } from '@builder.io/qwik';
 import { importedVariable } from './my-other-module';
 
@@ -245,30 +245,30 @@ export default component$(() => {
   const unserializable = new CustomClass();
   const localVariable = 1;
 
-  // 第一个参数是一个局部变量。
+  // The first argument is a local variable.
   const invalid1 = $(localVariable);
 
-  // 第一个参数是捕获不可序列化局部变量的函数。
+  // The first argument is a function that captures an unserializable local variable.
   const invalid2 = $((event) => {
     console.log('custom class', unserializable);
   });
 
-  // 第一个参数是使用局部变量的表达式。
+  // The first argument is an expression that uses a local variable.
   const invalid3 = $(localVariable + 1);
 
-  // 第一个参数是使用导入变量的表达式。
+  // The first argument is an expression that uses an imported variable.
   const invalid4 = $(importedVariable + 'hello');
 });
 ```
 
-## 响应式状态
+## Reactive state
 
 ### `useSignal(initialValue?)`
 
-`useSignal()`是创建响应式状态的主要方法。信号可以在组件之间共享，并且读取信号的每个组件、任务将在信号更改时重新渲染。
+`useSignal()` is the main way to create reactive state. Signals can be shared across components, and any component or task that reads the signal (executing: `signal.value`) will be rendered when the signal changes.
 
 ```ts
-// `Signal<T>`和`useSignal<T>`的TypeScript定义
+// Typescript definition for `Signal<T>` and `useSignal<T>`
 
 export interface Signal<T> {
   value: T;
@@ -277,35 +277,35 @@ export interface Signal<T> {
 export const useSignal: <T>(value?: T | (() => T)): Signal<T>;
 ```
 
-`useSignal(initialValue?)`接受一个可选的初始值，并返回一个`Signal<T>`对象。`Signal<T>`对象具有一个`value`属性，可以读取和写入该属性。当组件或任务访问`value`属性时，它会自动创建一个订阅，因此当`value`更改时，读取`value`的每个组件、任务或另一个计算信号都将重新计算。
+`useSignal(initialValue?)` takes an optional initial value and returns a `Signal<T>` object. The `Signal<T>` object has a `value` property that can be read and written to. When a component or task accesses the `value` property, it automatically creates a subscription, so when the `value` is changed, every component, task or another computed signals that read the `value` will be re-evaluated.
 
 ### `useStore(initialValue?)`
 
-`useStore(initialValue?)`与`useSignal`类似，但它创建一个响应式的JavaScript对象，使对象的每个属性都具有响应性，就像信号的`value`一样。在内部，`useStore`使用拦截所有属性访问的`Proxy`对象来使属性具有响应性。
+`useStore(initialValue?)` is similar to `useSignal` except that it creates a reactive javascript object, making every property of the object reactive, just like the `value` of a signal. Under the hood, `useStore` is implemented using a `Proxy` object that intercepts all property access, making the property reactive.
 
 ```ts
-// `useStore<T>`的TypeScript定义
+// Typescript definition `useStore<T>`
 
-// `Reactive<T>`是`T`类型的响应式版本，`T`的每个属性的行为都像`Signal<T>`一样。
+// The `Reactive<T>` is a reactive version of the `T` type, every property of `T` behaves like a `Signal<T>`.
 export interface Reactive<T extends Record<string, any>> extends T {}
 
 export interface StoreOptions {
-  // 如果`deep`为true，则存储的嵌套属性将包装在`Signal<T>`中。
+  // If `deep` is true, then nested property of the store will be wrapped in a `Signal<T>`.
   deep?: boolean;
 }
 export const useStore: <T>(value?: T | (() => T), options?: StoreOptions): Reactive<T>;
 ```
 
-在实践中，`useSignal`和`useStore`非常相似--`useSignal(0) === useStore({ value: 0 })`--但大多数情况下，`useSignal`更可取。`useStore`的一些用例包括：
+In practice, `useSignal` and `useStore` are very similar -- `useSignal(0) === useStore({ value: 0 })` -- but `useSignal` is preferable most of the time.  Some use cases for `useStore` are:
 
-- 当需要在数组中使用响应性时。
-- 当您想要一个可以轻松添加属性的响应式对象。
+- When you need reactivity in an array.
+- When you want a reactive object that you can easily add properties to.
 
 ```tsx
 import { component$, useStore } from '@builder.io/qwik';
 
 export const Counter = component$(() => {
-  // 使用`useStore`钩子创建响应式存储。
+  // The `useStore` hook is used to create a reactive store.
   const todoList = useStore(
     {
       array: [],
@@ -313,7 +313,7 @@ export const Counter = component$(() => {
     { deep: true }
   );
 
-  // todoList.array是一个响应式数组，因此我们可以将其推入其中，并且组件将重新渲染。
+  // todoList.array is a reactive array, so we can push to it and the component will re-render.
 
   return (
     <>
@@ -325,9 +325,9 @@ export const Counter = component$(() => {
               type="checkbox"
               checked={todo.completed}
               onInput$={() => {
-                // todoList是一个响应式存储
-                // 因为我们使用了`deep: true`，所以`todo`对象也是响应式的。
-                // 因此，我们可以更改`completed`属性，组件将重新渲染。
+                // todoList is a reactive store
+                // because we used `deep: true`, the `todo` object is also reactive.
+                // so we can change the `completed` property and the component will re-render.
                 todo.completed = !todo.completed;
               }}
             />
@@ -342,7 +342,7 @@ export const Counter = component$(() => {
 
 ### `useTask$(() => { ... })`
 
-`useTask$`用于创建异步任务。任务用于实现副作用、运行重型计算和异步代码作为渲染生命周期的一部分。`useTask$`任务在第一次渲染之前执行，并在跟踪的信号或存储更改时重新执行。
+`useTask$` is used to create an async task. Tasks are useful to implement side effects, running heavy computation and async code as part of the rendering lifecycle. `useTask$` tasks are executed before the first render, and subsequently whenever a tracked signal or store changes, the task is re-executed.
 
 ```tsx
 import { component$, useSignal, useTask$ } from '@builder.io/qwik';
@@ -351,25 +351,25 @@ export const Counter = component$(() => {
   const page = useSignal(0);
   const listOfUsers = useSignal([]);
 
-  // 使用`useTask$`钩子创建任务。
+  // The `useTask$` hook is used to create a task.
   useTask$(() => {
-    // 任务在第一次渲染之前执行。
+    // The task is executed before the first render.
     console.log('Task executed before first render');
   });
 
-  // 您可以创建多个任务，并且它们可以是异步的。
+  // You can create multiple tasks, and they can be async.
   useTask$(async (taskContext) => {
-    // 由于我们希望在`page`更改时重新运行任务，
-    // 我们需要跟踪它。
+    // Since we want to re-run the task whenever the `page` changes,
+    // we need to track it.
     taskContext.track(() => page.value);
     console.log('Task executed before the first render AND when page changes');
     console.log('Current page:', page.value);
 
-    // 任务可以运行异步代码，例如获取数据。
+    // Tasks can run async code, such as fetching data.
     const res = await fetch(`https://api.randomuser.me/?page=${page.value}`);
     const json = await res.json();
 
-    // 将值分配给信号将触发重新渲染。
+    // Assigning to a signal will trigger a re-render.
     listOfUsers.value = json.results;
   });
 
@@ -389,11 +389,11 @@ export const Counter = component$(() => {
 });
 ```
 
-`useTask$()`将在SSR期间在服务器上运行，在客户端上首次挂载组件时在浏览器上运行。因此，在任务中访问DOM API不是一个好主意，因为它们在服务器上不可用。相反，您应该使用事件处理程序或`useVisibleTask$()`在客户端上运行任务。
+`useTask$()` will run in the server during SSR, and in the browser if the component is first mounted on the client. Because of that, it's not a good idea to access DOM APIs in a task, since they will not be available on the server. Instead, you should use event handlers or `useVisibleTask$()` to run a task only on the client/browser.
 
 ### `useVisibleTask$(() => { ... })`
 
-`useVisibleTask$`用于创建仅在组件首次挂载到DOM后立即运行的任务。它类似于`useTask$`，但仅在客户端上运行，并在首次渲染后执行。因为它在渲染后执行，所以可以检查DOM或使用浏览器API。
+`useVisibleTask$` is used to create a task that happens right AFTER the component is first mounted in the DOM. It's similar to `useTask$` except that it only runs on the client, and it's executed after the first render. Because it's executed after the render, it's ok to inspect the DOM, or use browser APIs.
 
 ```tsx
 import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
@@ -401,15 +401,15 @@ import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
 export const Clock = component$(() => {
   const time = useSignal(0);
 
-  // 使用`useVisibleTask$`钩子创建一个任务，它在客户端上急切地运行。
+  // The `useVisibleTask$` hook is used to create a task that runs eagerly on the client.
   useVisibleTask$((taskContext) => {
-    // 由于此VisibleTask没有跟踪任何信号，它只会运行一次。
+    // Since this VisibleTask is not tracking any signals, it will only run once.
 
     const interval = setInterval(() => {
       time.value = new Date();
     }, 1000);
 
-    // 当组件卸载或任务重新运行时，将调用`cleanup`函数。
+    // The `cleanup` function is called when the component is unmounted, or when the task is re-run.
     taskContext.cleanup(() => clearInterval(interval));
   });
 
@@ -422,18 +422,18 @@ export const Clock = component$(() => {
 });
 ```
 
-由于Qwik在用户交互之前不执行任何浏览器上的Javascript代码，`useVisibleTask$()`是唯一在客户端上急切运行的API，这就是为什么它是执行以下操作的好地方：
+Since Qwik does NOT execute any Javascript on the browser before user interaction, `useVisibleTask$()` is the only API that will run eagerly on the client, which is why it's a good place to do things like:
 
-- 访问DOM API
-- 初始化仅在浏览器中的库
-- 运行分析代码
-- 启动动画或计时器。
+- Access DOM APIs
+- Initialize browser-only libraries
+- Run analytics code
+- Start an animation, or a timer.
 
-请注意，不应该使用`useVisibleTask$()`来获取数据，因为它不会在服务器上运行。相反，您应该使用`useTask$()`来获取数据，然后使用`useVisibleTask$()`执行诸如启动动画之类的操作。滥用`useVisibleTask$()`可能会导致性能问题。
+Note that `useVisibleTask$()` should not be used to fetch data, because it will not run on the server. Instead, you should use `useTask$()` to fetch data, and then use `useVisibleTask$()` to do things like start an animation. Abusing `useVisibleTask$()` can lead to poor performance.
 
-## 路由
+## Routing
 
-Qwik提供了基于文件的路由器，类似于Next.js，但有一些区别。路由器基于文件系统，特别是`src/routes/`。在`src/routes/`下的文件夹中创建一个新的`index.tsx`文件将创建一个新的路由。例如，`src/routes/home/index.tsx`将创建一个位于`/home/`的路由。
+Qwik comes with a file-based router, which is similar to Next.js, but with a few differences. The router is based on the file-system, specifically in `src/routes/`. Creating a new `index.tsx` file in a folder under `src/routes/` will create a new route. For example, `src/routes/home/index.tsx` will create a route at `/home/`.
 
 ```tsx title="src/routes/home/index.tsx"
 
@@ -444,11 +444,11 @@ export default component$(() => {
 });
 ```
 
-非常重要的是将组件作为默认导出进行导出，否则路由器将无法找到它。
+It is very important to export the component as the default export, otherwise the router will not be able to find it.
 
-### 路由参数
+### Route Parameters
 
-您可以通过在路由路径中添加包含`[param]`的文件夹来创建动态路由。例如，`src/routes/user/[id]/index.tsx`将创建一个位于`/user/:id/`的路由。为了访问路由参数，可以使用从`@builder.io/qwik-city`导出的`useLocation`钩子。
+You can create dynamic routes by adding a folder with `[param]` in the route path. For example, `src/routes/user/[id]/index.tsx` will create a route at `/user/:id/`. In order to access the route parameter, you can use the `useLocation` hook exported from `@builder.io/qwik-city`.
 
 ```tsx title="src/routes/user/[userID]/index.tsx"
 
@@ -467,11 +467,11 @@ export default component$(() => {
 });
 ```
 
-`useLocation()`返回一个响应式的`RouteLocation`对象，这意味着当路由更改时，它将重新渲染。`RouteLocation`对象具有以下属性：
+`useLocation()` returns a reactive `RouteLocation` object, meaning that it will re-render whenever the route changes. The `RouteLocation` object has the following properties:
 
 ```tsx
 /**
- * `useLocation()`返回的当前路由位置。
+ * The current route location returned by `useLocation()`.
  */
 export interface RouteLocation {
   readonly params: Readonly<Record<string, string>>;
@@ -480,9 +480,9 @@ export interface RouteLocation {
 }
 ```
 
-### 链接到其他路由
+### Linking to other routes
 
-要链接到其他路由，可以使用从`@builder.io/qwik-city`导出的`Link`组件。`Link`组件接受所有`<a>` HTMLAnchorElement的属性。唯一的区别是它将使用Qwik路由器进行SPA导航到路由，而不是进行完整的页面导航。
+To link to other routes, you can use the `Link` component exported from `@builder.io/qwik-city`. The `Link` component takes all the properties of the `<a>` HTMLAnchorElement. The only difference is that it will use the Qwik router to SPA navigate to the route instead of doing a full page navigation.
 
 ```tsx title="src/routes/index.tsx"
 
@@ -500,17 +500,17 @@ export default component$(() => {
 });
 ```
 
-## 获取/加载数据
+## Fetching / loading data
 
-从服务器加载数据的推荐方式是使用从`@builder.io/qwik-city`导出的`routeLoader$()`函数。`routeLoader$()`函数用于创建在路由渲染之前在服务器上执行的数据加载程序。`routeLoader$()`的返回值必须作为命名导出从路由文件中导出，即只能在`index.tsx`中使用，位于`src/routes/`内。
+The recommended way to load data from the server is to use the `routeLoader$()` function exported from `@builder.io/qwik-city`. The `routeLoader$()` function is used to create a data loader that will be executed on the server before the route is rendered. The return of `routeLoader$()` must be exported as a named export from the route file, ie, it can only be used in a `index.tsx`, inside of `src/routes/`.
 
 ```tsx title="src/routes/user/[userID]/index.tsx"
 
 import { component$ } from '@builder.io/qwik';
 import { routeLoader$ } from '@builder.io/qwik-city';
 
-// `routeLoader$()`函数用于创建在路由渲染之前在服务器上执行的数据加载程序。
-// `routeLoader$()`的返回值是一个自定义的use钩子，可以用于访问从`routeLoader$()`返回的数据。
+// The `routeLoader$()` function is used to create a data loader that will be executed on the server before the route is rendered.
+// The return of `routeLoader$()` is a custom use hook, which can be used to access the data returned from `routeLoader$()`.
 export const useUserData = routeLoader$(async (requestContext) => {
   const user = await db.table('users').get(requestContext.params.userID);
   return {
@@ -520,7 +520,7 @@ export const useUserData = routeLoader$(async (requestContext) => {
 });
 
 export default component$(() => {
-  // `useUserData`钩子将返回一个包含从`routeLoader$()`返回的数据的`Signal`，当导航更改并且重新运行`routeLoader$()`时，它将重新渲染组件。
+  // The `useUserData` hook will return a `Signal` containing the data returned from `routeLoader$()`, which will re-render the component, whenever the navigation changes, and the routeLoader$() is re-run.
   const userData = useUserData();
   return (
     <main>
@@ -531,9 +531,9 @@ export default component$(() => {
   );
 });
 
-// 导出的`head`函数用于设置路由的文档头。
+// Exported `head` function is used to set the document head for the route.
 export const head: DocumentHead = ({resolveValue}) => {
-  // 它可以使用`resolveValue()`方法从`routeLoader$()`解析值。
+  // It can use the `resolveValue()` method to resolve the value from `routeLoader$()`.
   const user = resolveValue(useUserData);
   return {
     title: `User: "${user.name}"`,
@@ -547,19 +547,19 @@ export const head: DocumentHead = ({resolveValue}) => {
 };
 ```
 
-`routeLoader$()`函数接受一个返回Promise的函数。该Promise在服务器上解析，解析后的值传递给`useCustomLoader$()`钩子。`useCustomLoader$()`钩子是由`routeLoader$()`函数创建的自定义钩子。`useCustomLoader$()`钩子返回一个包含从`routeLoader$()`函数返回的Promise的`Signal`。`useCustomLoader$()`钩子将在路由更改时重新渲染组件，并在重新运行`routeLoader$()`函数时重新运行。
+The `routeLoader$()` function takes a function that returns a promise. The promise is resolved on the server, and the resolved value is passed to the `useCustomLoader$()` hook. The `useCustomLoader$()` hook is a custom hook that is created by the `routeLoader$()` function. The `useCustomLoader$()` hook returns a `Signal` that contains the resolved value of the promise returned from the `routeLoader$()` function. The `useCustomLoader$()` hook will re-render the component whenever the route changes, and the `routeLoader$()` function is re-run.
 
-## 处理表单提交
+## Handle form submissions
 
-Qwik提供了从`@builder.io/qwik-city`导出的`routeAction$()` API来处理服务器上的表单请求。`routeAction$()`仅在表单提交时在服务器上执行。
+Qwik provides the `routeAction$()` API exported from `@builder.io/qwik-city` to handle form requests on the server. `routeAction$()` is only executed on the server when the form is submitted.
 
 ```tsx title="src/routes/user/[userID]/index.tsx"
 
 import { component$ } from '@builder.io/qwik';
 import { routeAction$, Form, zod$, z } from '@builder.io/qwik-city';
 
-// `routeAction$()`函数用于创建在表单提交时在服务器上执行的数据加载程序。
-// `routeAction$()`的返回值是一个自定义的use钩子，可以用于访问从`routeAction$()`返回的数据。
+// The `routeAction$()` function is used to create a data loader that will be executed on the server when the form is submitted.
+// The return of `routeAction$()` is a custom use hook, which can be used to access the data returned from `routeAction$()`.
 export const useUserUpdate = routeAction$(async (data, requestContext) => {
   const user = await db.table('users').get(requestContext.params.userID);
   user.name = data.name;
@@ -574,13 +574,13 @@ export const useUserUpdate = routeAction$(async (data, requestContext) => {
 }));
 
 export default component$(() => {
-  // `useUserUpdate`钩子将返回一个包含从`routeAction$()`返回的`value`的`ActionStore<T>`，以及其他一些属性，例如`submit()`，用于以编程方式提交表单，和`isRunning`。所有这些属性都是响应式的，当它们更改时，将重新渲染组件。
+  // The `useUserUpdate` hook will return an `ActionStore<T>` containing the `value` returned from `routeAction$()`, and some other properties, such as `submit()`, which is used to submit the form programmatically, and `isRunning`. All of these properties are reactive, and will re-render the component whenever they change.
   const userData = useUserUpdate();
-  // userData.value是从`routeAction$()`返回的值，在提交表单之前为`undefined`。
-  // userData.formData是提交的表单数据，在提交表单之前为`undefined`。
-  // userData.isRunning是一个布尔值，当表单正在提交时为true。
-  // userData.submit()是一个函数，可用于以编程方式提交表单。
-  // userData.actionPath是操作的路径，用于提交表单。
+  // userData.value is the value returned from `routeAction$()`, which is `undefined` before the form is submitted.
+  // userData.formData is the form data that was submitted, it is `undefined` before the form is submitted.
+  // userData.isRunning is a boolean that is true when the form is being submitted.
+  // userData.submit() is a function that can be used to submit the form programmatically.
+  // userData.actionPath is the path to the action, which is used to submit the form.
   return (
     <main>
       <h1>User data</h1>
@@ -598,7 +598,7 @@ export default component$(() => {
 });
 ```
 
-`routeAction$()`用于处理表单提交和其他操作的特殊组件，仅在服务器上执行。例如，您可以使用它将用户添加到数据库，然后重定向到用户配置文件页面。
+The `routeAction$()` is used on pair with the `Form` component exported from `@builder.io/qwik-city`. The `Form` component is a wrapper around the native HTML `<form>` element. The `Form` component takes an `ActionStore<T>` as the `action` property. The `ActionStore<T>` is the return value of the `routeAction$()` function.
 
 
 ## Run code only in the browser
@@ -647,19 +647,19 @@ export default component$(() => {
 
 ### `useVisibleTask$(() => { ... })`
 
-此API声明了一个仅在浏览器中运行的VisibleTask。它永远不会在服务器上运行。
+This API will declare a VisibleTask that is ensured to run only on the client/browser. It will never run on the server.
 
-### JSX事件处理程序
+### JSX event handlers
 
-仅在客户端上执行JSX处理程序，例如`onClick$`和`onInput$`。这是因为它们是DOM事件，由于服务器上没有DOM，因此它们不会在服务器上执行。
+JSX handlers such as `onClick$` and `onInput$` are only executed on the client. This is because they are DOM events, since there is no DOM on the server, they will not be executed on the server.
 
-### `isServer`条件
+### `isBrowser` conditional
 
-Qwik提供了一个从`@builder.io/qwik/build`导出的`isServer`布尔值。您可以使用它来确保代码仅在服务器上运行。
+Qwik provides an `isBrowser` boolean exported from `@builder.io/qwik/build`. You can use this to ensure that code only runs in the browser.
 
-## 仅在服务器上运行代码
+## Run code only on the server
 
-有时您需要仅在服务器上运行代码，例如获取数据或访问数据库。为了解决这个问题，Qwik提供了一些仅在服务器上运行代码的API。
+Sometimes you need to run code only on the server, such as fetching data or accessing a database. To solve this problem, Qwik provides a few APIs to run code only on the server.
 
 ```tsx
 import { component$, useTask$ } from '@builder.io/qwik';
@@ -668,14 +668,14 @@ import { isServer } from '@builder.io/qwik/build';
 
 
 export const useGetProducts = routeLoader$((requestEvent) => {
-  // 此代码仅在服务器上运行
+  // This code will only run on the server
   const db = await openDB(requestEvent.env.get('DB_PRIVATE_KEY'));
   const product = await db.table('products').select();
   return product;
 })
 
 const encryptOnServer = server$(function(message: string) {
-  // `this`是`requestEvent`
+  // `this` is the `requestEvent
   const secretKey = this.env.get('SECRET_KEY');
   const encryptedMessage = encrypt(message, secretKey);
   return encryptedMessage;
@@ -684,7 +684,7 @@ const encryptOnServer = server$(function(message: string) {
 export default component$(() => {
   useTask$(() => {
     if (isServer) {
-      // 此代码仅在服务器上运行，仅在组件首次在服务器上渲染时运行
+      // This code will only run on the server only when the component is first rendered in the server
     }
   });
 
@@ -692,7 +692,7 @@ export default component$(() => {
     <>
       <button
         onClick$={server$(() => {
-          // 此代码仅在服务器上运行，仅在单击按钮时运行
+          // This code will only run on the server when the button is clicked
         })}
       >
         Click me
@@ -700,7 +700,7 @@ export default component$(() => {
 
       <button
         onClick$={() => {
-          // 此代码将调用服务器函数，并等待结果
+          // This code will call the server function, and wait for the result
           const encrypted = await encryptOnServer('Hello world');
           console.log(encrypted);
         }}
@@ -714,16 +714,16 @@ export default component$(() => {
 
 ### `routeAction$()`
 
-`routeAction$()`是仅在服务器上执行的特殊组件。它用于处理表单提交和其他操作。例如，您可以使用它将用户添加到数据库，然后重定向到用户配置文件页面。
+The `routeAction$()` is a special component that is only executed on the server. It's used to handle form submissions, and other actions. For example, you can use it to add a user to a database, and then redirect to the user profile page.
 
 ### `routeLoader$()`
 
-`routeLoader$()`是仅在服务器上执行的特殊组件。它用于获取数据，然后渲染页面。例如，您可以使用它从API获取数据，然后使用数据渲染页面。
+The `routeLoader$()` is a special component that is only executed on the server. It's used to fetch data, and then render the page. For example, you can use it to fetch data from an API, and then render the page with the data.
 
 ### `server$((...args) => { ... })`
 
-`server$()`是一种特殊的方式来声明仅在服务器上运行的函数。如果从客户端调用它们，它们将像RPC调用一样在服务器上执行。它们可以接受任何可序列化的参数，并返回任何可序列化的值。
+The `server$()` is a special way to declare functions that only run on the server. If called from the client, they will behave like an RPC call, and will be executed on the server. They can take any serializable arguments, and return any serializable value.
 
-### `isServer`条件
+### `isServer` conditional
 
-Qwik提供了一个从`@builder.io/qwik/build`导出的`isServer`布尔值。您可以使用它来确保代码仅在服务器上运行。
+Qwik provides a `isServer` boolean exported from `@builder.io/qwik/build`. You can use this to ensure that code only runs on the server.
