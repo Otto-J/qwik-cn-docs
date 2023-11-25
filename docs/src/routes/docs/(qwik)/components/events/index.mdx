@@ -1,5 +1,5 @@
 ---
-title: Events | Components
+title: 事件 | 组件
 contributors:
   - voluntadpear
   - the-r3aper7
@@ -20,17 +20,17 @@ contributors:
 
 import CodeSandbox from '../../../../../components/code-sandbox/index.tsx';
 
-# Events
+# 事件
 
-For a web application to be interactive, there needs to be a way to respond to user events. This is done by registering callback functions in the JSX template. Event handlers are registered using the `on{EventName}$` attribute. For example, the `onClick$` attribute is used to listen for `click` events.
+为了使 Web 应用程序具有交互性，需要一种响应用户事件的方式。这可以通过在 JSX 模板中注册回调函数来实现。事件处理程序使用 `on{EventName}$` 属性进行注册。例如，`onClick$` 属性用于监听 `click` 事件。
 
 ```tsx /onClick$/
-<button onClick$={() => alert('CLICKED!')}>click me!</button>
+<button onClick$={() => alert('点击了！')}>点击我！</button>
 ```
 
-## Inline handler
+## 内联处理程序
 
-In the following example, the `onClick$` attribute of the `<button>` element is used to let Qwik know that a callback `() => store.count++` should be executed whenever the `click` event is fired by the `<button>`.
+在下面的示例中，`<button>` 元素的 `onClick$` 属性用于告诉 Qwik，每当 `<button>` 触发 `click` 事件时，应执行回调函数 `() => store.count++`。
 
 <CodeSandbox src="/src/routes/demo/state/counter-signal/index.tsx" style={{ height: '6em' }}>
 ```tsx {7} /onClick$/
@@ -41,22 +41,22 @@ export default component$(() => {
 
   return (
     <button onClick$={() => count.value++}>
-      Increment {count.value}
+      增加 {count.value}
     </button>
   );
 });
 ```
 </CodeSandbox>
 
-Notice that `onClick$` ends with [`$`](/docs/(qwik)/advanced/dollar/index.mdx). This is a hint to both the [Optimizer](/docs/(qwik)/advanced/optimizer/index.mdx) and the developer that a special transformation occurs at this location. The presence of the `$` suffix implies a lazy-loaded boundary here. The code associated with the `click` handler will not be loaded into the JavaScript VM until the user triggers the `click` event, however, it will be [loaded into the browser cache](/docs/advanced/speculative-module-fetching/) eagerly so as not to cause delays on first interactions.
+请注意，`onClick$` 以 [`$`](/docs/(qwik)/advanced/dollar/index.mdx) 结尾。这是对 [Optimizer](/docs/(qwik)/advanced/optimizer/index.mdx) 和开发人员的提示，表示在此位置发生了特殊的转换。`$` 后缀的存在意味着此处存在延迟加载边界。与 `click` 处理程序相关的代码直到用户触发 `click` 事件之前不会加载到 JavaScript VM 中，但它将急切地 [加载到浏览器缓存](/docs/advanced/speculative-module-fetching/) 中，以免在首次交互时造成延迟。
 
-> In real-world applications, the listener may refer to complex code. By creating a lazy-loaded boundary (with the `$`), Qwik can tree-shake all of the code behind the click listener and delay its loading until the user clicks the button.
+> 在实际应用中，监听器可能引用复杂的代码。通过创建延迟加载边界（使用 `$`），Qwik 可以树摇所有与点击监听器相关的代码，并延迟其加载，直到用户点击按钮。
 
-## Reusing event handlers
+## 重用事件处理程序
 
-If we want to reuse the same event handler for multiple elements or event, we need to import `$` from `@builder.io/qwik` and wrap the event handler in it.
+如果我们想要为多个元素或事件重用相同的事件处理程序，我们需要从 `@builder.io/qwik` 导入 `$`，并将事件处理程序包装在其中。
 
-This way we must extract the event handler into a [`QRLs`](/docs/advanced/qrl/) and pass it to the event listener.
+这样，我们必须将事件处理程序提取到 [`QRLs`](/docs/advanced/qrl/) 中，并将其传递给事件监听器。
 
 <CodeSandbox src="/src/routes/demo/events/extracted-handler/index.tsx" style={{ height: '6em' }}>
 ```tsx {5} /increment/#a
@@ -76,11 +76,11 @@ export default component$(() => {
 </CodeSandbox>
 
 
-> **Note:** If you extract the event handler then you must manually wrap the event handler in the `$(...handler...)` so that it can be lazy attached.
+> **注意：** 如果你提取事件处理程序，那么你必须手动将事件处理程序包装在 `$(...handler...)` 中，以便可以进行延迟附加。
 
-## Multiple event handlers
+## 多个事件处理程序
 
-If we want to register multiple event handlers for the same event, we can pass an array of event handlers to the `on{EventName}$` attribute.
+如果我们想要为同一个事件注册多个事件处理程序，我们可以将事件处理程序的数组传递给 `on{EventName}$` 属性。
 
 ```tsx /onClick$/
 import { component$, useSignal, $ } from '@builder.io/qwik';
@@ -90,7 +90,7 @@ export default component$(() => {
   const print = $((ev) => console.log('CLICKED!', ev));
   const increment = $(() => count.value++);
 
-  // The button when clicked will print "CLICKED!" to the console, increment the count and send an event to Google Analytics.
+  // 当按钮被点击时，将在控制台打印 "CLICKED!"，增加计数，并向 Google Analytics 发送一个事件。
   return (
     <button
       onClick$={[print, increment, $(() => {
@@ -103,9 +103,9 @@ export default component$(() => {
 });
 ```
 
-## Event object
+## 事件对象
 
-The first argument of the event handler is the `Event` object. This object contains information about the event that triggered the handler. For example, the `Event` object for a `click` event contains information about the mouse position and the element that was clicked. You can check out the [MDN docs to know more details about each DOM event](https://developer.mozilla.org/en-US/docs/Web/API/Event).
+事件处理程序的第一个参数是 `Event` 对象。该对象包含有关触发处理程序的事件的信息。例如，`click` 事件的 `Event` 对象包含有关鼠标位置和被点击的元素的信息。你可以查看 [MDN 文档](https://developer.mozilla.org/en-US/docs/Web/API/Event) 以了解有关每个 DOM 事件的更多详细信息。
 
 <CodeSandbox src="/src/routes/demo/events/mouse-position/index.tsx" style={{ height: '6em' }}>
 ```tsx /event/
@@ -119,7 +119,7 @@ export default component$(() => {
       style="height: 100vh"
     >
       <p>
-        Clicked at: ({position.value?.x}, {position.value?.y})
+        点击位置：({position.value?.x}, {position.value?.y})
       </p>
     </div>
   );
@@ -127,16 +127,16 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-## Asynchronous Events
+## 异步事件
 
-Because of the async nature of Qwik, an event's handler execution might be delayed because the implementation has not been loaded into the JavaScript VM yet. Because of the asynchronous nature of event processing in Qwik the following APIs on an `Event` object will not work:
+由于 Qwik 的异步特性，事件处理程序的执行可能会延迟，因为实现尚未加载到 JavaScript VM 中。由于 Qwik 中事件处理的异步性质，`Event` 对象上的以下 API 将不起作用：
 
 - `event.preventDefault()`
 - `event.currentTarget`
 
-### Prevent default
+### 阻止默认行为
 
-Because event handling is asynchronous, you can't use `event.preventDefault()`. To solve this Qwik introduces a declarative way to prevent default through `preventdefault:{eventName}` attribute.
+由于事件处理是异步的，你不能使用 `event.preventDefault()`。为了解决这个问题，Qwik 引入了一种声明式的方式来通过 `preventdefault:{eventName}` 属性来阻止默认行为。
 
 <CodeSandbox src="/src/routes/demo/events/preventdefault/index.tsx" style={{ height: '6em' }}>
 ```tsx {7}
@@ -146,22 +146,22 @@ export default component$(() => {
   return (
     <a
       href="/docs"
-      preventdefault:click // This will prevent the default behavior of the "click" event.
+      preventdefault:click // 这将阻止 "click" 事件的默认行为。
       onClick$={() => {
-        // event.PreventDefault() will not work here, because handler is dispatched asynchronously.
+        // 这里不能使用 event.PreventDefault()，因为处理程序是异步调度的。
         alert('Do something else to simulate navigation...');
       }}
     >
-      Go to docs page
+      前往文档页面
     </a>
   );
 });
 ```
 </CodeSandbox>
 
-### Event target
+### 事件目标
 
-Because event handling is asynchronous, you can't use `event.currentTarget`. To solve this Qwik handlers provide a `currentTarget` as a second argument.
+由于事件处理是异步的，你不能使用 `event.currentTarget`。为了解决这个问题，Qwik 处理程序提供了一个 `currentTarget` 作为第二个参数。
 
 <CodeSandbox src="/src/routes/demo/events/target/index.tsx" style={{ height: '10em' }}>
 ```tsx /currentTarget/
@@ -176,7 +176,7 @@ export default component$(() => {
       currentElm.value = currentTarget;
       targetElm.value = event.target as HTMLElement;
     }}>
-      Click on any text <code>target</code> and <code>currentElm</code> of the event.
+      点击任意文本 <code>target</code> 和 <code>currentElm</code> 事件。
       <hr/>
       <p>Hello <b>World</b>!</p>
       <hr/>
@@ -190,13 +190,13 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-> **Note:** `currentTarget` in the DOM points to the element that the event listener was attached to. In the example above it will always be the `<SECTION>` element.
+> **注意：** DOM 中的 `currentTarget` 指向事件监听器附加到的元素。在上面的示例中，它将始终是 `<SECTION>` 元素。
 
-### Synchronous event handling
+### 同步事件处理
 
-In some cases, it is necessary to handle an event traditionally, because some APIs need to be used synchronously. For example, `dragstart` event must be processed synchronously and therefore it can't be combined with Qwik's lazy code execution.
+在某些情况下，有必要以传统方式处理事件，因为某些 API 需要同步使用。例如，`dragstart` 事件必须同步处理，因此它不能与 Qwik 的延迟代码执行结合使用。
 
-To do this, we can leverage a `useVisibleTask` to programmatically add an event listener using the DOM API directly.
+为了做到这一点，我们可以利用 `useVisibleTask` 使用 DOM API 直接编程方式添加事件监听器。
 
 <CodeSandbox src="/src/routes/demo/events/synchronous/index.tsx" style={{ height: '10em' }}>
 ```tsx {7-20}
@@ -208,7 +208,7 @@ export default component$(() => {
 
   useVisibleTask$(({ cleanup }) => {
     if (draggableRef.value) {
-      // Use the DOM API to add an event listener.
+      // 使用 DOM API 添加事件监听器。
       const dragstart = () => (dragStatus.value = 'dragstart');
       const dragend = () => (dragStatus.value = 'dragend');
 
@@ -224,7 +224,7 @@ export default component$(() => {
   return (
     <div>
       <div draggable ref={draggableRef}>
-        Drag me!
+        拖动我！
       </div>
       <p>{dragStatus.value}</p>
     </div>
@@ -233,13 +233,13 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-> **NOTE** Using `VisibleTask` to listen for events is an anti-pattern in Qwik because it causes eager execution of code in the browser defeating [resumability](/docs/(qwik)/concepts/resumable/index.mdx). Only use it when you have no other choice. Most of the time, you should use JSX to listen for events: `<div onClick$={...}>` or `useOn(...)` event methods if you need to listen programmatically.
+> **注意：** 使用 `VisibleTask` 监听事件是 Qwik 中的反模式，因为它会导致在浏览器中急切执行代码，从而破坏了[可恢复性](/docs/(qwik)/concepts/resumable/index.mdx)。只有在没有其他选择时才使用它。大多数情况下，你应该使用 JSX 来监听事件：`<div onClick$={...}>` 或者使用 `useOn(...)` 事件方法来进行编程式监听。
 
-## Custom event props
+## 自定义事件属性
 
-When creating your components it is often useful to pass custom event props that look like event handlers, (even though they are not DOM events, only callbacks). Component boundaries in Qwik must be serializable for the optimizer to split them up into separate chunks, and functions are not serializable unless they are converted to a QRL using the `$` sign.
+在创建组件时，传递自定义事件属性通常是很有用的，这些属性看起来像事件处理程序（尽管它们不是 DOM 事件，只是回调函数）。Qwik 中的组件边界必须是可序列化的，以便优化器将它们拆分为单独的块，而函数是不可序列化的，除非它们使用 `$` 符号转换为 QRL。
 
-When typing `component$` with the Generics syntax, Qwik will handle the type transformation automatically for you.
+在使用泛型语法的 `component$` 时，Qwik 将自动处理类型转换。
 <CodeSandbox src="/src/routes/demo/events/custom-event/index.tsx" style={{ height: '10em' }}>
 ```tsx
 import { component$, Slot, useStore } from '@builder.io/qwik';
@@ -264,7 +264,7 @@ export const Button = component$<ButtonProps>(({ onTripleClick$ }) => {
   return (
     <button
       onClick$={() => {
-        // triple click logic
+        // 三击逻辑
         const now = Date.now();
         const timeBetweenClicks = now - state.lastClickTime;
         state.lastClickTime = now;
@@ -273,7 +273,7 @@ export const Button = component$<ButtonProps>(({ onTripleClick$ }) => {
         }
         state.clicks++;
         if (state.clicks === 3) {
-          // handle custom event
+          // 处理自定义事件
           onTripleClick$();
           state.clicks = 0;
         }
@@ -287,36 +287,35 @@ export const Button = component$<ButtonProps>(({ onTripleClick$ }) => {
 ```
 </CodeSandbox>
 
-⚠️ When using type annotations, we need to wrap the event type with `PropFunction` in order to tell TypeScript that the function can't be called synchronously.
+⚠️ 当使用类型注解时，我们需要使用 `PropFunction` 将事件类型包装起来，以告诉 TypeScript 该函数不能同步调用。
 ```tsx
 component$(({ onTripleClick$ } : { onTripleClick$?: PropFunction<() => void> }) => {
   ...
 });
 ```
 
-## Window and Document events
+## 窗口和文档事件
 
-So far, we have discussed how to listen to events that originate from elements. There are events (for example, `scroll` and `mousemove`) that require that we listen to them on the `window` or `document`. For this reason, Qwik allows for the `document:on` and `window:on` prefixes when listening for events.
+到目前为止，我们已经讨论了如何监听来自元素的事件。有些事件（例如 `scroll` 和 `mousemove`）需要我们在 `window` 或 `document` 上监听它们。因此，Qwik 允许在监听事件时使用 `document:on` 和 `window:on` 前缀。
 
-The purpose of the `window:on`/`document:` is to register an event at a current DOM location of the component but have it receive events from the `window`/`document`. There are two advantages to this:
+`window:on`/`document:` 的目的是在组件的当前 DOM 位置注册事件，但从 `window`/`document` 接收事件。这样做有两个优点：
 
-1. The events can be registered declaratively in your JSX.
-2. The events get automatically cleaned up when the component is destroyed (No explicit bookkeeping and cleanup is needed).
+1. 事件可以在 JSX 中声明式地注册。
+2. 当组件被销毁时，事件会自动清理（无需显式的清理和管理）。
 
 ## `useOn[window|document]` Hook
 
-- `useOn()`: listen to events on the current component's root element.
-- `useOnWindow()`: listen to events on the `window` object.
-- `useOnDocument()`: listen to events on the `document` object.
+- `useOn()`: 在当前组件的根元素上监听事件。
+- `useOnWindow()`: 在 `window` 对象上监听事件。
+- `useOnDocument()`: 在 `document` 对象上监听事件。
 
-`useOn[window|document]()` hook will add a DOM-based event listener at the component level programmatically. This is often useful when you want to create your own use hooks or if you don't know the event name at the time of compilation.
+`useOn[window|document]()` 钩子将以编程方式在组件级别添加基于 DOM 的事件监听器。当你想要创建自己的 use 钩子或者在编译时不知道事件名称时，这通常是有用的。
 
 <CodeSandbox src="/src/routes/demo/events/use-on/index.tsx" style={{ height: '10em' }}>
 ```tsx
 import { $, component$, useOnDocument, useStore } from '@builder.io/qwik';
 
-// Assume reusable use method that does not have access to JSX
-// but needs to register event handlers.
+// 假设可重用的 use 方法没有访问 JSX，但需要注册事件处理程序。
 function useMousePosition() {
   const position = useStore({ x: 0, y: 0 });
   useOnDocument(
