@@ -1,6 +1,6 @@
 ---
-title: 高级路由 | Qwik City
-description: 了解 Qwik City 中的高级路由，包括 404 页面处理、分组布局、命名布局、嵌套布局和 plugin.ts 文件。
+title: Advanced Routing | Qwik City
+description: Learn about advanced routing in Qwik City, including 404 page handling, grouped layouts, named layouts, nested layouts, and plugin.ts files.
 contributors:
   - manucorporat
   - adamdbradley
@@ -11,89 +11,89 @@ contributors:
   - hamatoyogi
 ---
 
-# 高级路由
+# Advanced Routing
 
-## 404 页面处理
+## 404 Page Handling
 
-任何用户都有可能访问您网站上不存在的 URL。例如，如果用户访问 `https://example.com/does-not-exist`，那么服务器应该以 [404 HTTP 状态码](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404) 响应，并且页面应该至少有一些解释，而不仅仅是一个空白页面。
+It's possible for any user to visit a URL that doesn't exist on your site. For example, if a user visits `https://example.com/does-not-exist`, then the server should respond with a [404 HTTP status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404), and the page should have at least some sort of explanation, rather than just a blank page.
 
-对于任何给定的路由，Qwik City 可以选择如何最好地处理用户的 404 响应，无论是使用默认的 404 页面、自定义的 404 页面还是动态生成的 404 页面。
+For any given route, Qwik City can choose how to best handle the 404 response for the user, whether it's with the default 404 page, a custom 404 page, or a dynamically generated 404 page.
 
-### 默认的 404 页面
+### Default 404 Page
 
-默认情况下，Qwik City 为未处理的任何路由提供了一个通用的 404 页面，而不是显示一个空白页面。当找不到自定义的 404 页面时，将呈现默认的 404 页面。Qwik City 的默认页面还可以，但我们建议提供一个自定义的 404 页面，以便用户可以获得更好的体验，例如提供常见的页眉和导航，以便用户可以找到他们正在寻找的页面。
+Rather than showing a blank page, by default Qwik City provides a generic 404 page for any route that isn't handled. The default 404 page is rendered as a fallback when a custom 404 page was not found. Qwik City's default page is alright and all, but we recommend providing a custom 404 so the user can be given a better experience, such as providing the common header and navigation so the user can find the page they're looking for.
 
-### 自定义的 404 页面
+### Custom 404 Page
 
-可以使用与站点的其余部分相同的熟悉布局来提供自定义的 404 页面，而不是显示通用（无聊）的 404 响应。
+Instead of showing the generic (boring) 404 response, it's possible to provide a custom 404 page using the same familiar layouts as the rest of your site.
 
-要创建自定义的 404 页面，请将 `404.tsx` 文件添加到根目录的 `src/routes` 目录中。
+To create a custom 404 page, add a `404.tsx` file to the root `src/routes` directory.
 
 ```bash
 src/
 └── routes/
-    ├── 404.tsx            # 自定义 404 页面
-    ├── layout.tsx         # 默认布局
+    ├── 404.tsx            # Custom 404
+    ├── layout.tsx         # Default layout
     └── index.tsx          # https://example.com/
 ```
 
-在上面的示例中，`404.tsx` 页面也将使用 `layout.tsx` 布局，因为它是与布局位于同一目录中的同级文件。
+In the example above, the `404.tsx` page will also use the `layout.tsx` layout, since it is a sibling of the layout in the same directory.
 
-此外，使用 Qwik City 的基于目录的路由允许在不同路径上创建自定义的 404 页面。例如，如果还将 `src/routes/account/404.tsx` 添加到结构中，则自定义的帐户 404 页面仅适用于 `/account/*` 路由，而所有其他 404 页面将使用根目录的 `404.tsx` 页面。
+Additionally, using Qwik City's directory-based routing allows for custom 404 pages to be created at different paths. For example, if `src/routes/account/404.tsx` was also added to the structure, then the custom account 404 page would only be applied to the `/account/*` routes, while all other 404s would use the root `404.tsx` page.
 
-> 注意：在开发和预览模式下，自定义的 404 页面不会被呈现，而是显示默认的 Qwik City 404 页面。然而，在构建用于生产的应用程序时，自定义的 404 页面将作为静态的 `404.html` 文件静态生成。
+> Note: During development and in preview mode, the custom 404 pages will not be rendered, but instead the default Qwik City 404 page will show. However, when building the app for production, the custom 404 page will be statically generated as a static `404.html` file.
 
 ```bash
 src/
 └── routes/
     ├── account/
-    │   └── 404.tsx        # 自定义帐户 404 页面
+    │   └── 404.tsx        # Custom Account 404
     │   └── index.tsx      # https://example.com/account/
-    ├── 404.tsx            # 自定义 404 页面
-    ├── layout.tsx         # 默认布局
+    ├── 404.tsx            # Custom 404
+    ├── layout.tsx         # Default layout
     └── index.tsx          # https://example.com/
 ```
 
-值得注意的是，自定义的 404 页面在构建时静态生成为静态的 404.html 文件，而不是单独的服务器端渲染页面。这种策略减轻了 HTTP 服务器的负载，避免了对 404 页面的服务器端渲染，从而保留了资源。
+It's worth noting that custom 404 pages are statically generated at build time, resulting in a static 404.html file, rather than individually server-side rendered pages. This strategy reduces the load on your HTTP server, avoiding server-side rendering of 404 pages, and thus preserving resources.
 
-### 动态 404 页面
+### Dynamic 404 Page
 
-在渲染页面时，默认情况下始终使用 [200 HTTP 状态码](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200) 响应，告诉浏览器一切正常，路由存在。然而，也可以处理渲染页面，但手动将响应状态码设置为其他值，例如 404。
+When rendering a page, the default is to always respond with a [200 HTTP status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200), which tells the browser all is good and the route exists. However, it's also possible to handle rendering the page, but manually setting the response status code to something other than 200, such as 404.
 
-例如，假设我们有一个产品页面，URL 类似于 `https://example.com/product/abc`。产品页面将使用 `src/routes/product/[id]/index.tsx` 基于目录的路由进行处理，而 `[id]` 是 URL 中的动态参数。
+For example, let's say we have a product page with a URL such as `https://example.com/product/abc`. The product page would be handled using `src/routes/product/[id]/index.tsx` directory-based route, and `[id]` is a dynamic param in the URL.
 
-在此示例中，`id` 用作从数据库加载产品数据的键。当找到产品数据时，很好，我们将正确地渲染数据。然而，如果数据库中找不到产品数据，我们仍然可以处理渲染此页面，但是响应一个 404 HTTP 状态码。
+In this example, `id` is used as a key to load the product data from the database. When the product data is found, great, we'll correctly render data. However, if the product data is not found in the database, we can still handle rendering this page, but instead responding with a 404 HTTP status code.
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
 import { routeLoader$ } from '@builder.io/qwik-city';
 
 export const useProductLoader = routeLoader$(async ({ params, status }) => {
-  // 使用 id 参数进行示例数据库调用
-  // 如果找不到产品，则数据库可能返回 null
+  // Example database call using the id param
+  // The database could return null if the product is not found
   const data = await productDatabase.get(params.id);
 
   if (!data) {
-    // 未找到产品数据
-    // 将状态码设置为 404
+    // Product data was not found
+    // Set the status code to 404
     status(404);
   }
 
-  // 返回数据（可能为 null）
+  // return the data (which may be null)
   return data;
 });
 
 export default component$(() => {
-  // 从加载器中获取产品数据
+  // get the product data from the loader
   const product = useProductLoader();
 
   if (!product.value) {
-    // 没有找到产品数据
-    // 因此渲染我们自己的自定义产品 404 页面
-    return <p>抱歉，看起来我们没有这个产品。</p>;
+    // no product data found
+    // so render our own custom product 404
+    return <p>Sorry, looks like we don't have this product.</p>;
   }
 
-  // 找到了产品数据，因此渲染它
+  // product data was found, so let's render it
   return (
     <div>
       <h1>{product.value.name}</h1>
@@ -104,41 +104,41 @@ export default component$(() => {
 });
 ```
 
-## 分组布局
+## Grouped Layouts
 
-通常，常见的路由会被放置在目录中，以便它们可以共享布局，并且相关的源文件可以逻辑上归为一组。但是，可能希望将用于分组类似文件和共享布局的目录从公开的 URL 中排除。这就是“分组”布局（也称为“无路径”布局路由）的用途。
+Common purpose routes are often placed into directories so they can share layouts, and so related source files are logically grouped next to each other. However, it may be desirable that the directory, which was used to group similar files and share layouts, is excluded from the public-facing URL. This is where "grouped" layouts come in (also referred to as a "pathless" layout route).
 
-通过使用括号将任何目录名称括起来，例如 `(name)`，则目录名称本身将不包含在 URL 路径中。
+By surrounding any directory name with parentheses, such as `(name)`, then the directory name itself will not be included in the URL pathname.
 
-例如，假设一个应用程序将所有 _account_ 路由放在一个目录中，但是 `/account/` 可以从 URL 中删除，以获得更简洁、更短的 URL。在下面的示例中，请注意路径位于 `src/routes/(account)/` 目录中。但是，URL 路径不包括 `(account)/`。
+For example, let's say an app placed all _account_ routes together in a directory, however, `/account/` could be dropped from the URL for cleaner, shorter URLs. In the example below, notice that the paths are within the `src/routes/(account)/` directory. However, the URL paths exclude `(account)/`.
 
 ```bash
 src/
 └── routes/
-    └── (account)/             # 注意括号
-        ├── layout.tsx         # 共享的帐户布局
+    └── (account)/             # Notice the parentheses
+        ├── layout.tsx         # Shared account layout
         └── profile/
             └── index.tsx      # https://example.com/profile
         └── settings/
             └── index.tsx      # https://example.com/settings
 ```
 
-## 命名布局
+## Named Layout
 
-有时，相关路由需要与其兄弟路由有明显不同的布局。可以为不同的兄弟路由定义多个布局。一个默认布局和任意数量的命名布局。然后，子路由可以请求特定的命名布局。
+At times related routes need to have drastically different layouts from their siblings. It is possible to define multiple layouts for different sibling routes. A single default layout and any number of named layouts. The child route can then request a specific named-layout.
 
-Qwik City 定义了布局位于 `src/routes` 中，并且文件名以 `layout` 开头的约定。这就是为什么默认布局被命名为 `layout.tsx`。命名布局也以 `layout` 开头，后面跟着一个破折号 `-` 和一个唯一的名称，例如 `layout-narrow.tsx`。
+Qwik City defines the convention that layouts are within `src/routes` and the filename starts with `layout`. That's why the default layout is named `layout.tsx`. A named layout also starts with `layout` followed by a dash `-` and a unique name, such as `layout-narrow.tsx`.
 
-要引用命名布局，路由的 `index.tsx` 文件必须以 `@<name>` 结尾。例如，`index@narrow.tsx` 将使用 `layout-narrow.tsx` 布局。
+To reference a named layout, the route's `index.tsx` file must be suffixed with `@<name>`. For example, `index@narrow.tsx` would use the `layout-narrow.tsx` layout.
 
 ```bash
 src/
 └── routes/
     ├── contact/
-    │   └── index@narrow.tsx      # https://example.com/contact（布局：layout-narrow.tsx）
-    ├── layout.tsx                # 默认布局
-    ├── layout-narrow.tsx         # 命名布局
-    └── index.tsx                 # https://example.com/（布局：layout.tsx）
+    │   └── index@narrow.tsx      # https://example.com/contact (Layout: layout-narrow.tsx)
+    ├── layout.tsx                # Default layout
+    ├── layout-narrow.tsx         # Named layout
+    └── index.tsx                 # https://example.com/ (Layout: layout.tsx)
 ```
 
 - `https://example.com/`
@@ -164,25 +164,25 @@ src/
   └──────────────────────────────────────────────────┘
   ```
 
-## 嵌套布局
+## Nested Layout
 
-大多数情况下，希望将布局嵌套在彼此之中。页面的内容可以嵌套在多个包装布局中，这由目录结构决定。
+Most times it is desirable to nest layouts into each other. A page's content can be nested in numerous wrapping layouts, which is determined by the directory structure.
 
 ```bash
 src/
 └── routes/
-    ├── layout.tsx           # 父布局
+    ├── layout.tsx           # Parent layout
     └── about/
-        ├── layout.tsx       # 子布局
+        ├── layout.tsx       # Child layout
         └── index.tsx        # https://example.com/about
 ```
 
-在上面的示例中，有两个布局应用于 `/about` 页面组件。
+In the above example, there are two layouts that apply themselves around the `/about` page component.
 
 1. `src/routes/layout.tsx`
 2. `src/routes/about/layout.tsx`
 
-在这种情况下，布局将相互嵌套，页面包含在其中。
+In this case, the layouts will nest each other with the page enveloped within each of them.
 
 ```
 ┌────────────────────────────────────────────────┐
@@ -205,7 +205,7 @@ import { component$, Slot } from '@builder.io/qwik';
 export default component$(() => {
   return (
     <main>
-      <Slot /> {/* <== 在此处插入子布局/路由 */}
+      <Slot /> {/* <== Child layout/route inserted here */}
     </main>
   );
 });
@@ -217,7 +217,7 @@ import { component$, Slot } from '@builder.io/qwik';
 export default component$(() => {
   return (
     <section>
-      <Slot /> {/* <== 在此处插入子布局/路由 */}
+      <Slot /> {/* <== Child layout/route inserted here */}
     </section>
   );
 });
@@ -231,7 +231,7 @@ export default component$(() => {
 });
 ```
 
-上面的示例将呈现以下 HTML：
+The above example would render the html:
 
 ```html
 <main>
@@ -243,16 +243,16 @@ export default component$(() => {
 
 ## `plugin.ts`
 
-可以在 `src/routes` 目录的根目录中创建 `plugin.ts` 和 `plugin@<name>.ts` 文件，以在根布局执行之前处理任何传入的请求。
+`plugin.ts` and `plugin@<name>.ts` files can be created in the root of the `src/routes` directory to handle any incoming request before even the root layout executes.
 
-可以有多个 `plugin.ts` 文件，每个文件都有不同的名称。例如，`plugin@auth.ts` 和 `plugin@security.ts`。`@<name>` 是可选的，仅用于开发人员帮助识别插件。
+You can have multiple `plugin.ts` files, each with a different name. For example, `plugin@auth.ts` and `plugin@security.ts`. The `@<name>` is optional and it's only used for developers to help identify the plugin.
 
-请求处理程序（如 `onRequest`、`onGet`、`onPost` 等）在执行 `server$` 函数之前被调用。
+Requests handlers like `onRequest`, `onGet`, `onPost`, etc. are called before `server$` functions are executed.
 
-### `plugin.ts` 文件的执行顺序
+### The order of execution of `plugin.ts` files
 
-如果存在 `plugin.ts` 文件，并且它导出了请求处理程序，则它们首先被执行。
+ If `plugin.ts` file exists and if it has exported request handlers, then they are executed first.
 
-然后按照文件名的字母顺序执行 `plugin@<name>.ts` 文件中导出的请求处理程序。例如，`plugin@auth.ts` 中的 `onGet` 在 `plugin@security.ts` 中的 `onGet` 之前执行，因为 `auth` 在字母顺序上位于 `security` 之前。
+Then exported request handlers from `plugin@<name>.ts` files are executed in alphabetical order of the file names. For example, `onGet` from `plugin@auth.ts` is executed before `onGet` from `plugin@security.ts` because `auth` is alphabetically before `security`.
 
-最后，如果存在 `server$` 函数，则最后执行它。
+Finally, if a `server$` function exists, it's executed last.

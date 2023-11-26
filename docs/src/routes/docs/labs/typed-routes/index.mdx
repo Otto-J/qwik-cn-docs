@@ -1,18 +1,18 @@
 ---
-title: 🧪 类型化路由
+title: 🧪 Typed Routes
 contributors:
   - mhevery
 ---
 
-# 🧪 类型化路由
-**阶段:** `原型`
+# 🧪 Typed Routes 
+**Stage:** `prototyping`
 
-提供了一种在应用程序中构建 URL 的类型安全方式。
+Provides type safe way of building URLs within the application.
 
-## 安装
+## Installation
 
 1. `npm install github:BuilderIo/qwik-labs-build#main`
-2. 更新 `vite.config.ts` 文件
+2. update `vite.config.ts`
    ```typescript
    // ...
    import { qwikTypes } from '@builder.io/qwik-labs/vite'; 
@@ -21,14 +21,14 @@ contributors:
      return {
        plugins: [
         // ...
-        qwikTypes() // <== 将 `qwikTypes()` 添加到插件列表中
+        qwikTypes() // <== Add `qwikTypes()` to the list of plugins
        ],
        // ...
      };
    });
    ```
-3. 运行构建命令，以生成 `~/routes.gen.d.ts` 和 `~/routes.config.tsx` 文件。
-4. 创建类型安全的链接：
+3. Run build so that it generates `~/routes.gen.d.ts` and `~/routes.config.tsx` files.
+3. To create a typesafe link:
    ```typescript
    import { AppLink } from '~/routes.config';
 
@@ -37,7 +37,7 @@ contributors:
      return (
        // ...
        <AppLink route="/your/[appParam]/link/" param:appParam={"some-value"}>
-         链接文本
+         Link text
        </AppLink>
      );
    });

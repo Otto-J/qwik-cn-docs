@@ -1,5 +1,5 @@
 ---
-title: 国际化 | 集成
+title: Internationalization | Integrations
 contributors:
   - mhevery
   - manucorporat
@@ -7,88 +7,88 @@ contributors:
   - tzdesign
 ---
 
-# 国际化
+# Internationalization
 
-国际化是一个复杂的问题。Qwik 并没有直接解决国际化问题，而是提供了低级别的 API，以便让其他库来解决。
+Internationalization is a complex problem. Qwik does not solve the internationalization problem directly instead it only provides low-level APIs to allow other libraries to solve it.
 
-## 运行时翻译 vs 编译时翻译
+## Runtime vs compile time translation
 
-从高层次来看，翻译问题可以通过两种方式解决：
+At a high level there are two ways in which the translation problem can be solved:
 
-- 运行时：在运行时加载翻译映射，并查找翻译结果。
-- 编译时：在编译过程中将翻译嵌入到输出字符串中。
+- Runtime: load a translation map and look up the translations at runtime.
+- Compile time: Have a compile step inline the translations into the output string.
 
-以上两种方法都有各自的权衡。
+Both of the above approaches have trade-offs that one should take into consideration.
 
-运行时方法的优点是：
+The advantages of runtime approaches are:
 
-- 简单。不需要额外的构建步骤。
+- Simplicity. Does not require an additional build step.
 
-运行时方法的缺点是：
+Disadvantages of the runtime approach are:
 
-- 每个字符串都会出现三次：
-  1. 作为代码中的原始字符串。
-  2. 作为翻译映射中的键。
-  3. 作为翻译映射中的翻译值。
-- 工具无法将翻译映射拆分，因此整个翻译映射必须在应用启动时被急切加载。这是一个问题，因为它会撤销 Qwik 在拆分和延迟加载代码库方面所做的努力。此外，由于翻译映射没有被拆分，浏览器将下载不必要的翻译内容。例如，对于在客户端上永远不会重新渲染的静态组件的翻译。
-- 翻译查找会带来运行时开销。
+- Each string is present in triplicate:
+  1. Once as the original string in the code.
+  2. Once as a key in a translation map.
+  3. Once as a translated value in the translation map.
+- The tools don't know how to break up the translation map, for this reason, the whole translation map must be loaded eagerly on application startup. This is a problem because it undoes the effort Qwik put into breaking up and lazy load your codebase. In addition because translation maps are not broken up, the browser will download unnecessary translations. For example, translations for static components that will never re-render on the client.
+- There is a runtime cost to translation lookups.
 
-编译时方法的优点是：
+The advantages of compile-time approaches are:
 
-- Qwik 的代码延迟加载现在也扩展到了翻译字符串的延迟加载。（不会加载不必要的翻译文本）
-- 没有运行时翻译映射，意味着字符串不会出现三次。
+- Qwik's lazy loading of code now extends to the lazy loading of translation strings. (No unnecessary translation text is loaded)
+- No runtime translation map means strings are not in triplicate.
 
-编译时方法的缺点是：
+Disadvantages of compile time approaches are:
 
-- 需要额外的构建步骤。
-- 切换语言需要重新加载页面。
+- Extra build step.
+- Changing languages requires a page reload.
 
-## 推荐方案
+## Recommendation
 
-考虑到上述情况，Qwik 建议您使用最适合您约束条件的工具。为了帮助您做出决策，有三个不同的考虑因素：浏览器、服务器和开发。
+With the above in mind, Qwik recommends that you use a tool that best fits your constraints. To help you make a decision there are three different considerations: Browser, Server, and Development.
 
-### 浏览器
+### Browser
 
-Qwik 的目标是提供最佳的用户体验。为了实现这一目标，它将代码的加载推迟到后面，以便初始启动性能不会受到过大的影响。由于运行时方法需要急切加载所有翻译内容，我们不推荐使用这种方法。我们认为编译时方法对于浏览器来说是最好的选择。
+Qwik's goal is to deliver the best possible user experience. It achieves this by deferring the loading of code to later so that the initial startup performance is not overwhelmed. Because the runtime approach requires eager loading of all translations, we don't recommend this approach. We think that the compile-time approach is best for the browser.
 
-### 服务器
+### Server
 
-服务器没有延迟加载的约束。因此，服务器可以使用运行时或编译时方法。编译时方法在服务器上的缺点是，我们需要为每种语言单独部署。这会增加部署过程的复杂性，并对服务器数量提出更高的要求。因此，我们认为在服务器上使用运行时方法更可取。
+The server does not have the constraint of lazy loading. For this reason, the server can use either the runtime or compiled approach. The disadvantage of compile time approach on the server is that we need to have a separate deployment for each translation. This complicates the deployment process as well as puts greater demand on number of servers. For this reason, we think the runtime approach is preferable on the server.
 
-### 开发
+### Development
 
-在开发过程中，较少的构建步骤将导致更快的反馈。因此，运行时翻译应该会带来更简单的开发工作流程。
+During development, fewer build steps will result in a faster turnaround. For this reason, runtime translation should result in a simpler development workflow.
 
-### 我们的建议
+### Our Recommendation
 
-我们建议在服务器上使用一个提供运行时方法的工具，并根据是否处于开发或生产环境，在客户端上使用运行时或编译时方法。这样可以提供最佳的用户体验和开发体验，并使用最少的服务器资源。
+Our recommendation is to use a tool that would provide a runtime approach on the server, and runtime or compile time on the client depending on whether we are in development or production. This way it is possible to prove the best user experience and development experience, and use the least server resources.
 
-## 国际化库
+## Internationalization libraries
 
 ### $localize
 
-[$localize](https://angular.io/api/localize/init/$localize) 是基于 [Angular](https://angular.io/) 的 $localize 系统的翻译系统。翻译可以以 xmb、xlf、xlif、xliff、xlf2、xlif2、xliff2 和 json 格式提取。
+[$localize](https://angular.io/api/localize/init/$localize) the translation system is based on the $localize system from [Angular](https://angular.io/). The translations can be extracted in xmb, xlf, xlif, xliff, xlf2, xlif2, xliff2, and json formats.
 
->注意：$localize 系统是一个编译时翻译系统，并且完全从最终输出中删除。$localize 是 Angular 的一个子项目，包括其使用并不意味着 Angular 用于应用程序的渲染。
+>NOTE: The $localize system is a compile-time translation system and is completely removed from the final output. $localize is a sub-project of Angular, and including its usage does not mean that Angular is used for rendering of applications.
 
-将 $localize 添加到 Qwik 的最简单方法是使用 `pnpm qwik add localize` 命令。这将安装所需的依赖项，并创建一个新的公共路由 `/src/routes/[locale]`，展示了 i18n $localize 的集成。
+The easiest way to add $localize to Qwik is using the `pnpm qwik add localize` command. This will install the required dependencies and create a new public route `/src/routes/[locale]` showcasing i18n $localize integration.
 
 ```bash
 npm run qwik add localize
 ```
 
-更多参考，请查看这个 [示例仓库](https://github.com/mhevery/qwik-i18n)。
+For further reference, please check this [example repo](https://github.com/mhevery/qwik-i18n).
 
-#### 使用 deepl 为 $localize 自动翻译
+#### Auto translations for $localize with deepl
 
-对于自动翻译，您可以使用 [deepl-localize](https://www.npmjs.com/package/deepl-localize) 包。它将使用 [deepl.com](https://deepl.com/) API 自动翻译您的字符串。
+For auto translations, you can use the [deepl-localize](https://www.npmjs.com/package/deepl-localize) package. It will automatically translate your strings using the [deepl.com](https://deepl.com/) API.
 
-使用 `deepl-localize` 命令使用 npx 来翻译您的字符串：
+Use the `deepl-localize` command to translate your strings with npx:
 ```bash
 npx deepl-localize translate -b src/locales/message-en.json -l de-DE fr-FR -a "YOUR-DEEPL-API-KEY"
 ```
 
-或者，您可以在脚本部分使用 `deepl-localize` 命令来翻译您的字符串：
+Alternatively, you can use the `deepl-localize` command to translate your strings within your script section:
 ```json
 {
   "scripts":{
@@ -99,6 +99,6 @@ npx deepl-localize translate -b src/locales/message-en.json -l de-DE fr-FR -a "Y
 
 ### qwik-speak
 
-[qwik-speak](https://github.com/robisim74/qwik-speak) 是一个用于在 Qwik 应用中翻译文本、日期和数字的库。
+[qwik-speak](https://github.com/robisim74/qwik-speak) library to translate texts, dates and numbers in Qwik apps.
 
-将 qwik-speak 添加到 Qwik 的最简单方法是按照官方的 [指南](https://github.com/robisim74/qwik-speak/blob/main/docs/quick-start.md) 进行操作。
+The easiest way to add qwik-speak to Qwik is following the official [guide](https://github.com/robisim74/qwik-speak/blob/main/docs/quick-start.md).

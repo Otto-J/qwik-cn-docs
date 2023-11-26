@@ -1,6 +1,6 @@
 ---
-title: 缓存 | Qwik City
-description: 学习如何在 Qwik City 应用中处理缓存，以保持网站尽可能快速。
+title: Caching | Qwik City
+description: Learn how to handle caching in your Qwik City app to keep your site as fast as possible.
 contributors:
   - steve8708
   - harishkrishnan24
@@ -8,13 +8,13 @@ contributors:
   - hamatoyogi
 ---
 
-# 缓存响应
+# Caching Responses
 
-对于保持网站尽可能快速，缓存响应至关重要，无论是对于[页面](/docs/(qwikcity)/pages/index.mdx)还是[中间件](/docs/(qwikcity)/middleware/index.mdx)。
+Caching responses is critical for keeping your site as fast as possible, both for [pages](/docs/(qwikcity)/pages/index.mdx) as well as [middleware](/docs/(qwikcity)/middleware/index.mdx).
 
-一个很好的默认设置是对所有响应使用[stale-while-revalidate](https://web.dev/stale-while-revalidate/)缓存。
+A good default is to use [stale-while-revalidate](https://web.dev/stale-while-revalidate/) caching for all responses. 
 
-例如，我们可以在根[布局](/docs/(qwikcity)/layout/index.mdx) (`src/routes/layout.tsx`) 中添加一个 `onGet` 导出，如下所示，以应用全站的良好缓存默认设置：
+For instance, we can add an `onGet` export to our root [layout](/docs/(qwikcity)/layout/index.mdx) (`src/routes/layout.tsx`) like so, to apply good caching defaults site-wide:
 
 ```tsx title="src/routes/layout.tsx"
 import { component$, Slot } from "@builder.io/qwik";
@@ -22,9 +22,9 @@ import type { RequestHandler } from "@builder.io/qwik-city";
 
 export const onGet: RequestHandler = async ({ cacheControl }) => {
   cacheControl({
-    // 默认情况下始终提供缓存响应，最多可以过期一周
+    // Always serve a cached response by default, up to a week stale
     staleWhileRevalidate: 60 * 60 * 24 * 7,
-    // 每 5 秒最多一次，在服务器上重新验证以获取此页面的新版本
+    // Max once every 5 seconds, revalidate on the server to get a fresh version of this page
     maxAge: 5,
   });
 };
@@ -38,11 +38,11 @@ export default component$(() => {
 });
 ```
 
-通过上述设置，我们不仅可以获得更好的性能（页面始终从缓存中立即提供），还可以显著降低托管成本，因为我们的服务器（或边缘函数）每个页面每 5 秒最多只需要运行一次。
+With the above setup we will not only have better performance (pages are always served instantly from cache), but can have significantly decreased hosting costs, as our server (or edge functions) only need to run max once every 5 seconds per page.
 
 ## `cacheControl`
 
-任何接受[请求事件](https://qwik.builder.io/docs/advanced/request-handling/#request-event)的方法都可以调用 `request.cacheControl` 来设置响应的缓存控制头：
+Any method that takes a [request event](https://qwik.builder.io/docs/advanced/request-handling/#request-event) can call `request.cacheControl` to set the cache control headers for the response:
 
 ```tsx title="src/routes/layout.tsx"
 import type { RequestHandler } from "@builder.io/qwik-city";
@@ -57,12 +57,12 @@ export const onGet: RequestHandler = async ({ cacheControl }) => {
 };
 ```
 
-您也可以覆盖这个设置。例如，也许您在根目录上有一个默认的缓存设置，但是想要禁用特定页面的缓存，您可以使用嵌套布局来覆盖这个设置：
+You can also override this as well. For instance, perhaps you have a default caching at the root, but want to disable caching for a specific page, you can override this with nested layouts
 
 ```tsx title="src/routes/dashboard/layout.tsx"
 import type { RequestHandler } from "@builder.io/qwik-city";
 
-// 为 /dashboard 页面覆盖缓存设置，不缓存，因为它们对每个访问者都是唯一的
+// Override caching for /dashboard pages to not cache as they are unique per visitor
 export const onGet: RequestHandler = async ({ cacheControl }) => {
   cacheControl({
     public: false,
@@ -74,21 +74,21 @@ export const onGet: RequestHandler = async ({ cacheControl }) => {
 
 ```
 
-您可以查看完整的[API 参考](https://qwik.builder.io/api/qwik-city-middleware-request-handler/)，了解可以传递给 `request.cacheControl` 的选项。
+You can see the full [API reference](https://qwik.builder.io/api/qwik-city-middleware-request-handler/) of options you can pass to `request.cacheControl`.
 
-## 不适合缓存的情况
+## When not to cache
 
-缓存是一个很好的默认设置，但并不适用于所有页面的所有时间。如果您的网站上有一些 URL，这些 URL 会向不同的人显示不同的内容 - 例如仅供已登录用户查看的页面，或者根据用户的位置显示不同内容的页面，您不应该使用响应中的缓存控制头对这些页面进行缓存，并且在服务器端根据访问者的情况渲染这些页面的内容。
+Caching is a good default, but not right for every page all the time. If you have URLs on your site that will show different content to different people - such as pages only for logged in users, or pages that show different content based on the user's location, you should not cache those pages using cache-control headers in the response, and on server side render the contents of those pages on a per-visitor basis.
 
-对于对每个人都相同的高流量页面，例如主页，缓存是性能和成本方面的最佳选择。但是对于仅供已登录用户查看的页面，由于流量可能较少，禁用缓存可能是明智的。
+For high traffic pages that look the same to everyone, such as a homepage, caching is the best thing to do for performance and cost. But for pages only for logged in users, and as a result probably have some degree less traffic, disabling caching may be wise.
 
-您可以根据需要使用任何逻辑条件性地更改缓存行为：
+You can conditionally change cache behaviors with any logic you like:
 
 ```tsx title="src/routes/layout.tsx"
 import type { RequestHandler } from "@builder.io/qwik-city";
 
 export const onGet: RequestHandler = async ({ cacheControl, url }) => {
-  // 只有我们的主页是公开的，并且应该被 CDN 缓存。其他页面对每个访问者都是唯一的
+  // Only our homepage is public and should be CDN cached. Other pages are unique per visitor
   if (url.pathname === '/') {
     cacheControl({
       public: true,
@@ -99,11 +99,11 @@ export const onGet: RequestHandler = async ({ cacheControl, url }) => {
 };
 ```
 
-## CDN 缓存控制
+## CDN Cache Controls
 
-为了更好地控制缓存策略，您的 CDN 可能有另一层缓存控制头。
+For even more control on your caching strategy, your CDN might have another layer of cache control headers.
 
-`cacheControl` 便捷方法可以接收第二个参数（默认设置为 `"Cache-Control"`）。您可以传递任何特定于您的 CDN 的字符串值，例如 "CDN-Cache-Control"、"Cloudflare-CDN-Cache-Control"、"Vercel-CDN-Cache-Control" 等。
+The `cacheControl` convenience method can receive a second argument (set to `"Cache-Control"` by default). You can pass in any string value specific to your CDN such as "CDN-Cache-Control", "Cloudflare-CDN-Cache-Control", "Vercel-CDN-Cache-Control", etc.
 
 ```tsx
 cacheControl({
@@ -112,20 +112,20 @@ cacheControl({
 }, "CDN-Cache-Control");
 ```
 
-### 缺失的控制
+### Missing controls
 
-某些 CDN（例如 Vercel Edge）可能会剥离一些 "Cache-Control" 头。
+Some CDNs (such as Vercel Edge) may strip some of your "Cache-Control" headers.
 
-[在 Vercel 的文档中：](https://vercel.com/docs/edge-network/caching#cdn-cache-control)
-> 如果您设置了没有 CDN-Cache-Control 的 Cache-Control，则 Vercel Edge 网络会在将响应发送到浏览器之前从响应中剥离 s-maxage 和 stale-while-revalidate。要确定响应是否来自缓存，请检查响应中的 [x-vercel-cache](https://vercel.com/docs/edge-network/caching#x-vercel-cache) 头。
+[On Vercel's documentation:](https://vercel.com/docs/edge-network/caching#cdn-cache-control)
+> If you set Cache-Control without a CDN-Cache-Control, the Vercel Edge Network strips s-maxage and stale-while-revalidate from the response before sending it to the browser. To determine if the response was served from the cache, check the [x-vercel-cache](https://vercel.com/docs/edge-network/caching#x-vercel-cache) header in the response.
 
-因此，如果您的 CDN 默认情况下剥离了一些缓存控制头（例如 Vercel Edge），并且您希望浏览器使用 "stale-while-revalidate" 或 "s-maxage"，您可以添加另一个 `cacheControl`：
+So if your CDN strips some cache control headers away by default (like Vercel Edge) and you want the browser to use "stale-while-revalidate" or "s-maxage", you can add another `cacheControl`:
 
 ```tsx title="src/routes/layout.tsx"
 import type { RequestHandler } from "@builder.io/qwik-city";
 
 export const onGet: RequestHandler = async ({ cacheControl }) => {
-    // 如果您希望浏览器使用 "stale-while-revalidate" 或 "s-maxage" 缓存控制头，您必须在 Vercel Edge 上添加第二个带有 "CDN-Cache-Control" 或 "Vercel-CDN-Cache-Control" 的 cacheControl
+    // If you want the browser to use "stale-while-revalidate" or "s-maxage" Cache Control headers, you have to add the second cacheControl with "CDN-Cache-Control" or "Vercel-CDN-Cache-Control" on Vercel Edge 
     cacheControl({
       staleWhileRevalidate: 60 * 60 * 24 * 365,
       maxAge: 5,

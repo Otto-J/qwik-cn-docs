@@ -1,40 +1,40 @@
 ---
-title: Cookbook | 带有 iOS 支持的媒体控制器
+title: Cookbook | Media Controller with iOS Support
 contributors:
   - n8sabes
 ---
 
-import CodeSandbox, { CodeFile } from '../../../../components/code-sandbox/index.tsx';
+import CodeSandbox, {CodeFile} from '../../../../components/code-sandbox/index.tsx';
 
-# 媒体控制器
+# Media Controller
 
-为了开发适用于各种浏览器和设备的应用，通常会遇到各种独特的挑战。其中最显著的挑战之一是确保在苹果的 iOS 设备上实现一致的媒体播放。
+Developing for a diverse range of browsers and devices often introduces unique challenges. One of the most notable challenges is ensuring consistent media playback, particularly on Apple's iOS devices.
 
-## 解释 iOS 媒体播放限制
+## iOS Media Playback Restrictions Explained
 
-苹果的 iOS 为音频和视频播放制定了特定的规则，以提升用户体验和管理数据消耗：
+Apple's iOS has established specific rules for audio and video playback to enhance user experience and manage data consumption:
 
-1. **用户体验**：iOS 禁止媒体自动播放，以防止意外干扰。这个设计选择确保用户在安静的环境中不会被突然的音频打扰。
-2. **数据效率**：考虑到流媒体可能消耗大量数据，iOS 要求用户手动启动媒体播放。这个设计对于使用有限或按流量计费的数据计划的用户尤其有益。
+1. **User Experience**: iOS prohibits media from auto-playing to prevent unexpected disturbances. This design choice ensures users aren't unexpectedly disrupted by sudden audio, especially in quiet settings.
+2. **Data Efficiency**: Given that streaming media can be data-intensive, iOS requires users to manually initiate media playback. This design is especially beneficial for users on limited or metered data plans.
 
-## 解决 iOS 播放挑战
+## Deciphering the iOS Playback Challenge
 
-iOS 挑战的核心是系统坚持用户发起的媒体播放。例如，开始播放视频必须直接由用户操作，比如点击。然而，异步事件处理程序，比如 `onClick$` (QRL)，可能导致用户的操作和播放命令之间存在不一致。这通常会导致 iOS 在第一次点击时阻止播放，需要进行第二次非直观的点击。
+At the heart of the iOS challenge is the system's insistence on user-initiated media playback. For instance, starting a video must result directly from a user action, like a tap. However, asynchronous event handlers, such as `onClick$` (QRL), can create a disconnect between the user's action and the playback command. This often results in iOS blocking playback on the first tap, requiring a second, non-intuitive tap.
 
-## `playsinline` 属性
+## The `playsinline` Attribute
 
-在 iOS 设备上，特别是 iPhone 上，视频会自动以全屏模式播放，除非 `<video>` 标签上存在 `playsinline` 属性。该属性确保视频在其指定的容器内播放，提供了在不同设备和平台上一致的体验。虽然主要用于 iOS，但在其他平台上包含 `playsinline` 是无害的，并确保更广泛的兼容性。
+On iOS devices, especially iPhones, videos automatically play in fullscreen mode unless the `playsinline` attribute is present on the `<video>` tag. This attribute ensures that videos play within their designated container, providing a consistent experience across different devices and platforms. While primarily intended for iOS, including `playsinline` is harmless on other platforms and ensures broader compatibility.
 
-## 创建一个通用的播放解决方案
+## Crafting a Universal Playback Solution
 
-为了在各种浏览器和设备上实现一致的媒体播放，需要采用一种全面的方法。本指南提供了一个解决方案，可以解决不同平台的细微差别。为了在用户交互时立即播放，应该同步调用 `.play()` 方法。可以通过直接在 `useVisibleTask$` 函数中附加 `click` 处理程序来实现这一点。
+To achieve consistent media playback across various browsers and devices, a holistic approach is essential. This guide presents a solution that addresses the nuances of different platforms. To ensure immediate playback upon user interaction, the `.play()` method should be invoked synchronously. This can be accomplished by directly attaching the `click` handler within the `useVisibleTask$` function.
 
-下面是一个针对 iOS 设备兼容的音频和视频控制器的原型。
+Below, you'll find a prototype of an audio and video controller, tailored to provide a consistent user experience across multiple platforms.
 
-<CodeSandbox url="/demo/cookbook/mediaController/" style={{ height: '700px' }}>
+<CodeSandbox url="/demo/cookbook/mediaController/"  style={{ height: '700px' }}>
 </CodeSandbox>
 
-与 iOS 设备兼容的通用媒体控制器代码如下：
+Universal media controller code compatible with iOS devices looks like this:
 
 <CodeFile src="/src/routes/demo/cookbook/mediaController/index.tsx">
 ```tsx
@@ -146,9 +146,9 @@ export default component$(() => {
   return (
     <segment>
       <div class="content">
-        <h1>媒体控制器</h1>
+        <h1>Media Controller</h1>
         <h3>
-          <i>带有 iOS 支持</i>
+          <i>with iOS Support</i>
         </h3>
         <br />
         <div class="video-container">
@@ -186,12 +186,12 @@ export default component$(() => {
 
         <br />
         <button ref={videoPlayButtonSignal}>
-          {videoIsPlayingSignal.value ? '暂停' : '播放'} 视频
+          {videoIsPlayingSignal.value ? 'Pause' : 'Play'} Video
         </button>
         <br />
         <br />
         <button ref={audioPlayButtonSignal}>
-          {audioIsPlayingSignal.value ? '暂停' : '播放'} 音频
+          {audioIsPlayingSignal.value ? 'Pause' : 'Play'} Audio
         </button>
       </div>
     </segment>

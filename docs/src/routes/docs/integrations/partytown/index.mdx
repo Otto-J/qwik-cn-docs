@@ -1,6 +1,6 @@
 ---
-title: Partytown | 集成
-keywords: '第三方脚本, 谷歌分析, 第三方, 脚本, 性能'
+title: Partytown | Integrations
+keywords: 'third party scripts, google analytics, 3rd party, scripts, performance'
 contributors:
   - manucorporat
   - leifermendez
@@ -12,22 +12,22 @@ contributors:
 
 # Partytown
 
-第三方脚本会通过阻塞主线程大大减慢初始页面加载速度。
+Third party scripts slow down your initial page load substantially by blocking the main thread.
 
-Partytown 是一个工具，通过使用 Web Worker 来延迟加载第三方脚本，如谷歌分析、Facebook 像素等，从而减少对主线程的影响。
-有关该工具的更多信息，请访问 [Partytown 文档](https://partytown.builder.io/)。
+Partytown is a tool that allows you to defer third party scripts like Google Analytics, Facebook Pixel, etc off the main thread by using a web worker.
+For more information about this tool visit the [Partytown docs](https://partytown.builder.io/).
 
-## 使用方法
+## Usage
 
-您可以通过使用以下 Qwik 起始脚本轻松添加 Partytown：
+You can add Partytown easily by using the following Qwik starter script:
 
 ```shell
 npm run qwik add partytown
 ```
 
-上述命令会更新您的应用程序，并在 `vite.config.ts` 中设置正确的配置。
+The previous command updates your app and sets the correct configuration in `vite.config.ts`.
 
-它还会向您的 `components` 文件夹添加新文件。
+It also adds new files to your `components` folder.
 
 ```tsx title="src/root.tsx"
 import { QwikPartytown } from './components/partytown/partytown';
@@ -50,6 +50,6 @@ export default component$(() => {
 });
 ```
 
-## 高级配置
+## Advanced
 
-要进一步配置 Partytown 的更多选项，请访问 [Partytown 文档](https://partytown.builder.io/configuration)。
+To further configure Partytown with more options, please visit the [Partytown Documentation](https://partytown.builder.io/configuration)

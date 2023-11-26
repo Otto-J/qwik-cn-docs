@@ -1,22 +1,22 @@
 ---
-title: 静态网站
+title: Static Site
 contributors:
   - the-r3aper7
 ---
 
-# 静态网站适配器
+# Static Site Adapter
 
-Qwik 的静态网站适配器可以帮助生成静态的 HTML 文件，可以轻松部署到任何云服务提供商。
+Qwik's Static Site adapter helps to generate static html files which can be easily deployed to any cloud providers.
 
-## 安装
+## Installation
 
-要集成 `static-site` 适配器，使用 `add` 命令：
+To integrate the `static-site` adapter, use the `add` command:
 
 ```shell
 npm run qwik add static
 ```
 
-上述命令将在项目根目录下创建一个名为 `adapters/static/vite.config.ts` 的目录，并包含以下代码。
+Above command will create a directory at project root named `adapters/static/vite.config.ts` with the below code.
 
 ```tsx file="apdaters/static/vite.config.ts"
 import { extendConfig } from '@builder.io/qwik-city/vite';
@@ -39,6 +39,6 @@ export default extendConfig(baseConfig, () => {
 });
 ```
 
-> 请记得将该文件中的 `origin` 更改为您的域名。
+> Remember to change the `origin` in this file to your domain.
 
-现在，您可以在使用 `Qwik` 的丰富生态系统、基于文件的路由等功能的同时生成静态网站。
+Now, you can generate static site while using `Qwik`'s rich ecosystem, file based routing and many more.

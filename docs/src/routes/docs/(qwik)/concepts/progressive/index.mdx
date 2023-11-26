@@ -1,5 +1,5 @@
 ---
-title: 渐进式 | 概念
+title: Progressive | Concepts
 contributors:
   - adamdbradley
   - RATIU5
@@ -9,72 +9,72 @@ contributors:
   - mhevery
 ---
 
-# 渐进式
+# Progressive
 
-渐进式是根据应用程序的需求下载代码，而不是急切地下载整个代码库。
+Progressive is about downloading code according to the application's needs, without eagerly downloading the entire code base.
 
-这将我们连接到 Qwik 的[核心原则](../../concepts/think-qwik/index.mdx)，即尽可能延迟加载和执行 JavaScript。为了实现这一点，Qwik 需要将应用程序分解为许多可延迟加载的块。
+This connects us to the [core principle](../../concepts/think-qwik/index.mdx) of Qwik which focuses on delaying **the loading** and execution of JavaScript for as long as possible. Qwik needs to break up the application into many lazy loadable chunks to achieve that.
 
-## 当前的最新技术
+## Current state-of-the-art
 
-[现有的框架存在两个问题](https://www.builder.io/blog/dont-blame-the-developer-for-what-the-frameworks-did)：
+[Existing frameworks suffer from two problems](https://www.builder.io/blog/dont-blame-the-developer-for-what-the-frameworks-did):
 
-- 懒加载边界完全由开发人员委托
-- 框架只能懒加载不在当前渲染树中的组件。
+- Lazy loading boundaries are completely delegated to the developer
+- Frameworks can only lazy load components that are not in the current render tree.
 
-问题在于框架需要将其内部状态与 DOM 进行协调。这意味着应用程序至少需要进行一次[hydration（重新注入）](../../concepts/resumable/#resumable-vs-hydration)。框架需要能够进行完整的渲染以重建框架的内部状态。在第一次渲染之后，框架可以更精确地进行更新，但已经造成了损害，代码已经被下载。因此，现在我们有了两个问题：
+The problem is that the frameworks need to reconcile their internal state with the DOM. And this means that at least once in the application [hydration](../../concepts/resumable/#resumable-vs-hydration) occurs. Frameworks are required to be able to do a full render to rebuild the framework's internal state. After the first render, the frameworks can be more surgical about their updates, but the damage has been done, the code has been downloaded. So now we have two issues:
 
-- 框架需要下载和执行组件以在启动时重建渲染树。（参见[hydration is pure overhead](https://www.builder.io/blog/hydration-is-pure-overhead)）这迫使所有组件急切地下载和执行。
-- 即使在渲染时不需要，事件处理程序也随组件一起下载。包含事件处理程序会强制下载不必要的代码。
+- Frameworks need to download and execute components to rebuild the render tree on startup. (See [hydration is pure overhead](https://www.builder.io/blog/hydration-is-pure-overhead)) This forces eager download and execution of all components in the render tree.
+- The event handlers come with the components even though they are not needed at the time of rendering. The inclusion of event handlers forces the download of unnecessary code.
 
-## 解决方案
+## Solution
 
-Qwik 的架构充分利用现代工具来自动化入口点生成的问题。开发人员可以正常编写组件，而 Qwik 优化器将这些组件拆分成块，并在需要时下载它们。
+Qwik's architecture takes full advantage of modern tooling to automate the problem of entry point generation. Developers can write components normally, while the Qwik optimizer will split the components into chunks and download them when needed.
 
-此外，框架运行时不需要下载不需要用于交互的代码，即使该组件是渲染树的一部分。
+In addition, the framework runtime does not need to download code that is not required for interactivity, even if the component is part of the render tree.
 
-### 优化器
+### Optimizer
 
-[优化器](../../advanced/optimizer/index.mdx)是一种代码转换工具，将函数提取为可导入的顶级符号，使得 Qwik 运行时可以按需延迟加载 JavaScript。
+[Optimizer](../../advanced/optimizer/index.mdx) is a code transformation that extracts functions into top-level importable symbols, which allows the Qwik runtime to lazy-load the JavaScript on an as-needed basis.
 
-优化器和 Qwik 运行时共同工作，以实现细粒度的懒加载。
+The Optimizer and Qwik runtime work together to achieve the desired result of fine-grained lazy loading.
 
-如果没有优化器，要么：
+Without the Optimizer, either:
 
-- 开发人员必须将代码拆分为可导入的部分。这对于编写应用程序来说是不自然的，会导致糟糕的开发体验。
-- 应用程序将不得不加载大量不必要的代码，因为没有懒加载的边界。
+- The code would have to be broken up by the developer into importable parts. This would be unnatural to write an application, making for a bad DX.
+- The application would have to load a lot of unnecessary code as there would be no lazy-loaded boundaries.
 
-Qwik 运行时必须理解优化器的输出。这里需要理解的是，通过将组件拆分为可延迟加载的块，懒加载要求将异步代码引入框架中。框架必须以不同的方式编写，以考虑到异步性。现有的框架假设所有代码都是同步可用的。这个假设阻止了将懒加载轻松插入现有框架中的可能性。（例如，当创建一个新组件时，框架假设可以以同步方式调用其初始化代码。如果这是第一次引用组件，则需要懒加载其代码，因此框架必须考虑到这一点）。
+Qwik runtime must understand the Optimizer output. What needs to be understood here is that by breaking up the component into lazy-loadable chunks, the lazy loading requirement introduces asynchronous code into the framework. The framework has to be written differently to take asynchronicity into account. Existing frameworks assume that all code is available synchronously. This assumption prevents an easy insertion of lazy-loading into existing frameworks. (For example, when a new component is created, the framework assumes that its initialization code can be invoked in a synchronous fashion. If this is the first time component is referenced, then its code needs to be lazy-loaded, and therefore the framework must take that into account).
 
-### 懒加载
+### Lazy-loading
 
-懒加载是异步的。Qwik 是一个异步框架。Qwik 理解到在任何时候，它可能没有回调的引用，因此可能需要懒加载它。（相比之下，大多数现有的框架假设所有的代码都是同步可用的，使得懒加载变得非常复杂）。
+Lazy-loading is asynchronous. Qwik is an asynchronous framework. Qwik understands that at any time, it may not have a reference to a callback, and therefore, it may need to lazy-load it. (In contrast, most existing frameworks assume that all of the code is available synchronously, making lazy-loading non-trivial).
 
-在 Qwik 中，一切都可以懒加载：
+In Qwik everything is lazy-loadable:
 
-- 渲染时的组件 - 初始化块和渲染块
-- 组件任务 - 副作用，仅在输入更改时下载
-- 监听器 - 仅在交互时下载
-- 样式 - 仅在服务器未提供时下载
+- Component on render - initialization block and render block
+- Component tasks - side-effects, only downloaded if inputs change
+- Listeners - only downloaded on interaction
+- Styles - only downloaded if the server did not already provide them
 
-懒加载是框架的核心属性，而不是事后的想法。
+Lazy-loading is a core property of the framework and not an afterthought.
 
-### 优化器和 `$`
+### Optimizer and `$`
 
-让我们再次看一下我们的示例：
+Let's look at our example again:
 
 ```tsx
-// `$` 后缀表示组件应该是
-// 懒加载的。
+// the `$` suffix for `component` indicates that the component should be
+// lazy-loaded.
 export const Counter = component$(() => {
   const count = useSignal(0);
 
-  // `$` 后缀表示处理程序的实现应该是
-  // 懒加载的。
+  // the `$` suffix for `onClick` indicates that the implementation for
+  // the handler should be lazy-loaded.
   return <button onClick$={() => count.value++}>{count.value}</button>;
 });
 ```
 
-注意代码中的 `$` 的存在。`$` 是一个标记，告诉优化器后面的函数应该是懒加载的。
-`$` 是一个单个字符，向优化器和开发人员暗示
-异步懒加载发生在这里。
+Notice the presence of `$` in the code. `$` is a marker that tells the Optimizer that the function
+following it should be lazy-loaded. The `$` is a single character that hints to the Optimizer and the developer to let them know
+that asynchronous lazy-loading occurs here.

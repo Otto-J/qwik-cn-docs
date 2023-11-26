@@ -1,56 +1,56 @@
-# Qwik 引导
+# Qwik Guide
 
-## 介绍
+## Introduction
 
-- [概览](</docs/(qwik)/index.mdx>)
-- [开始入门](</docs/(qwik)/getting-started/index.mdx>)
-- [项目结构](</docs/(qwikcity)/project-structure/index.mdx>)
-- [常见问题](</docs/(qwik)/faq/index.mdx>)
+- [Overview](</docs/(qwik)/index.mdx>)
+- [Getting Started](</docs/(qwik)/getting-started/index.mdx>)
+- [Project structure](</docs/(qwikcity)/project-structure/index.mdx>)
+- [FAQ](</docs/(qwik)/faq/index.mdx>)
 
-## 组件
+## Component
 
-- [概览](</docs/(qwik)/components/overview/index.mdx>)
-- [状态](</docs/(qwik)/components/state/index.mdx>)
-- [事件](</docs/(qwik)/components/events/index.mdx>)
-- [任务和生命周期](</docs/(qwik)/components/tasks/index.mdx>)
-- [上下文](</docs/(qwik)/components/context/index.mdx>)
-- [插槽](</docs/(qwik)/components/slots/index.mdx>)
-- [渲染](</docs/(qwik)/components/rendering/index.mdx>)
-- [样式](</docs/(qwik)/components/styles/index.mdx>)
+- [Overview](</docs/(qwik)/components/overview/index.mdx>)
+- [State](</docs/(qwik)/components/state/index.mdx>)
+- [Events](</docs/(qwik)/components/events/index.mdx>)
+- [Tasks & Lifecycle](</docs/(qwik)/components/tasks/index.mdx>)
+- [Context](</docs/(qwik)/components/context/index.mdx>)
+- [Slots](</docs/(qwik)/components/slots/index.mdx>)
+- [Rendering](</docs/(qwik)/components/rendering/index.mdx>)
+- [Styling](</docs/(qwik)/components/styles/index.mdx>)
 
 ## Qwik City
 
-- [概览](</docs/(qwikcity)/qwikcity/index.mdx>)
-- [路由](</docs/(qwikcity)/routing/index.mdx>)
-- [页面](</docs/(qwikcity)/pages/index.mdx>)
-- [嵌套布局](</docs/(qwikcity)/layout/index.mdx>)
+- [Overview](</docs/(qwikcity)/qwikcity/index.mdx>)
+- [Routing](</docs/(qwikcity)/routing/index.mdx>)
+- [Pages](</docs/(qwikcity)/pages/index.mdx>)
+- [Layouts](</docs/(qwikcity)/layout/index.mdx>)
 - [Loaders](</docs/(qwikcity)/route-loader/index.mdx>)
 - [Actions](</docs/(qwikcity)/action/index.mdx>)
-- [验证器](</docs/(qwikcity)/validator/index.mdx>)
-- [端点 Endpoints](</docs/(qwikcity)/endpoints/index.mdx>)
-- [中间件](</docs/(qwikcity)/middleware/index.mdx>)
+- [Validators](</docs/(qwikcity)/validator/index.mdx>)
+- [Endpoints](</docs/(qwikcity)/endpoints/index.mdx>)
+- [Middleware](</docs/(qwikcity)/middleware/index.mdx>)
 - [server$](</docs/(qwikcity)/server$/index.mdx>)
-- [缓存响应](</docs/(qwikcity)/caching/index.mdx>)
-- [HTML 属性](</docs/(qwikcity)/html-attributes/index.mdx>)
-- [环境变量](</docs/(qwikcity)/env-variables/index.mdx>)
-- [API 索引](</docs/(qwikcity)/api/index.mdx>)
+- [Caching](</docs/(qwikcity)/caching/index.mdx>)
+- [HTML attributes](</docs/(qwikcity)/html-attributes/index.mdx>)
+- [Env variables](</docs/(qwikcity)/env-variables/index.mdx>)
+- [API reference](</docs/(qwikcity)/api/index.mdx>)
 
 ## Cookbook
 
-- [概览](/docs/cookbook/index.mdx)
+- [Overview](/docs/cookbook/index.mdx)
 - [Portal](/docs/cookbook/portal/index.mdx)
 - [Media Controller](/docs/cookbook/mediaController/index.mdx)
 
-## 集成
+## Integrations
 
-- [概览](integrations/index.mdx)
+- [Overview](integrations/index.mdx)
 - [Astro](integrations/astro/index.mdx)
 - [Auth.js](integrations/authjs/index.mdx)
 - [Bootstrap](integrations/bootstrap/index.mdx)
 - [Builder.io](integrations/builderio/index.mdx)
 - [Cypress](integrations/cypress/index.mdx)
-- [图标](integrations/icons/index.mdx)
-- [图片优化](integrations/image-optimization/index.mdx)
+- [Icons](integrations/icons/index.mdx)
+- [Image Optimization](integrations/image-optimization/index.mdx)
 - [i18n](integrations/i18n/index.mdx)
 - [Leaflet Map](integrations/leaflet-map/index.mdx)
 - [Modular Forms](integrations/modular-forms/index.mdx)
@@ -70,9 +70,9 @@
 - [Turso](integrations/turso/index.mdx)
 - [Vitest](integrations/vitest/index.mdx)
 
-## 部署
+## Deployments
 
-- [概览](deployments/index.mdx)
+- [Overview](deployments/index.mdx)
 - [Azure SWA](deployments/azure-swa/index.mdx)
 - [AWS](deployments/aws-lambda/index.mdx)
 - [Firebase](deployments/firebase/index.mdx)
@@ -85,23 +85,23 @@
 - [Vercel Edge](deployments/vercel-edge/index.mdx)
 - [Static Site](deployments/static/index.mdx)
 
-## 指导
+## Guides
 
 - [Qwik in a nutshell](</docs/(qwikcity)/guides/qwik-nutshell/index.mdx>)
-- [Markdown 和 MDX](</docs/(qwikcity)/guides/mdx/index.mdx>)
+- [Markdown & MDX](</docs/(qwikcity)/guides/mdx/index.mdx>)
 - [SSG](</docs/(qwikcity)/guides/static-site-generation/index.mdx>)
 - [React Cheat Sheet](</docs/(qwikcity)/guides/react-cheat-sheet/index.mdx>)
 - [Best Practices](</docs/(qwikcity)/guides/best-practices/index.mdx>)
 - [Bundle Optimization](</docs/(qwikcity)/guides/bundle/index.mdx>)
 
-## 概念
+## Concepts
 
-- [思考 Qwik](</docs/(qwik)/concepts/think-qwik/index.mdx>)
-- [可恢复性 Resumable](</docs/(qwik)/concepts/resumable/index.mdx>)
+- [Think Qwik](</docs/(qwik)/concepts/think-qwik/index.mdx>)
+- [Resumable](</docs/(qwik)/concepts/resumable/index.mdx>)
 - [Progressive](</docs/(qwik)/concepts/progressive/index.mdx>)
 - [Reactivity](</docs/(qwik)/concepts/reactivity/index.mdx>)
 
-## 高级
+## Advanced
 
 - [The $ dollar sign](</docs/(qwik)/advanced/dollar/index.mdx>)
 - [Containers](</docs/(qwik)/advanced/containers/index.mdx>)
@@ -122,10 +122,10 @@
 - [Content Security Policy](</docs/(qwikcity)/advanced/content-security-policy/index.mdx>)
 - [Complex Forms](</docs/(qwikcity)/advanced/complex-forms/index.mdx>)
 
-## 索引
+## Reference
 
-- [API 索引](/api/)
-- [废弃特性](</docs/(qwik)/deprecated-features/index.mdx>)
+- [API Reference](/api/)
+- [Deprecated Features](</docs/(qwik)/deprecated-features/index.mdx>)
 
 ## Qwik Labs 🧪
 
@@ -134,10 +134,10 @@
 - [Typed Routes](/docs/labs/typed-routes/index.mdx)
 - [Devtools](/docs/labs/devtools/index.mdx)
 
-## 社区
+## Community
 
 - [GitHub](https://github.com/BuilderIO/qwik)
 - [@QwikDev](https://twitter.com/QwikDev)
 - [Discord](https://qwik.builder.io/chat)
-- [社区项目](/community/projects/index.mdx)
-- [价值观](/community/values/index.mdx)
+- [Community Projects](/community/projects/index.mdx)
+- [Values](/community/values/index.mdx)

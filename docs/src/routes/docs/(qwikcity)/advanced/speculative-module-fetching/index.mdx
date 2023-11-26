@@ -1,6 +1,6 @@
 ---
-title: 预取模块 | 高级
-description: 了解 Qwik 如何处理后台加载捆绑包并使用预取模块填充缓存。
+title: Speculative Module Fetching | Advanced
+description: Learn how Qwik handles loading bundles in the background and filling the cache with Speculative Module Fetching.
 contributors:
   - ulic75
   - mhevery
@@ -9,110 +9,110 @@ contributors:
   - manucorporat
 ---
 
-# 预取模块
+# Speculative Module Fetching
 
-Qwik 能够快速加载页面并变得交互起来，这要归功于它能够在没有 JavaScript 的情况下启动。除此之外，预取模块是一项强大的功能，它允许 Qwik 在后台线程中预先填充浏览器的缓存。
+Qwik is able to load page and become interactive extremely fast due to its ability to startup _without_ JavaScript. In addition to this, Speculative Module Fetching is a powerful feature that allows Qwik to pre-populate the browser's cache in a background thread.
 
-Qwik 的目标不是预先填充整个应用程序的缓存，而是在那个时间点上已经缓存了可能的内容。当 Qwik 优化器拆分应用程序时，它能够理解可能的用户交互。从这个角度来看，同样重要的是它能够理解用户交互中不可能的部分，并避免加载这些捆绑包。
+The goal of Qwik is not to pre-populate the cache with the entire application, but to have already cached what's possible _at that time_. When the Qwik optimizer breaks apart the application, it's able to understand possible user interactions. And from this, it's just as important that it's able to understand what's not possible from user interaction, and to avoid loading those bundles.
 
-- [按页面预先填充缓存](#按页面预先填充缓存)
-- [按交互预先填充缓存](#按交互预先填充缓存)
-- [预先填充缓存事件](#预先填充缓存事件)
+- [Pre-populating the Cache with a Service Worker](#pre-populating-the-cache-with-a-service-worker)
+- [Caching Request and Response Pairs](#caching-request-and-response-pairs)
+- [Parallelizing Network Requests](#parallelizing-network-requests)
 
-### 按页面预先填充缓存
+### Pre-populating the Cache Per Page
 
-每次页面加载时，都会使用用户在该页面上可能执行的捆绑包预先填充缓存。例如，假设页面上有一个按钮的点击监听器。当页面加载时，服务工作者的第一件事就是确保该点击监听器的捆绑包已经在[缓存](#cache-api)中等待。当用户点击按钮时，Qwik 发送请求到事件监听器的捆绑包，目标是该捆绑包已经准备好在[浏览器的缓存](https://developer.mozilla.org/en-US/docs/Web/API/Cache)中执行。
+Each page load will pre-populate the cache with bundles that _could_ be executed by the user, at that moment, on the page. For example, let's say that the page has a click listener on a button. When the page loads, the very first thing the service worker does is ensure the bundle for that click listener is already waiting in the [cache](#cache-api). When the user clicks the button, and Qwik makes a request to the event listener's bundle, the goal is that the bundle is already sitting in the [browser's cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache) ready to execute.
 
-### 按交互预先填充缓存
+### Pre-populating the Per Interaction
 
-您可以将页面加载视为第一个用户交互，它会预先填充缓存，以便下一个用户交互可能使用。当发生后续交互，例如打开模态框或菜单时，Qwik 将再次发出另一个事件，并附带自上次交互以来可能使用的其他捆绑包。预先填充缓存不仅发生在页面加载时，而且在用户与应用程序交互时持续发生。
+You can think of the page load as the first user interaction, which pre-populates the cache with what the next user interaction _could_ be. When a follow-up interaction happens, such as opening a modal or menu, then Qwik will again emit another event with additional bundles that could be used since the last interaction happened. Pre-populating the cache not only happens on page load, but continuously as users interact with the application.
 
-### 预先填充缓存事件
+### Pre-populate Cache Event
 
-推荐的策略是使用[服务工作者](#按页面预先填充缓存)来填充[浏览器的缓存](https://developer.mozilla.org/en-US/docs/Web/API/Cache)。Qwik 框架本身应该使用[预取事件](../../../(qwik)/advanced/prefetching/index.mdx#prefetching-implementation)实现，这已经是默认设置。
+The recommended strategy is to use a [service worker](#pre-populating-the-cache-with-a-service-worker) to populate the [browser's cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache). The Qwik framework itself should use the [prefetchEvent](../../../(qwik)/advanced/prefetching/index.mdx#prefetching-implementation) implementation, which is already the default.
 
-## 按页面预先填充缓存
+## Pre-populating the Cache with a Service Worker
 
-传统上，服务工作者用于缓存应用程序使用的大部分或全部捆绑包。[服务工作者](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers)通常只被视为使应用程序离线工作的一种方式。
+Traditionally, a service worker is used to cache most, or all, of the bundles that an application uses. [Service workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers) are commonly seen only as a way to make an application work offline.
 
-然而，Qwik City 使用服务工作者的方式与众不同，提供了一种强大的缓存策略。目标不是下载整个应用程序，而是使用服务工作者动态预先填充缓存，以便执行可能的内容。通过不下载整个应用程序，可以释放资源，使用户只需请求屏幕上当前任务所需的应用程序部分。
+Qwik City, however, uses service workers quite differently to provide a powerful caching strategy. Instead, the goal is not to download the entire application, but rather to use the service worker to dynamically pre-populate the cache with what's _possible_ to execute. By _not_ downloading the entire application, resources are freed up, enabling the user to only request the necessary parts of the app they _could_ use to complete their current task on the screen.
 
-此外，服务工作者还会自动为 Qwik 发出的这些事件添加监听器。
+Additionally, the service worker will automatically add listeners for these events emitted from Qwik.
 
-### 后台任务
+### Background Task
 
-使用服务工作者的一个优点是它也是[工作者](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)的扩展，运行在后台线程中。
+An advantage of using a service worker is that it's also an extension of a [worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), which runs in a background thread.
 
-> Web Workers 使得在与 Web 应用程序的主执行线程分离的后台线程中运行脚本操作成为可能。这样做的好处是可以在单独的线程中执行繁重的处理，允许主线程（通常是 UI 线程）在没有被阻塞/减慢的情况下运行。
+> Web Workers makes it possible to run a script operation in a background thread separate from the main execution thread of a web application. The advantage of this is that laborious processing can be performed in a separate thread, allowing the main (usually the UI) thread to run without being blocked/slowed down.
 
-通过在服务工作者中预先填充缓存（它本身就是一个工作者），我们能够在后台任务中运行代码，以避免干扰主 UI 线程。通过不干扰主 UI，我们能够提高用户的 Qwik 应用程序的性能。
+By pre-populating the cache from within a service worker (which is a worker), we're able to essentially run the code in a background task, in order to not interfere with the main UI thread. By not interfering with the main UI we're able to help improve the performance of the Qwik application for users.
 
-### 交互式预先填充缓存
+### Interactively Pre-populating the Cache
 
-Qwik 本身应该配置为使用[预取事件](../../../(qwik)/advanced/prefetching/index.mdx#prefetching-implementation)实现（这也是 Qwik 的默认设置）。当 Qwik 发出事件时，服务工作者注册会主动将事件数据转发给已安装和激活的服务工作者。
+Qwik itself should be configured to use the [prefetchEvent](../../../(qwik)/advanced/prefetching/index.mdx#prefetching-implementation) implementation (which is also Qwik's default). When Qwik emits the event, the service worker registration actively forwards the event data to the installed and active service worker.
 
-服务工作者（运行在后台线程中）然后获取模块并将其添加到浏览器的缓存中。"主线程只需要发出有关所需捆绑包的数据，而服务工作者的唯一重点是缓存这些捆绑包。为了实现这一点，服务工作者预先填充浏览器的[缓存](https://developer.mozilla.org/en-US/docs/Web/API/Cache)。
+The service worker (which runs in a background thread) then fetches the modules and adds them to the browser's cache. “The main thread only needs to emit data about the required bundles, while the service worker’s sole focus is to cache those bundles. To achieve this, the service worker pre-populates the browser’s [Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache).
 
-1. 如果浏览器已经缓存了它？太好了，什么都不用做！
-2. 如果浏览器还没有缓存此捆绑包，那么让我们开始获取请求。
+1. If the browser already has it cached? Great, do nothing!
+2. If the browser hasn't already cached this bundle, then let's kick off the fetch request.
 
-了解更多关于[缓存请求和响应对](#caching-request-and-response-pairs)。
+Read more about [Caching Request and Response Pairs](#caching-request-and-response-pairs).
 
-此外，服务工作者确保不会同时发生对同一捆绑包的多个请求。有关此内容的更多信息，请参阅[并行化网络请求](#parallelizing-network-requests)文档。
+Additionally, the service worker ensures that multiple requests for the same bundle do not happen at the same time. More about this in the [Parallelizing Network Requests](#parallelizing-network-requests) documentation.
 
-## 缓存请求和响应对
+## Caching Request and Response Pairs
 
-在许多传统框架中，首选的策略是使用带有 `rel` 属性的 `<link>`，例如 `prefetch`、`preload` 或 `modulepreload`。然而，由于存在[足够多已知问题](../../../(qwik)/advanced/prefetching/index.mdx#link-rel)，Qwik 更倾向于不将 `link` 设置为默认的预取策略（尽管仍然可以[配置](../../../(qwik)/advanced/prefetching/index.mdx)）。
+In many traditional frameworks, the preferred strategy is to use `<link>` with a `rel` attribute of `prefetch`, `preload` or `modulepreload`. However, there are [enough known issues](../../../(qwik)/advanced/prefetching/index.mdx#link-rel) that Qwik has preferred to not make `link` the default prefetching strategy (though it still can be [configured](../../../(qwik)/advanced/prefetching/index.mdx)).
 
-相反，Qwik 更喜欢使用一种较新的方法，充分利用浏览器的[缓存 API](https://developer.mozilla.org/en-US/docs/Web/API/Cache)，这也比[modulepreload](../../../(qwik)/advanced/prefetching/index.mdx#link-rel)更好地得到支持。
+Instead, Qwik prefers to use a newer approach that takes full advantage of the browser's [Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache), which is also better supported compared to [modulepreload](../../../(qwik)/advanced/prefetching/index.mdx#link-rel).
 
-### 缓存 API
+### Cache API
 
-[缓存 API](https://developer.mozilla.org/en-US/docs/Web/API/Cache)通常与服务工作者一起使用，它是一种将请求和响应对存储在其中以使应用程序离线工作的方法。除了使应用程序能够在没有连接的情况下工作之外，同样的缓存 API 也为 Qwik 提供了一种极其强大的缓存机制。
+The [Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache), often associated with service workers, is a way to store request and response pairs in order for an application to work offline. In addition to enabling applications to work without connectivity, the same Cache API provides an extremely powerful caching mechanism available to Qwik.
 
-使用已安装和激活的[服务工作者](#按页面预先填充缓存)来拦截请求，Qwik 能够处理特定的已知捆绑包请求。与通常使用服务工作者的方式相反，默认设置不会尝试处理所有请求，而只处理 Qwik 生成的已知捆绑包。站点的已安装服务工作者仍然可以[由每个站点自定义](#user-service-worker-code)。
+Using the installed and activated [service worker](#pre-populating-the-cache-with-a-service-worker) to intercept requests, Qwik is able to handle specific requests for _known_ bundles. In contrast to the common way service workers are used, the default does not attempt to handle all requests, but rather, only known bundles generated by Qwik. The site's installed service worker can still be [customized by each site](#user-service-worker-code).
 
-Qwik 优化器的一个优点是它还生成了一个 `q-manifest.json` 文件。该清单提供了一个详细的模块图，不仅显示了捆绑包的关联方式，还显示了每个捆绑包中的符号。这个相同的模块图数据提供给了服务工作者，它允许处理已知捆绑包的每个网络请求。
+An advantage of Qwik's optimizer is it also generates a `q-manifest.json` file. The manifest provides a detailed module graph of not only how bundles are associated, but also which symbols are within each bundle. This same module graph data is provided to the service worker which allows for every network request for known bundles to be handled by the cache.
 
-### 动态导入和缓存
+### Dynamic Imports and Caching
 
-当 Qwik 请求一个模块时，它使用动态的 `import()`。例如，假设发生了用户交互，需要 Qwik 执行 `/build/q-abc.js` 的动态导入，代码如下所示：
+When Qwik requests a module it uses a dynamic `import()`. For example, let's say a user interaction happened, requiring Qwik to execute a dynamic import for `/build/q-abc.js`. The code to do so would look something like this:
 
 ```ts
 const module = await import('/build/q-abc.js');
 ```
 
-这里重要的是，Qwik 本身对预取和缓存策略一无所知。它只是请求一个 URL。然而，由于我们安装了一个服务工作者，并且服务工作者正在拦截请求，它能够检查 URL 并说：“看，这是一个对 `/build/q-abc.js` 的请求！这是我们的一个捆绑包！在进行实际的网络请求之前，让我们首先检查一下我们是否已经在缓存中拥有它。”
+What's important here is that Qwik itself has no knowledge of a prefetching or caching strategy. It's simply making a request for a URL. However, because we've installed a service worker, and the service worker is intercepting requests, it's able to inspect the URL and say, "look, this is a request for `/build/q-abc.js`! This is one of our bundles! Let's first check to see if we already have this in the cache before we do an actual network request."
 
-这就是服务工作者和缓存 API 的威力所在！Qwik 首先在另一个线程中预先填充用户可能很快请求的模块的缓存。更好的是，如果已经缓存了该模块，那么浏览器就不需要做任何事情。
+This is where the power of the service worker and Cache API comes in! Qwik first pre-populates the cache for modules the user may soon request within another thread. And better yet, if it's already cached, then there's no need for the browser to do anything.
 
-其他好处包括[并行化网络请求](#parallelizing-network-requests)。
+Other benefits include [Parallelizing Network Requests](#parallelizing-network-requests).
 
-## 并行化网络请求
+## Parallelizing Network Requests
 
-在[缓存请求和响应对](#cache-api)文档中，我们解释了[缓存](https://developer.mozilla.org/en-US/docs/Web/API/Cache)和[服务工作者](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorker) API 的强大组合。然而，我们可以通过确保不为同一捆绑包创建重复请求，并且可以防止网络瀑布效应，将其推进一步，所有这些都是在后台线程中完成的。
+In the [Caching Request and Response Pairs](#cache-api) docs we explained the powerful combination of the [Cache](https://developer.mozilla.org/en-US/docs/Web/API/Cache) and [Service Worker](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorker) APIs. However, we can take it even one step further by ensuring duplicate requests are not created for the same bundle, and we can prevent network waterfalls, all from within the background thread.
 
-### 避免重复请求
+### Avoiding Duplicate Requests
 
-举个例子，假设最终用户当前使用的是一个较慢的 3G 连接。当他们首次请求着陆页时，尽管这个慢速网络允许的速度很快，设备会下载 HTML 并呈现内容（这是 Qwik 真正擅长的领域）。在这种慢速连接下，如果他们还需要下载几百千字节的内容才能[使他们的应用程序工作并变得交互](https://www.builder.io/blog/hydration-is-pure-overhead)，那将是一种遗憾。
+As an example, let's say an end-user currently has a slow 3G connection. When they first request the landing page, as fast as this slow network allows, the device downloads the HTML and renders the content (an area where Qwik really shines). On this slow connection, it'd be a shame if they'd have to also download a few more hundred kilobytes just to [make their app work and become interactive](https://www.builder.io/blog/hydration-is-pure-overhead).
 
-然而，由于应用程序是使用 Qwik 构建的，最终用户不需要下载整个应用程序才能使其变得交互。相反，最终用户已经下载了 SSR 渲染的 HTML 应用程序，以及任何交互部分，例如“添加到购物车”按钮，可以立即预取。
+However, because the app was built with Qwik, the end-user doesn't need to download the entire application for it to become interactive. Instead, the end-user already downloaded the SSR rendered HTML app, and any interactive parts, such as an "Add to cart" button, can be prefetched immediately.
 
-> 请注意，我们只预取实际的监听器代码，而不是整个组件树渲染函数的堆栈。
+> Note that we're only prefetching the actual listener code, and _not_ the entire stack of the component tree render functions.
 
-在这个极其常见的真实世界示例中，设备立即开始为最终用户可见的可能交互预先填充缓存。然而，由于他们的连接速度较慢，即使我们在[后台线程](#background-task)中尽快缓存模块，获取请求本身仍然可能在进行中。
+In this extremely common real-world example of a device with a slow connection, the device immediately starts to pre-populate the cache for the possible interactions that are visible by the end-user. However, due to their slow connection, even though we started to cache the modules as soon as possible in a [background thread](#background-task), the fetch request itself could still be in flight.
 
-为了演示目的，假设获取此捆绑包需要两秒钟。然而，在查看页面一秒钟后，用户点击了按钮。在传统框架中，很有可能什么都不会发生！如果框架还没有完成下载、水合和重新渲染，那么事件监听器就无法添加到按钮上。这反过来意味着用户的交互将会丢失。
+For demo purposes, let's say the fetching for this bundle takes two seconds. However, after one second of viewing the page, the user clicks on the button. In a traditional framework, there's a good chance that absolutely nothing would happen! If the framework hasn't finished downloading, hydrating and re-rendering, the event listener can't be added to the button yet. Which in turn means that the user's interaction would just be lost.
 
-然而，使用 Qwik 的缓存功能，如果用户点击了按钮，并且我们已经在一秒钟前开始了一个请求，并且还剩下一秒钟才能完全接收到它，那么最终用户只需要等待一秒钟。请记住，在这个演示中，他们使用的是一个较慢的 3G 连接。幸运的是，用户已经收到了完整的渲染的着陆页，所以他们已经在看一个完成的页面。接下来，他们只是在预先填充缓存中添加了他们可以交互的应用程序部分，并且他们的慢速连接只用于这些捆绑包。这与他们的慢速连接下载整个应用程序，只为执行一个监听器的情况形成了对比。
+However, with Qwik's caching, if the user clicked the button, and we already started a request one second ago, and it has one second left until it's fully received, then the end-user only has to wait for one second. Remember, they're on a slow 3G connection in this demo. Luckily the user already received the full rendered landing page, so they're already looking at a completed page. Next, they're only pre-populating the cache with the bits of the app they could interact with, and their slow connection is dedicated to just those bundle(s). This is in contrast to their slow connection downloading all of the app, just to execute one listener.
 
-Qwik 能够拦截对已知捆绑包的请求，如果在后台线程中已经有一个获取请求正在进行中，然后用户请求相同的捆绑包，它将确保第二个请求能够重用最初的请求，该请求可能已经完成下载。如果尝试使用[link](../../../(qwik)/advanced/prefetching/index.mdx#link-rel)执行任何此操作，也可以看出为什么 Qwik 更倾向于不将其设置为默认值，而是使用缓存 API 并使用服务工作者拦截请求。
+Qwik is able to intercept requests for known bundles, and if a fetch in a background thread is already in flight, and then a user requests the same bundle, it'll ensure that the second request is able to re-use the initial one, which may already be done downloading. Trying to perform any of this with the [link](../../../(qwik)/advanced/prefetching/index.mdx#link-rel) also shows why Qwik preferred to not make it the default, but instead uses the caching API and intercepts requests with a service worker.
 
-### 减少网络瀑布效应
+### Reducing Network Waterfalls
 
-网络瀑布效应是指多个请求一个接一个地发生，就像楼梯一样，而不是并行发生。网络请求的瀑布通常会影响性能，因为它增加了下载所有模块的时间，而不是每个模块同时开始下载。
+A network waterfall is when numerous requests happen one after another, like steps downstairs, rather than in parallel. A waterfall of network requests will usually hurt performance because it increases the time until all modules are downloaded, rather than each module starting to download at the same time.
 
-下面是一个具有三个模块 A、B 和 C 的示例。模块 A 导入 B，B 导入 C。HTML 文档是通过首先请求模块 A 来启动瀑布的。
+Below is an example with three modules: A, B and C. Module A imports B, and B imports C. The HTML document is what starts the waterfall by first requesting Module A.
 
 ```ts
 import './b.js';
@@ -132,15 +132,15 @@ console.log('Module C');
 <script type="module" src="./a.js"></script>
 ```
 
-在这个示例中，当首次请求模块 `A` 时，浏览器不知道它还应该开始请求模块 `B` 和 `C`。它甚至不知道在模块 `A` 完成下载之前，它需要开始请求模块 `B`。这是一个常见的问题，即浏览器事先不知道它应该开始请求什么，直到每个模块都完成下载。
+In this example, when Module `A` is first requested, the browser has no idea that it should also start requesting Module `B` and `C`. It doesn't even know it needs to start requesting Module `B`, until AFTER Module `A` has finished downloading. It's a common problem in that the browser doesn't know ahead of time what it should start to request, until after each module has finished downloading.
 
-然而，由于我们的服务工作者包含从清单生成的模块图，我们确实知道接下来将请求哪些模块。因此，当发生用户交互或对捆绑包的预取时，浏览器会启动将请求所有将要请求的捆绑包。这样我们就能大大减少请求所有捆绑包所需的时间。
+However, because our service worker contains a module graph generated from the manifest, we do know all of the modules which _will_ be requested next. So when either user interaction or a prefetch for a bundle happens, the browser initiates the request for all of the bundles that _will_ be requested. This allows us to drastically reduce the time it takes to request all bundles.
 
-## 用户服务工作者代码
+## User Service Worker Code
 
-由 Qwik City 安装的默认服务工作者仍然可以完全由应用程序控制。例如，源文件 `src/routes/service-worker.ts` 变成了 `/service-worker.js`，这是浏览器请求的脚本。请注意，它在 `src/routes` 中的位置仍然遵循基于目录的路由模式。
+The default service worker that is installed by Qwik City can still be controlled entirely by the application. For example, the source file `src/routes/service-worker.ts` becomes `/service-worker.js`, which is the script requested by the browser. Notice how its place within `src/routes` still follows the same directory-based routing pattern.
 
-下面是 `src/routes/service-worker.ts` 源文件的示例：
+Below is an example of a default `src/routes/service-worker.ts` source file:
 
 ```ts
 import { setupServiceWorker } from '@builder.io/qwik-city/service-worker';
@@ -152,38 +152,38 @@ addEventListener('install', () => self.skipWaiting());
 addEventListener('activate', (ev) => ev.waitUntil(self.clients.claim()));
 ```
 
-`src/routes/service-worker.ts` 的源代码可以由开发人员根据需要进行修改。这包括选择是否使用 Qwik City 的服务工作者。
+The source code for `src/routes/service-worker.ts` can be modified by the developer however they'd like. This includes opting-in, or opting-out, of setting up Qwik City's service worker.
 
-请注意，`setupServiceWorker()` 函数是从 `@builder.io/qwik-city/service-worker` 导入并在源文件顶部执行的。开发人员可以修改调用此函数的位置和方式。例如，开发人员可能希望首先处理 fetch 请求，这样他们会在 `setupServiceWorker()` 之前添加自己的 fetch 监听器。或者，如果他们根本不想使用 Qwik City 的服务工作者，他们只需从文件中删除 `setupServiceWorker()`。
+Notice that the `setupServiceWorker()` function is imported from `@builder.io/qwik-city/service-worker` and executed at the top of the source file. If, and where, this function is called can be modified by the developer. For example, the developer may want to handle the fetch requests first, in which case they'd add their own fetch listener above `setupServiceWorker()`. Or if they didn't want to use Qwik City's service worker at all, they would just have to remove `setupServiceWorker()` from the file.
 
-此外，默认的 `src/routes/service-worker.ts` 文件附带了一个[install](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/install_event)和[activate](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/activate_event)事件监听器，每个监听器都添加在文件底部。提供的回调函数是推荐的回调函数。但是，开发人员可以根据自己应用程序的要求修改这些回调函数。
+Additionally, the default `src/routes/service-worker.ts` file comes with an [install](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/install_event) and [activate](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerGlobalScope/activate_event) event listeners, each added at the bottom of the file. The callbacks provided are the recommended callbacks. However, the developer can modify these callbacks depending on their own app's requirements.
 
-另一个重要的注意事项是，Qwik City 的请求拦截仅适用于 Qwik 捆绑包，它不会尝试处理任何不属于其构建的请求。
+Another important note is that Qwik City's request intercepting is _only_ for Qwik bundles, it does not attempt to handle any requests which are not a part of its build.
 
-因此，虽然 Qwik City 提供了一种帮助预取和缓存捆绑包的方法，但它并不完全控制应用程序的服务工作者。这使开发人员能够添加自己的服务工作者逻辑，而不会与 Qwik 发生冲突。
+So while Qwik City does provide a way to help prefetch and cache bundles, it does not take full control of the app's service worker. This still allows developers to add their service worker logic without conflicting with Qwik.
 
-## 在开发和预览期间禁用
+## Disabled During Development and Preview
 
-在开发和使用 Vite 的预览模式期间，有一个需要注意的地方，即服务工作者被禁用，这也禁用了预取模块。在开发过程中，我们希望始终确保使用最新的开发代码，而不是之前的代码。
+One gotcha during development and using Vite's preview mode is that the service worker is disabled which also disables speculative module fetching. During development we want to always ensure the latest development code is being used, rather than previous code.
 
-预取模块仅在生产构建中启用。要查看预取模块的效果，您需要在除开发或预览之外的服务器上运行生产构建。
+Speculative module fetching only kicks on a production build. To see speculative module fetching in action you'll need to run the production build on a server other than development or preview.
 
-### HTTP 缓存与服务工作者缓存
+### HTTP Cache vs. Service Worker Cache
 
-预取模块可能看起来不起作用，部分原因是存在各种级别的缓存。例如，浏览器本身可能会在其[HTTP 缓存](https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching)中缓存请求，而服务工作者可能会在[缓存 API](https://developer.mozilla.org/en-US/docs/Web/API/Cache)中缓存请求。仅清空其中一个缓存可能不足以看到预取模块的效果。
+Speculative module fetching may appear to not be working partly due to the various levels of caching. For example, the browser itself may cache requests in its [HTTP cache](https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching), and the service worker may cache requests in the [Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache). Just emptying one of the caches may not be enough to see the effects of speculative module fetching.
 
-### 误导性的清空缓存和硬刷新
+### Misleading Empty Cache and Hard Reload
 
-当开发人员运行[清空缓存和硬刷新](https://developer.chrome.com/blog/hard-reload/)时，它有点误导性，因为它实际上只清空了浏览器的 HTTP 缓存。然而，它并没有清空服务工作者的缓存。即使浏览器的 HTTP 缓存为空，服务工作者仍然具有先前缓存的请求。
+When developers run [Empty Cache and Hard Reload](https://developer.chrome.com/blog/hard-reload/), it's a bit misleading because it actually _only_ empties the browser's HTTP cache. It's not, however, emptying the service worker's cache. Even though the browser's HTTP cache is empty, the service worker still has the previous cached requests.
 
-此外，当使用“清空缓存和硬刷新”时，浏览器会在请求中发送一个 `no-cache` 的缓存控制头。由于请求带有 `no-cache` 的缓存控制头，服务工作者故意不使用自己的缓存，而是浏览器执行常规的 HTTP 获取。
+Additionally, when "Empty Cache and Hard Reload" is used, the browser sends a `no-cache` cache-control header in the _request_ to the server. Because the request has a `no-cache` cache-control header, the service worker purposely does not use its own cache, and instead the browser performs the usual HTTP fetch again.
 
-### 清空服务工作者缓存
+### Emptying the Service Worker Cache
 
-测试预取模块的推荐方法是：
+The recommended way to test specualtive module fetching is to:
 
-- **注销服务工作者**：在 Chrome DevTools 中，转到 Application 选项卡，在 Service Workers 下，单击站点的服务工作者的“注销”链接。
-- **删除 "QwikBuild" 缓存存储**：在 Chrome DevTools 中，转到 Application 选项卡，在左侧的 Cache Storage 下，右键单击 "QwikBuild" 缓存存储上的 "删除"。
-- **不要硬刷新**：不要进行硬刷新，因为这会向服务工作者发送一个带有 `no-cache` 缓存控制的请求，而是单击 URL 栏并按回车。这将发送一个正常的请求，就像您是第一次访问一样。
+- **Unregister the service worker**: In Chrome DevTools, go to the Application tab, and under Service Workers, click the "Unregister" link for the for your site's service worker.
+- **Delete the "QwikBuild" Cache Storage**: In Chrome DevTools, go to the Application tab, and under Cache Storage on the left side, right click "Delete" on the "QwikBuild" cache storage.
+- **Do not hard reload**: Instead of hard reloading, which would send a no-cache cache-control to the service worker, just click the URL bar and hit enter. This will send a normal request as if you were a first time visitor.
 
-请注意，此过程仅用于测试预取模块，对于新的构建不需要执行此过程。每次构建都会创建一个新的服务工作者，并且旧的服务工作者将自动注销。
+Note that this process is only for testing the speculative module fetching, and is not required for new builds. Each build will create a new service worker, and the old service worker will be automatically unregistered.

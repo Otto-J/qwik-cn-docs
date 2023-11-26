@@ -1,23 +1,23 @@
 ---
-title: HTML 属性 | QwikCity
-description: 学习如何向 HTML 标签添加属性，以添加“lang”或其他自定义属性。
+title: HTML attributes | QwikCity
+description: Learn how to add attributes to the html tag, in order to add "lang" or other custom attributes.
 contributors:
   - bab2683
   - hamatoyogi
 ---
 
-# HTML 属性
+# HTML attributes
 
-有时我们需要添加属性来设置网站的某些功能，无论是控制应用程序的主题，决定文本的方向（`dir` 属性），还是设置语言（`lang` 属性）。通常情况下，将这些属性添加到 `html` 标签中是很实用的，因为它通常是应用程序的[容器](../../(qwik)/advanced/containers/index.mdx)。
+Sometimes we need to add attributes to set some functionalities in the website, be it to control the theme of the application, decide the direction of text (`dir` attribute), or set up the language of (`lang` attribute). More often than not, it is practical to add these attributes to the `html` tag as it's usually the [container](../../(qwik)/advanced/containers/index.mdx) of the application.
 
-要在 Qwik City 中实现这一点，请转到 `src/entry.ssr.tsx` 并将它们添加到 `containerAttributes` 中，如下所示：
+To do this with Qwik city, go to `src/entry.ssr.tsx` and add them to `containerAttributes` like so:
 
 ```tsx
 export default function (opts: RenderToStreamOptions) {
   return renderToStream(<Root />, {
     manifest,
     ...opts,
-    // 使用容器属性在 html 标签上设置属性。
+    // Use container attributes to set attributes on the html tag.
     containerAttributes: {
       lang: "en-us",
       ...opts.containerAttributes,
@@ -26,11 +26,12 @@ export default function (opts: RenderToStreamOptions) {
 }
 ```
 
-除此之外，您还可以从 `opts.serverData` 对象（以及嵌套对象）中获取有关请求的信息，例如 `request headers`、`url`、`route params` 等等。通过利用这些信息，现在我们可以做到以下几点：
+In addition to that, from the `opts.serverData` object (and nested objects) you can get information about the request, like `request headers`, `url`, `route params`, etc. 
+By leveraging this information, now we can do the following:
 
 ```tsx
 export default function (opts: RenderToStreamOptions) {
-  // 使用这个路由结构 src/routes/[locale]/post/[id]/index.tsx
+  // With this route structure src/routes/[locale]/post/[id]/index.tsx
   const isRTL = opts.serverData?.qwikcity.params.locale === 'ar';
 
   return renderToStream(<Root />, {

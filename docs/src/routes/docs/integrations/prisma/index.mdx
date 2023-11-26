@@ -1,6 +1,6 @@
 ---
-title: Prisma | 集成
-keywords: 'prisma, orm, 数据库, 数据, 存储, postgress, mondodb'
+title: Prisma | Integrations
+keywords: 'prisma, orm, database, data, storage, postgress, mondodb'
 contributors:
   - manucorporat
   - ulic75
@@ -8,24 +8,24 @@ contributors:
 
 # Prisma
 
-[Prisma](https://www.prisma.io/) 允许以完全类型安全的方式与 [MongoDB](https://www.prisma.io/docs/concepts/database-connectors/mongodb) 或 [SQL 数据库](https://www.prisma.io/docs/concepts/database-connectors/postgresql) 进行交互。
+[Prisma](https://www.prisma.io/) allows interaction with [MongoDB](https://www.prisma.io/docs/concepts/database-connectors/mongodb) or [SQL databases](https://www.prisma.io/docs/concepts/database-connectors/postgresql) in a fully type-safe manner.
 
-使用 Prisma，您可以在 `.prisma` 文件中定义数据库模式，其 CLI 会自动生成数据库迁移和 Typescript 类型。
+With Prisma you define your DB schema in `.prisma` files, and their CLI automatically generates the DB migrations as well as the Typescript types.
 
-Prisma 可以与 Qwik 一起使用 `routeLoader$`、`routeAction$` 和 `server$` 函数。这些是 Qwik 的 API，用于仅在服务器端执行代码。
+Prisma can be used in Qwik with `routeLoader$`, `routeAction$` and `server$` functions. These are Qwik APIs to allow code to execute only on the server-side.
 
-将 Prisma 添加到 Qwik 的最简单方法是使用 `pnpm qwik add prisma` 命令。这将安装所需的依赖项，并创建一个包含 Prisma 模式和迁移的 `prisma` 文件夹。
+The easiest way to add Prisma to Qwik is using the `pnpm qwik add prisma` command. This will install the required dependencies and create a `prisma` folder with the Prisma schema and the migrations.
 
 ```bash
 npm run qwik add prisma
 ```
 
-> Prisma 可以轻松使用不同的数据库，如 Postgres、MySQL、SQLite 和 MongoDB。
+> Prisma makes it easy to use different databases such as Postgres, MySQL, SQLite and MongoDB.
 
 
-## 列出所有用户
+## Listing all the users
 
-我们将使用 `routeLoader$` 查询数据库中的所有用户，使用 `prisma.user.findMany()`，并返回结果。
+We will use `routeLoader$` to query all users in the DB, using `prisma.user.findMany()`, and returning the result.
 
 ```tsx {7} /PrismaClient/ title="src/routes/users/index.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -34,7 +34,7 @@ import { PrismaClient } from '@prisma/client'
 
 export const useGetUsers = routeLoader$(async () => {
   const prisma = new PrismaClient();
-  // 从 SQLite 中读取示例
+  // example read from SQLite
   const users = await prisma.user.findMany()
   return users;
 });
@@ -43,7 +43,7 @@ export default component$(() => {
   const users = useGetUsers();
   return (
     <section>
-      <h1>用户目录</h1>
+      <h1>User's directory</h1>
       <ul>
         {users.value.map(user => (
           <li key={user.id}>
@@ -56,9 +56,9 @@ export default component$(() => {
 });
 ```
 
-## 显示用户详细信息
+## Show user detail
 
-我们将使用 `routeLoader$` 根据 `userId` URL 参数查询特定用户，使用 `prisma.user.findUnique()`，并返回结果。
+We will use `routeLoader$` to query specific users based on the `userId` URL param, using `prisma.user.findUnique()`, and returning the result.
 
 
 ```tsx {8} /PrismaClient/ title="src/routes/users/[userId]/index.tsx"
@@ -71,7 +71,7 @@ export const useGetUser = routeLoader$(async ({params, status}) => {
   const prisma = new PrismaClient();
   const user = await prisma.user.findUnique({where: {id: userId}});
   if (!user) {
-    // 如果找不到用户，则将状态设置为 404
+    // Set the status to 404 if the user is not found
     status(404);
   }
   return user;
@@ -81,23 +81,23 @@ export default component$(() => {
   const user = useGetUser();
   return (
     <section>
-      <h1>用户详细信息</h1>
+      <h1>User detail</h1>
       {user.value ? (
         <>
-          <p>姓名：{user.value.name}</p>
-          <p>邮箱：{user.value.email}</p>
+          <p>Name: {user.value.name}</p>
+          <p>Email: {user.value.email}</p>
         </>
       ) : (
-        <p>用户未找到</p>
+        <p>User not found</p>
       )}
     </section>
   )
 });
 ```
 
-## 添加用户
+## Adding a user
 
-我们将使用 `routeAction$` 和 `Form` 创建一个渐进式表单，以将新用户添加到数据库。我们将使用 `prisma.user.create()` 创建用户。
+We will use `routeAction$` and `Form` to create a progressive form to add a new user to the DB. We will use `prisma.user.create()` to create the user.
 
 ```tsx {7-9} /PrismaClient/ title="src/routes/create/index.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -119,19 +119,19 @@ export default component$(() => {
   const createUserAction = useCreateUser();
   return (
     <section>
-      <h1>创建用户</h1>
+      <h1>Create User</h1>
       <Form action={createUserAction}>
-        <label>姓名
+        <label>Name
           <input name="name" value={createUserAction.formData?.get('name')} />
         </label>
-        <label>邮箱
+        <label>Email
           <input name="email" value={createUserAction.formData?.get('email')} />
         </label>
-        <button type="submit">创建</button>
+        <button type="submit">Create</button>
       </Form>
       {createUserAction.value && (
         <div>
-          <h2>用户创建成功！</h2>
+          <h2>User created successfully!</h2>
         </div>
       )}
     </section>

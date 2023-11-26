@@ -1,5 +1,5 @@
 ---
-title: 优化器规则 | 高级
+title: Optimizer Rules | Advanced
 contributors:
   - the-r3aper7
   - manucorporat
@@ -7,15 +7,15 @@ contributors:
   - mhevery
 ---
 
-# 优化器
+# Optimizer
 
-Qwik 的理念是尽可能延迟加载代码。为了实现这一点，Qwik 依赖于优化器来重新排列代码以进行懒加载。优化器是一个在 rollup 过程中运行的代码级别的转换。
+Qwik's philosophy is to delay loading code for as long as possible. To do that, Qwik relies on an Optimizer to re-arrange the code for lazy loading. The Optimizer is a code level transformation that runs as part of the rollup.
 
-> 优化器是用 Rust 编写的（并且作为 WASM 可用），以实现即时性能。
+> The Optimizer is written in Rust (and available as WASM) for instant performance.
 
-优化器会查找 `$` 并应用一个转换，提取 `$` 后面的表达式，并将其转换为可懒加载和可导入的符号。
+The Optimizer looks for `$` and applies a transformation that extracts the expression following the `$` and turns it into a lazy-loadable and importable symbol.
 
-让我们从一个简单的 `Counter` 示例开始：
+Let's start by looking at a simple `Counter` example:
 
 ```tsx
 export const Counter = component$(() => {
@@ -25,7 +25,7 @@ export const Counter = component$(() => {
 });
 ```
 
-上面的代码表示开发人员编写的组件描述。下面是优化器对代码应用的转换，使其可懒加载的转换过程。
+The above code represents what a developer would write to describe the component. Below are the transformations that the Optimizer applies to the code to make the code lazy-loadable.
 
 ```tsx
 const Counter = component(qrl('./chunk-a.js', 'Counter_onMount'));
@@ -45,8 +45,8 @@ const Counter_onClick = () => {
 };
 ```
 
-请注意，每个 `$` 的出现都会产生一个新的可懒加载的符号。
+Notice that every occurrence of `$` results in a new lazy loadable symbol.
 
-## 序列化
+## Serialization
 
-有关可序列化内容的讨论，请参见 [serialization](../../concepts/resumable/index.mdx#serialization)。
+See [serialization](../../concepts/resumable/index.mdx#serialization) for a discussion of what is serializable.

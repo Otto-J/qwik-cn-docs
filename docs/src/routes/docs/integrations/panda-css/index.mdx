@@ -1,39 +1,39 @@
 ---
-title: Panda CSS | 集成
-keywords: '样式, 样式化'
+title: Panda CSS | Integrations
+keywords: 'styles, styling'
 contributors:
   - anubra266
 ---
 
 # Panda CSS
 
-Panda 是一个样式引擎，以类型安全和可读的方式生成样式原语，用于编写原子 CSS 和配方。
-[Panda CSS 网站](https://panda-css.com/)
+Panda is a styling engine that generates styling primitives to author atomic CSS and recipes in a type-safe and readable manner.
+[Panda CSS Website](https://panda-css.com/)
 
-## 使用方法
+## Usage
 
-您可以通过使用以下 Qwik 脚本轻松添加 Panda：
+You can add Panda easily by using the following Qwik starter script:
 
 ```shell
 npm run qwik add pandacss
 ```
 
-上述命令会更新您的应用程序，并添加所需的依赖项。
+The previous command updates your app with the necessary dependencies.
 
-它还会向您的项目文件夹添加新文件：
+It also adds new files to your project folder:
 
 - `postcss.config.js`
 - `panda.config.js`
 - `.vscode/settings.json`
 
-并修改您的 `src/global.css` 文件以包含以下内容：
+and modifies your `src/global.css` to include
 
 ```css title="src/global.css"
 
-# global.css 文件
+# global.css file
 
 @layer reset, base, tokens, recipes, utilities;
 
-...内容...
+...stuff...
 
 ```

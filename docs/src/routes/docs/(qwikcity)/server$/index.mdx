@@ -9,25 +9,25 @@ contributors:
 
 # `server$()`
 
-`server$()` 允许你创建一个总是在服务器上执行的函数，这使得它成为访问数据库或执行仅限服务器操作的绝佳位置。
+`server$()` allows you to create a function that always execute on the server, making it a great place to access the DB or perform server-only actions.
 
-`server$` 是客户端和服务器之间的一种 RPC（远程过程调用）机制，就像传统的 HTTP 端点一样，但由于 TypeScript 的强类型支持，更易于维护。
+`server$` is a form of RPC (Remote Procedure Call) mechanism between the client and server, just like a traditional HTTP endpoint but strongly typed thanks to Typescript, and easier to maintain.
 
-你的新函数将具有以下签名：
+Your new function will have the following signature:
 `([AbortSignal, ] ...): Promise<T>`
 
-`AbortSignal` 是可选的，它允许你通过终止连接来取消长时间运行的请求。
-请注意，根据你的服务器运行时，服务器上的函数可能会立即终止，也可能不会立即终止，这取决于该运行时如何处理客户端断开连接。
+`AbortSignal` is optional, and allows you to cancel a long running request by terminating the connection.
+Please note that depending on your server runtime, the function on the server may or may not terminate immediately as it depends on how client disconnections are handled by said runtime.
 
 ```tsx
 import { component$, useSignal } from '@builder.io/qwik';
 import { server$ } from '@builder.io/qwik-city';
 
-// 通过使用 `server$()` 包装一个函数，我们将其标记为总是在服务器上执行。
-// 这是一种 RPC 机制。
+// By wrapping a function with `server$()` we mark it to always
+// execute on the server. This is a form of RPC mechanism.
 const serverGreeter = server$((firstName: string, lastName: string) => {
   const greeting = `Hello ${firstName} ${lastName}`;
-  console.log('在服务器上打印', greeting);
+  console.log('Prints in the server', greeting);
   return greeting;
 });
 
@@ -37,8 +37,8 @@ export default component$(() => {
 
   return (
     <section>
-      <label>名字：<input bind:value={firstName} /></label>
-      <label>姓氏：<input bind:value={lastName} /></label>
+      <label>First name: <input bind:value={firstName} /></label>
+      <label>Last name: <input bind:value={lastName} /></label>
 
       <button
         onClick$={async () => {
@@ -46,20 +46,20 @@ export default component$(() => {
           alert(greeting);
         }}
       >
-        打招呼
+        greet
       </button>
     </section>
   );
 });
 ```
 
-`server$` 还可以使用 `this` 读取 HTTP cookies、headers 或环境变量。在这种情况下，你需要使用一个函数而不是箭头函数。
+`server$` can also read the HTTP cookies, headers, or environment variables, using `this`. In this case you will need to use a function instead of an arrow function.
 
 ```tsx
-// 注意，包装的函数声明为 `async function`
+// Notice that the wrapped function is declared as an `async function`
 const addUser = server$(async function(id: number, fullName: string, address: Address) {
-  // `this` 是 `RequestEvent` 对象，
-  // 其中包含 HTTP headers、cookies 和环境变量。
+  // The `this` is the `RequestEvent` object, which contains
+  // the HTTP headers, cookies, and environment variables.
   const db = createClient(this.env.get('DB_KEY'));
   if (this.cookie.get('user-session')) {
     await db.from('users').insert({
@@ -77,15 +77,15 @@ const addUser = server$(async function(id: number, fullName: string, address: Ad
 })
 ```
 
-> `server$` 可以接受任意数量的参数，并返回 Qwik 可序列化的任何值，包括原始类型、对象、数组、bigint、JSX 节点，甚至是 Promise，仅举几例。
+> Server$ can accept any number of arguments and return any value that can be serialized by Qwik, that includes primitives, objects, arrays, bigint, JSX nodes and even Promises, just to name a few.
 
 
-## 流式响应
+## Streaming responses
 
-`server$` 可以通过使用异步生成器返回数据流，这对于从服务器流式传输数据到客户端非常有用。
+`server$` can return a stream of data by using an async generator. This is useful for streaming data from the server to the client.
 
-在客户端上终止生成器（例如通过在生成器上调用 `return()` 或从异步 for 循环中退出）将终止连接。
-与 `AbortSignal` 一样，生成器在服务器端如何终止取决于服务器运行时以及如何处理客户端断开连接。
+Terminating the generator on the client side (e.g. by calling `return()` on the generator, or by breaking out from your async for-loop) will terminate the connection. As with `AbortSignal` -
+how the generator will terminate on the server side depends on the server runtime and how client disconnects are handled.
 
 ```tsx
 import { component$, useSignal } from '@builder.io/qwik';
@@ -110,7 +110,7 @@ export default component$(() => {
           }
         }}
       >
-        开始
+        start
       </button>
       <div>{message.value}</div>
     </div>
@@ -118,21 +118,21 @@ export default component$(() => {
 });
 ```
 
-实际上，这个 API 用于在我们的文档站点中实现 QwikGPT 流式响应。
+This API is actually used to implement QwikGPT streaming responses in our docs site.
 
 
-## `server$()` 是如何工作的？
+## How does `server$()` work?
 
-`server$()` 包装一个函数并返回一个异步代理函数。在服务器上，代理函数直接调用包装的函数，并且 `server$()` 函数会自动创建一个 HTTP 端点。
+A `server$()` wraps a function and returns an async proxy to the function. On the server, the proxy function directly calls the wrapped function, and a HTTP endpoint is automatically created by the `server$()` function.
 
-在客户端上，代理函数通过使用 `fetch()` 发起 HTTP 请求来调用包装的函数。
+On the client, the proxy function invokes the wrapped function via an HTTP request, using `fetch()`.
 
-> 注意：`server$()` 函数必须确保服务器和客户端执行的代码版本相同。如果存在版本不一致，行为是未定义的，可能会导致错误。如果版本不一致是一个常见问题，那么应该使用更正式的 RPC 机制，例如 tRPC 或其他库。
+> Note: The `server$()` function must ensure that the server and client have the same version of the code executing. If there is a version skew the behavior is undefined and may result in an error. If version skew is a common problem then a more formal RPC mechanism should be used such as a tRPC or other library.
 
-## 中间件和 `server$`
+## Middleware and `server$`
 
-在使用 `server$` 时，了解 [中间件函数](/docs/middleware/#middleware-function) 的执行方式非常重要。在 `layout` 文件中定义的中间件函数不会对 `server$` 请求运行。这可能会导致困惑，特别是当开发人员期望某些中间件对页面请求和 `server$` 请求都执行时。
+When using `server$`, it's important to understand how [middleware functions](/docs/middleware/#middleware-function) are executed. Middleware functions defined in `layout` files do not run for `server$` requests. This can lead to confusion, especially when developers expect certain middleware to be executed for both page requests and `server$` requests.
 
-为了确保中间件函数对两种类型的请求都运行，应该在 `plugin.ts` 文件中定义它。这样可以确保中间件在所有传入请求中一致地执行，无论是普通页面请求还是 `server$` 请求。
+To ensure that a middleware function runs for both types of requests, it should be defined in the `plugin.ts` file. This ensures that the middleware is executed consistently for all incoming requests, regardless of whether they are normal page requests or `server$` requests.
 
-通过在 `plugin.ts` 文件中[定义中间件](/docs/advanced/routing/#plugints)，开发人员可以维护一个集中的位置来共享中间件逻辑，确保一致性并减少潜在的错误或疏忽。
+By [defining middleware in the `plugin.ts`](/docs/advanced/routing/#plugints) file, developers can maintain a centralized location for shared middleware logic, ensuring consistency and reducing potential errors or oversights.

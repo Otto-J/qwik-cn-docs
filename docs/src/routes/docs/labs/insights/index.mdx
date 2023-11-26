@@ -1,33 +1,34 @@
 ---
-title: 🧪 洞察 | Qwik 实验室
+title: 🧪 Insights | Qwik Labs
 contributors:
   - mhevery
   - gioboa
 ---
 
-# 🧪 洞察
-**阶段：** `原型制作`
+# 🧪 Insights 
+**Stage:** `prototyping`
 
-洞察功能允许您的应用收集真实用户的使用信息，以优化包的创建。通过观察真实用户行为，Qwik 构建系统可以更好地预取应用的包。这有两个好处：
-1. 通过注意哪些符号一起使用，打包工具可以将这些符号放在同一个包中，最小化可能发生的瀑布效应，如果有太多需要下载的小文件。
-2. 通过观察符号的使用顺序，预取器可以按优先顺序获取包，确保首先加载使用频率更高的包。
+Insights allow your application to collect real user usage information to optimize the creation of bundles. By observing real user behavior, the Qwik build system can then do a better job prefetching bundles for your application. There are two benefits of this:
+1. By noticing which symbols are used together, the bundler can colocate the symbols in the same bundle minimizing the waterfall that could occur if there are too many small files needing to be downloaded.
+2. By observing in which order the symbols are used, the prefetcher can then fetch bundles in priority order ensuring that the bundles that are used more often are loaded first.
 
-## 架构
+## Architecture
 
-优化包括以下部分：
-- 一个 `<Insights>` 组件，用于收集真实用户的使用数据。
-- 在 builder.io 数据库中注册的应用程序。
-- 一个 `qwikInsights` Vite 插件，在构建过程中加载和保存真实用户的使用数据。
+The optimization consists of these parts:
+- A `<Insights>` component which collects real user usage data.
+- A registered application inside the builder.io database.
+- A `qwikInsights` Vite Plugin to load and save real user usage data during the build process.
 
-> 注意：
-> 要尝试这个新功能，请在 [Qwik Discord 服务器](https://qwik.builder.io/chat) 中留言。
-> 目前，洞察信息托管在 Builder 数据库中。这些信息是关于应用程序中符号/块的执行情况。
-> 服务的实现是开源的，您可以选择使用我们的服务或托管您自己的服务。
-> （请注意，将来可能会收费。）
+> NOTE:
+> To try this new feature please drop a message inside the [Qwik Discord server](https://qwik.builder.io/chat)
+> Currently Insights info is hosted in the Builder database. This information is about the execution of symbols/chunks in the application.
+> The implementation of the service is open-source and you have the choice to use ours or host your own.
+> (Please note, that this may become a paid service in the future.)
 
-## `<Insights>` 组件
 
-应将 `<Insights>` 组件添加到您的 `root.tsx` 文件中。
+## `<Insights>` component
+
+The `<Insights>` component should be added to your `root.tsx` file.
 
 ```typescript
 // ...
@@ -51,22 +52,22 @@ export default component$(() => {
 });
 ```
 
-您可以通过访问 [Qwik Insight](https://qwik-insights.builder.io/app/add/) 获取 `PUBLIC_QWIK_INSIGHTS_KEY`。
+You can get `PUBLIC_QWIK_INSIGHTS_KEY` by visiting [Qwik Insight](https://qwik-insights.builder.io/app/add/).
 
-`<Insights>` 组件收集以下数据：
-- 符号的时间信息。
-- URL 的 `pathname` 部分。
-- 随机的 sessionID，用于标识来自同一浏览器会话的符号加载。
+The `<Insights>` component collects this data:
+- Timing information of symbols.
+- The `pathname` part of the URL.
+- Random sessionID which identifies which symbol loads came from the same browser session.
 
-注意：`<Insights>` 组件不会收集任何可识别用户的信息。
+NOTE: The `<Insights>` component does not collect any user-identifiable information.
 
-收集的信息将发送到 builder.io 数据库进行存储。
+The information collected is sent to builder.io database for storage.
 
-## Vite 集成
+## Vite integration
 
-一旦应用程序运行一段时间并收集足够的符号使用信息，统计数据可以用于改进未来版本的应用程序的包。通过将 vite 构建与 Insights 连接起来，可以实现这一点，如下所示：
+Once the application is running for a while and it collects sufficient information on symbol usage, the stats can be used to improve the bundles of the future version of the application. This is done by connecting the vite build with Insights like so:
 
-文件：`vite.config.js`
+file: `vite.config.js`
 ```typescript
 //..
 import { defineConfig, loadEnv } from 'vite';

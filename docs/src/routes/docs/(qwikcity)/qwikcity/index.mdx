@@ -1,5 +1,5 @@
 ---
-title: 概述 | Qwik City
+title: Overview | Qwik City
 contributors:
   - manucorporat
   - strogonoff
@@ -14,40 +14,40 @@ import ImgRoutingFiles from '~/media/docs/qwikcity/routing-files.png?jsx';
 
 # Qwik City
 
-虽然 Qwik 专注于组件 API，但 Qwik City 包含了支持组件的常见服务器功能的 API：
-- [路由](/docs/routing/): 使用基于目录的路由定义应用程序的路由。（支持 MPA 和 SPA 路由模型。）
-- [页面](/docs/pages): 渲染应用程序页面，是应用程序的主要功能。
-- [布局](/docs/layout/): 定义可在页面之间重复使用的共享页面布局。
-- [加载器](/docs/route-loader/): 在服务器上获取组件使用的数据。
-- [动作](/docs/action/): 提供组件请求服务器执行动作的方式。
-- [验证器](/docs/validator/): 提供验证动作和加载器的方式。
-- [端点](/docs/endpoints/): 定义用于 RESTful API、GraphQL API、JSON、XML 或反向代理的数据端点的方式。
-- [中间件](/docs/middleware/): 执行跨切面关注点（如身份验证、安全性、缓存、重定向和日志记录）的集中方式。
-- [server$](/docs/server$/): 在服务器上执行逻辑的简单方式。
-- [缓存](/docs/caching/): 控制内容的缓存。
-- [环境变量](/docs/env-variables/): 以平台无关的方式管理读取环境变量的 API，通常用于密钥。
-- 同时支持服务器端渲染（SSR）用于完全动态站点以及静态站点生成（SSG）以在静态 Web 服务器和 CDN 上托管。
+While Qwik focuses on Component API, Qwik City contains API to support the component with common server focused features:
+- [routing](/docs/routing/): Define your application routes with directory based routing. (Supports both MPA and SPA routing models.)
+- [pages](/docs/pages): Render application pages, the main feature of an application.
+- [layouts](/docs/layout/): Define common shared page layouts to be reused across pages.
+- [loaders](/docs/route-loader/): Fetch data on the server to be used by the component.
+- [actions](/docs/action/): Provide a way for the component to request the server to perform an action.
+- [validators](/docs/validator/): Provide a way for validating actions and loaders.
+- [endpoints](/docs/endpoints/): A way to define data endpoints for your RESTful API, GraphQL API, JSON, XML or reverse proxy.
+- [middleware](/docs/middleware/): A centralized way to perform cross-cutting concerns such as authentication, security, caching, redirects, and logging.
+- [server$](/docs/server$/): A simple way to execute logic on the server.
+- [cache](/docs/caching/): Control caching of your content.
+- [env variables](/docs/env-variables/): API to manage reading environment variables, commonly used for keys, in a platform independent way.
+- Supports both Server Side Rendering (SSR) for fully dynamic sites as well as Static Site Generation (SSG) to be hosted on static web servers and CDNs.
 
 > Qwik¹ City²
 >
-> [**Qwik¹**](/docs/(qwik)/index.mdx): 核心框架，稳定，基本组件模型。
+> [**Qwik¹**](/docs/(qwik)/index.mdx): Core framework, stable, primitives, component model.
 >
-> [**City²**](/docs/(qwikcity)/routing/index.mdx): 基于文件的路由器、中间件、端点和数据获取和更新。
+> [**City²**](/docs/(qwikcity)/routing/index.mdx): Opinionated file-based router, middleware, endpoints, and data fetching and update.
 
-我们称之为 Qwik 的**元框架**。Qwik City 是 Qwik 的补充，就像 [Next.js](https://nextjs.org/) 对于 React，[Nuxt](https://nuxt.com/) 对于 Vue，[SvelteKit](https://kit.svelte.dev/) 对于 Svelte，[Analog](https://analogjs.org/) 对于 Angular 一样。
+We call it a **meta-framework** for Qwik. Qwik City is to Qwik, what [Next.js](https://nextjs.org/) is to React, what [Nuxt](https://nuxt.com/) is to Vue, [SvelteKit](https://kit.svelte.dev/) to Svelte and [Analog](https://analogjs.org/) is to Angular.
 
-Qwik（核心）和 Qwik City（路由）在两个抽象层面上解决问题。**Qwik** 专注于组件和状态管理基元，而 Qwik City 提供了一种**基于观点和高性能的构建大规模站点的方式**。我们不希望将生态系统锁定在单一正确的站点构建方式上，事实上，我们鼓励社区在 Qwik 之上构建替代解决方案。
+Qwik (core) and Qwik City (routing) solve problems at two layers of abstraction. **Qwik**, focuses on component and state management primitives, while Qwik City brings an **opinionated and performant way to build sites at scale**. We don't want to lock the ecosystem into a single correct way of building sites, in fact we encourage the community to build alternative solutions on top of Qwik.
 
-> 虽然 Qwik City 充满了有用的功能，但由于 Qwik 的可恢复性和 JavaScript 流式处理，对于最终用户来说，使用 Qwik City 不会增加额外的成本。（零 JavaScript）；
+> While Qwik City is full of useful functionality, thanks to Qwik's resumability and JavaScript streaming, there is no additional cost to the end user from Qwik City. (zero JavaScript);
 
-使用 Qwik City 构建电子商务网站、博客网站或任何其他需要路由、布局或数据检索/更新的网站。Qwik City 基于 Qwik 构建，因此 Qwik City 站点具有可恢复性，并且只下载最小量的 JavaScript，并进行细粒度的延迟加载。
+Use Qwik City to build an e-commerce website, blog site, or any other website that needs routing, layouts, or data retrieval/updates. Qwik City is built on Qwik, and therefore Qwik City sites are resumable and only download the minimal amount of JavaScript with fine-grained lazy loading.
 
-## 高级 API 概述
+## High Level API Overview
 
-以下表格显示了应该在哪个文件（`index.tsx` vs `layout.tsx`）中实现相应的功能。
+This table shows which file (`index.tsx` vs `layout.tsx`) the respective feature should be implemented in.
 
 <ImgRoutingFiles />
 
 ## Partytown
 
-Qwik City 还预先集成了 [Partytown](https://partytown.builder.io)，允许您在主线程之外执行第三方代码。
+Qwik City also comes pre-integrated with [Partytown](https://partytown.builder.io) allowing you to execute your third-party code off the main thread.

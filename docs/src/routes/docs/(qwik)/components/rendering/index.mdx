@@ -1,5 +1,5 @@
 ---
-title: 渲染 | 组件
+title: Rendering | Components
 contributors:
   - the-r3aper7
   - RATIU5
@@ -15,23 +15,24 @@ contributors:
   - mhevery
 ---
 
-# 渲染
+# Rendering
 
-渲染是根据应用程序和组件模板的状态变化来更新 DOM 的过程。
+Rendering is the process of updating the DOM based on changes in the state of the application and the component templates.
 
-Qwik 是独特的，因为它知道如何异步地以细粒度的方式无序地渲染模板。
+Qwik is unique because it knows how to render templates out-of-order asynchronously and in a fine-grained manner.
+
 
 ## JSX
 
-与 React 一样，Qwik 使用 [JSX](https://facebook.github.io/jsx/) 来表达组件的模板。请注意，JSX 只是语法，在底层，React 和 Qwik 是完全不同的。**JSX != VDOM**。
+Just like React, Qwik uses [JSX](https://facebook.github.io/jsx/) to express the component's template. Notice that JSX is only syntax, under the hood, React and Qwik are completely different. **JSX != VDOM**.
 
-Qwik 与其他 JSX 框架有一些不同之处：
+Qwik presents a few differences from other JSX frameworks:
 
-- 组件总是使用 `component$` 函数声明。
-- 组件可以使用 `useSignal` 钩子创建响应式状态。
-- 事件处理程序使用 `$` 后缀声明。
-- 对于 `<input>`，在 Qwik 中，`onChange` 事件被称为 `onInput$`。
-- 优先使用 HTML 属性。`class` 替代 `className`。`for` 替代 `htmlFor`。
+- Components are always declared with the `component$` function.
+- Components can use the `useSignal` hook to create reactive state.
+- Event handlers are declared with the `$` suffix.
+- For `<input>`, the `onChange` event is called `onInput$` in Qwik.
+- HTML attributes are prefered. `class` instead of `className`. `for` instead of `htmlFor`.
 
 ```tsx /component$/#a /onClick$/#b /class/#c
 import { component$, useSignal } from '@builder.io/qwik';
@@ -61,10 +62,9 @@ export const MyComponent = component$((props) => {
 ```
 
 
-## 渲染子组件
+## Rendering child components
 
-
-Qwik 在需要时按需加载组件。为了减少要下载的组件数量，只有当组件的 props 发生变化时，Qwik 才会进入子组件。
+Qwik lazy loads components on an as-needed basis. To minimize the number of components to download, Qwik only descends into child components if the component's props have changed.
 
 ```tsx {9} /Child/#a
 import { component$, useSignal } from '@builder.io/qwik';
@@ -85,12 +85,12 @@ export const Child = component$((props: { name: string }) => {
 });
 ```
 
-> 在上面的示例中，Parent 组件将一个变化的 `name` 属性传递给 Child 组件。只有当 count 信号发生变化时，Child 组件才会重新渲染。
+> In the above example, the Parent component passes a changing `name` property to the Child component. The Child component will only re-render when the count signal changes.
 
 
-### 渲染列表项
+### Rendering a list of items
 
-在许多情况下，您可能希望通过在渲染函数中使用 `items.map()` 来映射数组来渲染组件。对于列表的每个项，都需要将一个唯一的 `key` 属性传递给映射函数的第一个子元素。`key` 必须是字符串或数字，并且在列表中必须是唯一的。
+In many cases you'll want to render components by mapping an array in the render function with `items.map()`. It is required for every item of the list to have a unique `key` property passed to the first child of the mapping function. The `key` must be a string, or number and must be unique within the list.
 
 ```tsx {6} /data.map/ /key/#a
 import { component$ } from '@builder.io/qwik';
@@ -108,11 +108,11 @@ export const Parent = component$(() => {
 });
 ```
 
-> **注意：** 不建议使用数组的索引作为键，除非您可以保证给定键的数据始终相同。最好使用数据中的某个唯一标识符作为键。
+> **Note:** it is not recommended to use the array's index as the key unless you can guarantee that the data for a given key will always be the same. It is always preferred to use some unique identifier from the data as the key.
 
-### 条件渲染
+### Rendering conditionally
 
-条件渲染可以使用 JavaScript 的 [三元运算符](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) `?`、`&&` 运算符，或者使用 `if` 语句来完成。
+Conditional rendering is done with the Javascipt [ternary operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) `?`, the `&&` operator, or just by using `if` statements.
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -131,20 +131,20 @@ export default component$(() => {
 
 ### `dangerouslySetInnerHTML`
 
-Qwik 在 HTML 元素上提供了一个名为 `dangerouslySetInnerHTML` 的属性，用于替代在 DOM 上调用 `innerHTML`。
+Qwik offers an attribute on HTML Elements called `dangerouslySetInnerHTML` as a replacement for calling `innerHTML` on the DOM.
 
-由于在渲染不可信内容时存在跨站脚本（XSS）的可能性，您必须使用此属性来提醒自己此操作可能是危险的。
+Due to cross-site-scripting (XSS) possibilities when rendering not trustworthy content, you must use this attribute to remind yourself that this operation might be dangerous.
 
 ```tsx
 const htmlString = "<strong>hello</strong>";
 <div dangerouslySetInnerHTML={htmlString}></div>
 ```
 
-### `bind` 属性
+### `bind` attribute
 
-这是一个方便的 API，用于将 `<input>` 的值与 `Signal` 进行双向数据绑定。
+It is a convenient API to two-way data bind the value of a `<input>` to a `Signal`.
 
-对于复选框输入，可以使用 `bind:checked`，将 `checked` 布尔值绑定到指定的信号。
+For checkbox inputs, you can use `bind:checked`, which binds the `checked` boolean to the specified signal.
 
 ```tsx /bind:value/ /bind:checked/ /firstName/#a /acceptConditions/#b
 import { component$, useSignal } from '@builder.io/qwik';
@@ -164,7 +164,7 @@ export default component$(() => {
 })
 ```
 
-`bind:` 会被 Qwik 优化器编译为属性设置和事件处理程序，即它只是语法糖。
+The `bind:` is compiled away by the Qwik optimizer to a property set and an event handler, ie, it is just syntax sugar.
 
 ```tsx /bind:value/ /bind:checked/ /firstName/#a /acceptConditions/#b
 import { component$, useSignal } from '@builder.io/qwik';
@@ -189,27 +189,26 @@ export default component$(() => {
 })
 ```
 
-> 此 API 确保输入的 `value` 始终与信号的值同步，无论更改来自何处。
+> This API ensures that the `value` of the input is always in sync with the value of the signal, no matter where the change comes from.
 
 
-## 异步渲染
+## Async rendering
 
-渲染管道能够按需加载子组件非常重要。懒加载是一个异步操作，因此渲染需要是异步的。实际上，这意味着 `render()` 函数返回一个 Promise。
+It is important that the rendering pipeline can lazy load child components. Lazy loading is an asynchronous operation; therefore, rendering needs to be asynchronous. In practice, this means that the `render()` function returns a promise.
 
-大多数当前的框架都有同步的 `render()` 过程。同步渲染无法轻松处理异步代码加载，因此同步渲染要求在渲染开始之前，所有依赖的组件都必须急切地存在。
+Most current-generation frameworks have a synchronous `render()` process. Synchronous rendering can't easily deal with asynchronous code loading, so synchronous rendering necessitates that all dependant components are eagerly present before rendering can commence.
 
-## 渲染批处理
+## Render batching
 
-每当应用程序的状态发生变化时，Qwik 将安排一个渲染操作。渲染操作将安排在宏任务（例如 `setTimeout(0)`）之后运行。这允许应用程序将多个状态更改批处理为单个渲染操作。
+Whenever the state of the application changes, Qwik will schedule a render operation. The render operation will be scheduled to run after a macro-task (e.g. `setTimeout(0)`). This allows the application to batch multiple state changes into a single render operation.
 
-此外，由于 Qwik 的异步性质，所有 DOM 写入都会被缓冲，并且只有在下载所有组件并执行它们的 JSX 函数之后才会刷新。结果是，UI 将作为一个原子操作更新，即使应用程序渲染速度较慢，用户也不会看到中间步骤。
+In addition, because of the asynchronous nature of Qwik, all DOM writes are buffered and only flushed once all of the components have been downloaded and their JSX functions executed. The result is that the UI will update as an atomic operation, and the user will not see the intermediate steps, even if the application is slow to render.
 
-最终目标是在快速变化的状态和慢速网络的情况下实现性能和一致的渲染。
+The end goal is to enable performance and consistent rendering, even in the context of fast changing state and slow network.
 
-## 细粒度的响应性
+## Fine-grained reactivity
 
-由于 Qwik 具有细粒度的响应性，只有依赖于状态的组件才会被更新。这对性能有很大的提升，原因如下：
+Thanks to the fine-grained reactivity of Qwik, only the components that depend on the state will be updated. This is a big performance gain for two reasons:
 
-1. 执行的代码越少，应用程序更新的渲染速度就越快。
-2. 执行的代码越少，往往意味着代码不必在应用程序启动时（或永远）下载。
-å
+1. Less code to execute means application updates will render faster.
+2. Less code to execute means oftentimes the code does not have to be downloaded on application startup (or ever).

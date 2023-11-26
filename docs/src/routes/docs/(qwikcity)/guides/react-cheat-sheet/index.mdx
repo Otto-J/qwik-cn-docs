@@ -1,6 +1,6 @@
 ---
-title: React 开发者的 Qwik
-description: 在这个便捷的速查表中了解 React 和 Qwik 的区别。
+title: Qwik for React developers
+description: Learn the difference between React and Qwik in this handy cheat sheet.
 
 contributors:
   - the-r3aper7
@@ -21,11 +21,11 @@ contributors:
 
 # React Vs Qwik
 
-比较 React 和 Qwik 的几个例子。
+Several examples comparing React and Qwik.
 
-## Hello world 组件
+## Hello world component
 
-### ⚛️ React
+### ⚛️ From React
 
 ```tsx
 export const HelloWorld = () => {
@@ -33,7 +33,7 @@ export const HelloWorld = () => {
 }
 ```
 
-### ⚡️ Qwik
+### ⚡️ To Qwik
 
 ```tsx
 export const HelloWorld = component$(() => {
@@ -42,14 +42,14 @@ export const HelloWorld = component$(() => {
 ```
 
 <details>
-  <summary style={{ color: "#17ADF5" }}>component$ 和 $ 是什么？</summary>
-  <p><span style={{ color: "#A273F2" }}>component$</span> 用于声明一个 <a href="https://qwik.builder.io/docs/components/overview/#component">Qwik 组件</a>。</p>
-  <p><a href="https://qwik.builder.io/docs/advanced/dollar/#the-dollar--sign">美元符号</a> <span style={{ color: "#A273F2" }}>$</span> 用于在 Qwik 将应用程序拆分为许多我们称之为 symbols 的小块时，向优化器和开发人员发出信号。</p>
+  <summary style={{color: "#17ADF5"}}>What is component$ and $?</summary>
+  <p><span style={{color: "#A273F2"}}>component$</span> is used to declare a <a href="https://qwik.builder.io/docs/components/overview/#component">Qwik component.</a></p>
+  <p><a href="https://qwik.builder.io/docs/advanced/dollar/#the-dollar--sign">The dollar sign</a> <span style={{color: "#A273F2"}}>$</span> is used to signal both the optimizer and the developer when Qwik splits up your application into many small pieces we call symbols.</p>
 </details>
 
-## 带有点击处理程序的按钮
+## Button with a click handler
 
-### ⚛️ React
+### ⚛️ From React
 
 ```tsx
 export const Button = () => {
@@ -57,7 +57,7 @@ export const Button = () => {
 }
 ```
 
-### ⚡️ Qwik
+### ⚡️ To Qwik
 
 ```tsx
 export const Button = component$(() => {
@@ -66,14 +66,14 @@ export const Button = component$(() => {
 ```
 
 <details>
-  <summary style={{ color: "#17ADF5" }}>还记得 $ 吗？</summary>
-  <p>在 qwik 中，事件处理程序的行为与其他框架中的行为相同，只需记住它们的内容将以延迟方式加载，这要归功于美元后缀。</p>
-  <p>注意 ⚠️：JSX <a href="https://qwik.builder.io/docs/components/events/#inline-handler">处理程序</a>（如 onClick$ 和 onInput$）仅在客户端上执行。这是因为它们是 DOM 事件，由于服务器上没有 DOM，它们不会在服务器上执行。</p>
+  <summary style={{color: "#17ADF5"}}>Remember $?</summary>
+  <p>Event handlers in qwik behave in the same way as in other frameworks, you just have to keep in mind that their content will be loaded in a lazy way thanks to the dollar suffix.</p>
+  <p>Attention ⚠️: JSX <a href="https://qwik.builder.io/docs/components/events/#inline-handler">handlers</a> such as onClick$ and onInput$ are only executed on the client. This is because they are DOM events, since there is no DOM on the server, they will not be executed on the server.</p>
 </details>
 
-## 使用 Props
+## Using Props
 
-### ⚛️ React
+### ⚛️ From React
 
 ```tsx
 export const Parent = (() => {
@@ -100,7 +100,7 @@ export const Child = ((props: ChildProps) => {
 })
 ```
 
-### ⚡️ Qwik
+### ⚡️ To Qwik
 
 ```tsx
 export const Parent = component$(() => {
@@ -123,13 +123,13 @@ export const Child = component$<ChildProps>(({ userData }) => {
 ```
 
 <details>
-  <summary style={{ color: "#17ADF5" }}>等等，我不需要将处理程序作为 prop 传递吗？</summary>
-  <p><a href="https://qwik.builder.io/docs/components/state/#usesignal">useSignal()</a> 返回的响应式信号由一个具有单个属性 .value 的对象组成。如果更改信号的 value 属性，任何依赖于它的组件都将自动更新。</p>
+  <summary style={{color: "#17ADF5"}}>Wait, I don't need to pass the handler as a prop?</summary>
+  <p>The reactive signal returned by <a href="https://qwik.builder.io/docs/components/state/#usesignal">useSignal()</a> consists of an object with a single property .value. If you change the value property of the signal, any component that depends on it will be updated automatically.</p>
 </details>
 
-## 声明本地状态
+## Declare local state
 
-### ⚛️ React
+### ⚛️ From React
 
 ```tsx
 export function UseStateExample() {
@@ -138,7 +138,7 @@ export function UseStateExample() {
 }
 ```
 
-### ⚡️ Qwik
+### ⚡️ To Qwik
 
 ```tsx
 export const LocalStateExample = component$(() => {
@@ -148,13 +148,13 @@ export const LocalStateExample = component$(() => {
 ```
 
 <details>
-  <summary style={{ color: "#17ADF5" }}>如果我有一个更复杂的状态怎么办？</summary>
-  <p><a href="https://qwik.builder.io/docs/components/state/#usestore">useStore()</a> 的工作方式与 useSignal() 非常相似，但它以对象作为初始值，并且默认情况下，反应性扩展到嵌套对象和数组。可以将 store 视为多值信号或由多个信号组成的对象。</p>
+  <summary style={{color: "#17ADF5"}}>What if I have a more complex state?</summary>
+  <p><a href="https://qwik.builder.io/docs/components/state/#usestore">useStore()</a> Works very similarly to useSignal(), but it takes an object as its initial value and the reactivity extends to nested objects and arrays by default. One can think of a store as a multiple-value signal or an object made of several signals.</p>
 </details>
 
-## 创建一个计数器组件
+## Create a counter component
 
-### ⚛️ React
+### ⚛️ From React
 
 ```tsx
 export function Counter() {
@@ -168,7 +168,7 @@ export function Counter() {
 }
 ```
 
-### ⚡️ Qwik
+### ⚡️ To Qwik
 
 ```tsx
 export const Counter = component$(() => {
@@ -182,9 +182,9 @@ export const Counter = component$(() => {
 });
 ```
 
-## 创建一个每秒递增的时钟
+## Create a clock that increments every second
 
-### ⚛️ React
+### ⚛️ From React
 
 ```tsx
 export function Clock() {
@@ -199,7 +199,7 @@ export function Clock() {
 }
 ```
 
-### ⚡️ Qwik
+### ⚡️ To Qwik
 
 ```tsx
 export const Clock = component$(() => {
@@ -215,9 +215,9 @@ export const Clock = component$(() => {
 });
 ```
 
-## 每次状态更改时执行一次 fetch 请求
+## Perform a fetch request every time the state changes
 
-### ⚛️ React
+### ⚛️ From React
 
 ```tsx
 export function Fetch() {
@@ -239,7 +239,7 @@ export function Fetch() {
 }
 ```
 
-### ⚡️ Qwik
+### ⚡️ To Qwik
 
 ```tsx
 export const Fetch = component$(() => {
@@ -263,14 +263,14 @@ export const Fetch = component$(() => {
 ```
 
 <details>
-  <summary style={{ color: "#17ADF5" }}>useTask$ 和 bind 是什么？</summary>
-  <p><a href="https://qwik.builder.io/docs/components/tasks/#usetask">useTask$()</a> 注册一个钩子，在组件创建时执行，它将在服务器或浏览器中至少运行一次，具体取决于组件最初在哪里呈现。</p>
-  <p><a href="https://qwik.builder.io/docs/components/rendering/#bind-attribute">bind 属性</a> 是一个方便的 API，用于将 `input` 的值与 Signal 进行双向数据绑定。</p>
+  <summary style={{color: "#17ADF5"}}>What is useTask$ and bind?</summary>
+  <p><a href="https://qwik.builder.io/docs/components/tasks/#usetask">useTask$()</a> registers a hook to be executed upon component creation, it will run at least once either in the server or in the browser, depending on where the component is initially rendered.</p>
+  <p><a href="https://qwik.builder.io/docs/components/rendering/#bind-attribute">bind attribute</a> is a convenient API to two-way data bind the value of an `input` to a Signal.</p>
 </details>
 
-## 声明一些上下文并使用它
+## Declare some context and consume it
 
-### ⚛️ React
+### ⚛️ From React
 
 ```tsx
 export const MyContext = createContext({ message: 'some example value' });
@@ -289,7 +289,7 @@ export const Child = () => {
 };
 ```
 
-### ⚡️ Qwik
+### ⚡️ To Qwik
 
 ```tsx
 export const MyContext = createContextId('my-context');
@@ -311,14 +311,14 @@ export const Child = component$(() => {
 ```
 
 <details>
-  <summary style={{ color: "#17ADF5" }}>如何避免 prop drilling？</summary>
-  <p>只需创建一个<a href="https://qwik.builder.io/docs/components/context/#context">上下文</a>。</p>
-  <p>只需在需要存储信息的组件中创建上下文，然后在其后代组件中通过相应的 ContextId 获取信息。</p>
+  <summary style={{color: "#17ADF5"}}>How can I avoid prop drilling?</summary>
+  <p>You simply need to create a <a href="https://qwik.builder.io/docs/components/context/#context">context</a>.</p>
+  <p>Just create the context in the component where you need to store the information and then, in its descendants, get the information through the corresponding ContextId.</p>
 </details>
 
-## 创建一个防抖输入框
+## Create a debounced input
 
-### ⚛️ React
+### ⚛️ From React
 
 ```tsx
 export const DebouncedInput = () => {
@@ -342,7 +342,7 @@ export const DebouncedInput = () => {
 };
 ```
 
-### ⚡️ Qwik
+### ⚡️ To Qwik
 
 ```tsx
 export const DebouncedInput = component$(() => {
@@ -367,9 +367,9 @@ export const DebouncedInput = component$(() => {
 });
 ```
 
-## 每次按钮点击时随机更改背景颜色
+## Change background color randomly every button click
 
-### ⚛️ React
+### ⚛️ From React
 
 ```tsx
 export function DynamicBackground() {
@@ -396,7 +396,7 @@ export function DynamicBackground() {
 }
 ```
 
-### ⚡️ Qwik
+### ⚡️ To Qwik
 
 ```tsx
 export const DynamicBackground = component$(() => {
@@ -424,9 +424,9 @@ export const DynamicBackground = component$(() => {
 });
 ```
 
-## 创建一个渲染总统列表的组件
+## Create a component that renders a list of the presidents
 
-### ⚛️ React
+### ⚛️ From React
 
 ```tsx
 export function Presidents() {
@@ -466,7 +466,7 @@ export function Presidents() {
 }
 ```
 
-### ⚡️ Qwik
+### ⚡️ To Qwik
 
 ```tsx
 export const Presidents = component$(() => {

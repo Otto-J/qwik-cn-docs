@@ -4,57 +4,57 @@ contributors:
   - mhevery
 ---
 
-import CodeSandbox, { CodeFile } from '../../../../components/code-sandbox/index.tsx';
+import CodeSandbox, {CodeFile} from '../../../../components/code-sandbox/index.tsx';
 
 # Portal
 
-前端开发中常见的问题之一是从组件中弹出模态对话框。问题在于模态对话框需要在 DOM 树的不同部分渲染，并且触发模态对话框的组件需要有一种影响渲染位置的方式。
+A common problem in front-end development is to pop up a modal dialog from a component. The complication is that the modal dialog needs to be rendered in a different part of the DOM tree, and the component that triggers the modal needs to have a way to affect the location of rendering.
 
-在其他框架中，通常通过专用的 API（例如 [`createPortal()`](https://react.dev/reference/react-dom/createPortal)）来解决此问题。然而，这样的 API 在服务器端渲染方面效果不佳，因此需要另一种方法。
+In other frameworks, this is often solved by dedicated API such as [`createPortal()`](https://react.dev/reference/react-dom/createPortal). However such APIs don't work well with server-side rendering and so an alternative approach is needed.
 
-## 替代方案
+## Alternatives
 
-您可以考虑使用这些现代浏览器中的模态对话框的替代方案：
+You may want to consider these modern browser alternatives to modals:
 - https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog
 - https://developer.chrome.com/blog/introducing-popover-api/
 
-## 问题
+## Problem
 
-要解决的基本问题是：
-1. 决定在应用程序中渲染弹出窗口的位置（我们称之为 `<Portal>`）。
-2. 有一种方法可以与 `<Portal>` 进行通信，以便让它知道何时以及应该渲染哪个组件（从触发弹出窗口的组件）。这通过 `<PortalProvider/>` 组件实现。
+The fundamental problems to solve are:
+1. decide where the popup should be rendered in the application. (Let's call this `<Portal>`)
+2. have a way to communicate with the `<Portal>` to let it know when and what component should be rendered (from the component that triggers the popup.) This is achieved through `<PortalProvider/>` component.
 
-## 解决方案
+## Solution
 
-<CodeSandbox url="/demo/cookbook/portal/" style={{ height: '15em' }}>
+<CodeSandbox url="/demo/cookbook/portal/"  style={{ height: '15em' }}>
 </CodeSandbox>
 
 
-让我们将解决方案分解为以下步骤：
-1. 创建一个 `PortalProvider` 组件，负责管理弹出窗口。
-2. 将 `<PortalProvider>` 放置在顶级 `layout.tsx` 组件中。
-3. 创建一个 `PortalAPI`，用于与 `PortalProvider` 进行通信。
-4. 创建 `<Portal>` 组件，用于渲染弹出窗口内容。
+Let's break down the solution into steps:
+1. Create a `PortalProvider` component that is responsible for managing the portals.
+1. Place the `<PortalProvider>` into the top-level `layout.tsx` component.
+1. Create a `PortalAPI` that can be used to communicate with the `PortalProvider`.
+1. Create `<Portal>` component which renders the portal content.
 
 
-### 使用 PortalProvider
+### Using the PortalProvider
 
-假设我们已经有了一个 `PortalProvider`，让我们首先关注它的使用方式。
-1. 通过以下方式获取 `PortalProvider` API：
+Let's assume that we already have a `PortalProvider` and let's focus on how it is used first.
+1. We get a hold of the `PortalProvider` API through: 
    ```tsx
    const portal = useContext(PortalAPI);
    ```
-2. 然后使用 `PortalProvider` API 来显示弹出窗口：
+2. We then use the `PortalProvider` API to show a popup:
    ```tsx
    portal('modal', <PopupExample name="World" />)
    ```
-3. 最后，我们可以使用 `PortalCloseAPI` API 来隐藏弹出窗口：
+3. Finally we can use `PortalCloseAPI` API to hide the popup:
    ```tsx
    const portalClose = useContext(PortalCloseAPI);
    portalClose();
    ```
 
-完整的源代码可以在这里找到：
+The full source code can be found here:
 
 <CodeFile src="/src/routes/demo/cookbook/portal/index.tsx">
 ```tsx
@@ -70,13 +70,13 @@ import PopupExampleCSS from './popup-example.css?inline';
 import { useLocation } from '@builder.io/qwik-city';
 
 export default component$(() => {
-  // 获取 portal API
+  // Retrieve the portal API
   const portal = useContext(PortalAPI);
-  // 这个函数用于打开模态对话框。
-  // Portal 可以被命名，每个 Portal 可以渲染多个项目。
+  // This function is used to open the modal.
+  // Portals can be named and each portal can have multiple items rendered into it.
   const openModal = $(() => portal('modal', <PopupExample name="World" />));
 
-  // 在服务器上有条件地打开 <Portal/>，以演示 Portal 的服务器端渲染。
+  // Conditionally open the <Portal/> on the server to demonstrate SSR of portals.
   const location = useLocation();
   useTask$(() => {
     location.url.searchParams.get('modal') && openModal();
@@ -84,23 +84,23 @@ export default component$(() => {
   return (
     <>
       <div>
-        [ <a href="?modal=true">将 Portal 作为 SSR 的一部分渲染</a> |{' '}
-        <a href="?">将 Portal 作为客户端交互的一部分渲染</a> ]
+        [ <a href="?modal=true">render portal as part of SSR</a> |{' '}
+        <a href="?">render portal as part of client interaction</a> ]
       </div>
-      <button onClick$={openModal}>显示模态对话框</button>
+      <button onClick$={openModal}>Show Modal</button>
     </>
   );
 });
 
-// 这个组件显示为模态对话框。
+// This component is shown as a modal.
 export const PopupExample = component$<{ name: string }>(({ name }) => {
   useStylesScoped$(PopupExampleCSS);
-  // 要关闭一个 Portal，请获取关闭 API。
+  // To close a portal retrieve the close API.
   const portalClose = useContext(PortalCloseAPIContextId);
   return (
     <div class="popup-example">
-      <h1>模态对话框</h1>
-      <p>你好，{name}！</p>
+      <h1>MODAL</h1>
+      <p>Hello {name}!</p>
       <button onClick$={() => portalClose()}>X</button>
     </div>
   );
@@ -109,7 +109,7 @@ export const PopupExample = component$<{ name: string }>(({ name }) => {
 </CodeFile>
 
 
-`PopupExample` 组件的样式是（`portal-provider.css`）：
+The styling for the `PopupExample` component is (`portal-provider.css`):
 <CodeFile src="/src/routes/demo/cookbook/portal/portal-provider.css">
 ```css
 .modal {
@@ -130,28 +130,28 @@ export const PopupExample = component$<{ name: string }>(({ name }) => {
 ```
 </CodeFile>
 
-## 实现 `PortalProvider`
+## Implementing the `PortalProvider`
 
-`PortalProvider` 是一个负责渲染弹出窗口的组件。它还提供了一个上下文 API，可用于显示/隐藏弹出窗口。
+A `PortalProvider` is a component that is responsible for rendering the popup. It also provides a context API that can be used to show/hide the popup.
 
-1. 创建 `PortalProviderContext`，用于与 `PortalProvider` 进行通信。
+1. Create the `PortalProviderContext` that will be used to communicate with the `PortalProvider`.
    ```tsx
    useContextProvider(PortalProviderContext, {
     show: $(<T extends {}>(component: Component<T>, props: T) => {...}),
     hide: $(() => {...})
    });
    ```
-2. 有条件地渲染组件：
+2. Conditionally render the component:
    ```tsx
    {
-     // 有条件地渲染模态对话框
+     // Conditionally render the modal
      modal.value && <div class="modal">
        <modal.value.Component {...modal.value.props} />
      </div>
    }
    ```
 
-完整的实现可以在这里找到：
+Full implementation can be found here:
 
 <CodeFile src="/src/routes/demo/cookbook/portal/portal-provider.tsx">
 ```tsx
@@ -171,14 +171,14 @@ import {
 import { type JSXNode } from '@builder.io/qwik/jsx-runtime';
 import CSS from './portal-provider.css?inline';
 
-// 定义打开 Portal 的公共 API
+// Define public API for opening up Portals
 export const PortalAPI = createContextId<
   /**
-   * 向 Portal 添加 JSX。
-   * @param name Portal 名称。
-   * @param jsx 要添加的 JSX。
-   * @param contexts 要添加到 Portal 的上下文。
-   * @returns 用于关闭 Portal 的函数。
+   * Add JSX to a portal.
+   * @param name portal name.
+   * @param jsx to add.
+   * @param contexts to add to the portal.
+   * @returns A function used for closing the portal.
    */
   QRL<
     (name: string, jsx: JSXNode, contexts?: ContextPair<any>[]) => () => void
@@ -187,11 +187,11 @@ export const PortalAPI = createContextId<
 
 export type ContextPair<T> = { id: ContextId<T>; value: T };
 
-// 定义关闭 Portal 的公共 API
+// Define public API for closing Portals
 export const PortalCloseAPIContextId =
   createContextId<QRL<() => void>>('PortalCloseAPI');
 
-// 用于管理 Portal 的内部上下文
+// internal context for managing portals
 const PortalsContextId = createContextId<Signal<Portal[]>>('Portals');
 
 interface Portal {
@@ -205,7 +205,7 @@ export const PortalProvider = component$(() => {
   const portals = useSignal<Portal[]>([]);
   useContextProvider(PortalsContextId, portals);
 
-  // 为其他组件提供 PopupManager 的公共 API。
+  // Provide the public API for the PopupManager for other components.
   useContextProvider(
     PortalAPI,
     $((name: string, jsx: JSXNode, contexts?: ContextPair<any>[]) => {
@@ -230,10 +230,10 @@ export const PortalProvider = component$(() => {
 });
 
 /**
- * 重要提示：为了使 <Portal> 在 SSR 中正确渲染，
- * 它需要在打开 Portal 的调用之后进行渲染。
- * （在将内容设置为 Portal 之后，无法在 SSR 中返回到 <Portal/>，
- * 因为它已经被流式传输到客户端。）
+ * IMPORTANT: In order for the <Portal> to correctly render in SSR, it needs
+ * to be rendered AFTER the call to open portal. (Setting content to portal
+ * AFTER the portal is rendered can't be done in SSR, because it is not possible
+ * to return back to the <Portal/> after it has been streamed to the client.)
  */
 export const Portal = component$<{ name: string }>(({ name }) => {
   const portals = useContext(PortalsContextId);
@@ -266,7 +266,7 @@ export const WrapJsxInContext = component$<{
 ```
 </CodeFile>
 
-`PortalProvider` 组件的样式是（`portal-provider.css`）：
+The styling for the `PortalProvider` component is (`portal-provider.css`):
 <CodeFile src="/src/routes/demo/cookbook/portal/portal-provider.css">
 ```tsx
 .modal {
@@ -288,7 +288,7 @@ export const WrapJsxInContext = component$<{
 </CodeFile>
 
 
-## 将 `PortalProvider` 添加到根 `layout.tsx`
+## Adding `PortalProvider` to root `layout.tsx`
 
 <CodeFile src="/src/routes/demo/cookbook/portal/layout.tsx">
 ```tsx
@@ -296,11 +296,11 @@ import { Slot, component$ } from '@builder.io/qwik';
 import { Portal, PortalProvider } from './portal-provider';
 
 export default component$(() => {
-  // 1. 使用 <PortalProvider> 包装根组件，以启用 portal API。
-  //    <PortalProvider> 组件将提供一个上下文 API，
-  // 允许其他组件创建 portals。
-  // 2. 在要渲染 portals 的位置添加 <Portal/>。
-  //    （<Portal/> 具有名称，因此您可以有多个 <Portal/> 位置。）
+  // 1. Wrap a root component with a <PortalProvider> to enable portal API.
+  //    The <PortalProvider> component will provide a context API to
+  //    allow other components to create portals.
+  // 2. Add <Portal/> to where you want the portals to be rendered.
+  //    (<Portal/>s have names and so you can have multiple <Portal/> locations.)
   return (
     <PortalProvider>
       <Slot />

@@ -1,42 +1,42 @@
 ---
-title: LeafletJS 地图 | 集成
-keywords: '地图, 交互地图'
+title: LeafletJS Map | Integrations
+keywords: 'map, interactive maps'
 contributors:
   - mugan86
 ---
 
-# LeafletJS 地图
+# LeafletJS Map
 
-Leaflet 是一款领先的开源 JavaScript 库，用于创建适用于移动设备的交互地图。
-它只有约 42 KB 的 JS 文件大小，包含了大多数开发者所需的地图功能。
+Leaflet is the leading open-source JavaScript library for mobile-friendly interactive maps. 
+Weighing just about 42 KB of JS, it has all the mapping features most developers ever need.
 
-Leaflet 的设计理念是简单、高性能和易用性。它在所有主要的桌面和移动平台上都能高效运行，并且可以通过许多插件进行扩展。
-它具有美观、易于使用和文档完善的 API，以及简单易读的源代码，非常适合贡献者参与。[LeafletJS 地图网站](https://leafletjs.com/)
+Leaflet is designed with simplicity, performance and usability in mind. 
+It works efficiently across all major desktop and mobile platforms, can be extended with lots of plugins, has a beautiful, easy to use and well-documented API and a simple, readable source code that is a joy to contribute to. [LeafletJS Map Website](https://leafletjs.com/)
 
-## 使用方法
+## Usage
 
-您可以通过使用以下 Qwik 脚本轻松添加 LeafletJS 地图：
+You can add LeafletJS Map easily by using the following Qwik starter script:
 
 ```shell
 npm run qwik add leaflet-map
 ```
 
-上述命令会更新您的应用程序，并添加所需的依赖项：
+The previous command updates your app with the necessary dependencies.
 
 - `leaflet@1.9.4`
 - `@types/leaflet@1.9.4`
 
-它还会在您的项目文件夹中添加新文件：
+It also adds new files to your project folder:
 
-- `src/helpers/boundary-box.tsx`：检查地图区域边界的函数。
-- `src/models/location.ts`：定义用于 props 中的位置信息元素的模型。
-- `src/models/map.ts`：定义用于 props 中的地图信息的模型。
-- `src/components/leaflet-map/index.tsx`：Leaflet 地图简单地图功能组件。
-- `src/routes/basic-map/index.tsx`：使用演示数据消费 Leaflet 地图组件的示例
+- `src/helpers/boundary-box.tsx`: Check map area boundaries function.
+- `src/models/location.ts`: Model to define locations info elements to use in props.
+- `src/models/map.ts`: Model to define map info to use in props.
+- `src/components/leaflet-map/index.tsx`: Leaflet map simple map features component.
+- `src/routes/basic-map/index.tsx`: Example to consume Leaflet Map component with demo data
 
-## 关于 LeafletJS 地图的有趣信息：
+## Interesting info about LeafletJS Map:
 
-### 官方
+### Official
 
-- `教程`：逐步示例，参考文档以创建新功能。[参考链接](https://leafletjs.com/examples.html)。
-- `文档`：使用 LeafletJS 的所有必要信息。[参考链接](https://leafletjs.com/reference.html)
+- `Tutorials`: Examples step by step to reference to create new features using Documentation. [Reference](https://leafletjs.com/examples.html).
+- `Docs`: All necessary info to work with LeafletJS. [Reference](https://leafletjs.com/reference.html)

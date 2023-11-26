@@ -1,6 +1,6 @@
 ---
-title: Bundle Optimization | 指南
-description: 了解在 Qwik 中进行捆绑优化的方法，Qwik 是一个用于构建 Web 应用程序的 JavaScript 框架。本指南解释了如何通过共同定位符号和块来优化代码，并提供了如何在源代码中创建和使用符号的示例。跟随代码片段并在包含的 CodeSandbox 演示中尝试它们。
+title: Bundle Optimization | Guides
+description: Learn about bundle optimization in Qwik, a JavaScript framework for building web applications. This guide explains how to optimize your code by co-locating symbols and chunks, and provides examples of how to create and use symbols in your source code. Follow along with the code snippets and try them out in the included CodeSandbox demo.
 contributors:
   - mhevery
   - hamatoyogi
@@ -9,15 +9,15 @@ contributors:
 import CodeSandbox from '../../../../../components/code-sandbox/index.tsx';
 
 
-# 捆绑优化
+# Bundle Optimization
 
-捆绑优化是指决定哪个符号放入哪个捆绑包的过程，以便应用程序可以共同定位一起使用的代码。将符号共同定位可以加快应用程序的加载速度。
+Bundle Optimization refers to the process of deciding which symbol goes to which bundle so that the application can co-locate the code that is used together.  Having the symbols co-located can make the application load faster.
 
-## 符号 vs 块
+## Symbols vs Chunks
 
-符号是 Qwik 中的单个可延迟加载的部分。每当您在源代码中使用 `__$(__)` 时，就会创建一个符号。
+Symbols are individual lazy-loadable pieces in Qwik. A symbol is created whenever you use the `__$(__)` in your source code.  
 
-例如，下面的代码从 `component$` 和 `onClick$` 创建了两个符号。
+For example, the code below creates two symbols from `component$` and `onClick$`.
 
 <CodeSandbox src="/src/routes/demo/state/counter-signal/index.tsx" style={{ height: '6em' }}>
 ```tsx /component$/ /onClick$/
@@ -33,11 +33,11 @@ export default component$(() => {
   );
 });
 ```
-  </CodeSandbox>
+</CodeSandbox>
 
-优化器将上述代码重写为以下内容：
+The optimizer rewrites the above code to something like this:
 
-文件：`chunk-1.js`
+File: `chunk-1.js`
 ```tsx
 export default componentQRL(qrl('./chunk-1.js', 's_ABC123'));
 
@@ -57,30 +57,30 @@ export const s_XYZ432 = () => {
 }
 ```
 
-在上面的示例中，所有符号（`s_ABC123` 和 `s_XYZ432`）都共同定位在同一个块（`./chunk-1.js`）中。
+In the above example, all of the symbols (`sABC123` and `s_XYZ432`) are co-located in the same chunk (`./chunk-1.js`). 
 
-块是可以包含一个或多个符号的 JavaScript 捆绑包。
+Chunks are JavaScript bundles that can contain one or more symbols. 
 
-## 最佳符号分布
+## Optimal Symbol Distribution
 
-您可以将捆绑优化视为一个滑块，允许我们优化符号的传递。
-- 在滑块的一端，我们有一个包含所有符号的单个块。这相当于没有任何类型的延迟加载的应用程序。（这是大多数应用程序今天的写法。）
-- 在滑块的另一端，我们为每个符号单独创建一个块。这是 Qwik 应用程序在开发过程中的行为。每个符号都在自己的块中。
+You can think of bundle optimization as a slider that allows us to optimize the symbol delivery.
+- On one end of the slider, we have a single chunk that contains all of the symbols. This is equivalent to the application without any sort of lazy loading. (This is how most applications are written today.)
+- On the other extreme of the slider, we have a separate chunk for each symbol. This is how Qwik applications behave during development. Each symbol is in its own chunk.
 
-单个块的问题是：
-- 它将包含客户端不需要的许多符号。（浪费带宽。）
-- 客户端在加载整个块之前无法运行任何符号。
+The problem with a single chunk is:
+- It will contain many symbols which are not needed by the client. (Wasted bandwidth.)
+- The client can't run any symbols until the whole chunk is loaded.
 
-每个符号单独创建一个块的问题是：
-- 客户端将不得不发出许多请求来加载所有块，通常会导致不理想的瀑布请求。
+The problem with a separate chunk for each symbol is:
+- The client will have to make many requests to load all of the chunks, often leading to undesirable waterfall requests.
 
-最佳解决方案在中间某个位置。我们希望有少量的块，但我们也希望将一起使用的符号共同定位在同一个块中。拥有少量的块允许我们优先加载块的顺序，但同时也分摊了进行 HTTP 请求的成本。将符号共同定位可以最小化瀑布。
+The optimal solution is somewhere in the middle. We want to have a small number of chunks, but we also want to have the symbols that are used together to be co-located in the same chunk. Having a small number of chunks allows us to prioritize the order in which chunks load but at the same time amortize the cost of making HTTP requests. Having symbols co-located allows us to minimize the waterfall.
 
-好消息是，使用 Qwik，您完全可以控制哪个符号放入哪个块。通常，为了进行延迟加载，拆分应用程序需要开发人员编写动态导入并重构代码。在 Qwik 中，所有 `$()` 都是潜在的延迟加载位置，只需要告知捆绑器如何分发符号即可。
+The good news is that with Qwik you are in full control of which symbol goes into which chunk. Normally breaking up your application for lazy loading requires the developer to write dynamic imports and re-factor the code. In Qwik, all `$()` are potential lazy load locations, all that is needed is to inform the bundler how to distribute the symbols.
 
-## `qwikVite()` 插件
+## `qwikVite()` Plugin
 
-`qwikVite()` 插件在您的 `vite.config.ts` 中控制符号分布。通常，`entryStrategy` 设置为 `smart`，允许 Qwik 根据启发式猜测来确定符号应如何进行延迟加载。但是，可以通过在 `vite.config.ts` 文件中提供 `manual` 配置来覆盖启发式猜测，如下所示：
+`qwikVite()` plugin inside your `vite.config.ts` controls the symbol distribution. Normally the `entryStrategy` is set to `smart` which allows the Qwik to make heuristic guesses as to how the symbols should be lazy loaded. But it is possible to override the heuristic by providing `manual` configuration like this in `vite.config.ts` file:
 
 ```typescript
 export default defineConfig(() => {
@@ -120,67 +120,67 @@ function bundle(bundleName: string, symbols: string[]) {
 }
 ```
 
-那么问题就变成了如何获取诸如 `s_I5CyQjO9FjQ` 这样的符号名称？请参阅下一节运行时分析。
+So the question becomes how do you get the symbol names such as `s_I5CyQjO9FjQ`? See the next section Runtime Analytics.
 
-## 运行时分析
+## Runtime analytics
 
-要解决的根本问题是，静态地确定最佳捆绑包是不可能的。理想的捆绑包将取决于用户的行为。只有在观察用户行为之后，我们才能确定哪些符号是一起使用的。
+The fundamental problem to solve is that determining the optimal bundles is not statically possible. The ideal bundles will depend on the user's behavior. Only after observing users' behavior can we determine which symbols are used together.
 
-要从运行中的应用程序收集符号使用情况：
+To collect symbol usage from a running application:
 
-1. 将以下代码插入到您的应用程序中：
+1. Insert this code into your app:
     ```html
     <script>
       window.symbols = [];
       document.addEventListener('qsymbol', (e) => window.symbols.push(e.detail));
     </script>
     ```
-2. 执行一些模拟用户行为的操作。
-3. 打开控制台，输入 `symbols` 查看使用的符号列表。使用该信息更新 `vite.config.ts` 文件。
+2. Perform some set of operations mimicking user behavior.
+3. Open the console and type `symbols` to see the list of symbols used. Used that information to update the `vite.config.ts` file.
 
 
-> **注意：**我们正在研究在将来创建更好的收集此信息的方法。（请参阅[洞察](/docs/labs/insights/index.mdx)。）
+> **NOTE:** We are looking into creating better ways of collecting this information in the future. (See [Insights](/docs/labs/insights/index.mdx).)
 
-> **注意：**符号哈希被设计为在许多次编译中保持稳定。但是，如果代码经历复杂的重构，哈希可能会发生变化。这不会破坏应用程序，但可能会导致符号移动到不同的次优块，直到再次收集运行时分析。
+> **NOTE:** Symbols hashes are designed to be stable even across many compilations. However, if the code undergoes complex refactoring it is possible for the hash to change. This will not break the application, but it may cause the symbol to be moved to a different sub-optimal chunk until runtime analytics can be collected again. 
 
 
-## 服务工作器
+## Service worker
 
-Qwik 应用程序使用服务工作器确保捆绑包被预取到浏览器的缓存中，并且任何用户交互都会导致缓存命中，因此没有延迟的交互。
+Qwik apps employ a service worker to ensure that bundles are prefetched into the browser's cache and that any user interaction would result in a cache hit, hence no delay in interaction.
 
-请参阅[推测性模块获取](/docs/(qwikcity)/advanced/speculative-module-fetching/index.mdx)。
+See [Speculative Module Fetching](/docs/(qwikcity)/advanced/speculative-module-fetching/index.mdx).
 
-## 事件
+## Events
 
-可以通过监听以下自定义事件来观察有关符号何时加载的所有信息：
+All information regarding when the symbols are loaded can be observed by listening to the following custom events:
 
-### `qprefetch` 自定义事件详细信息。
+### `qprefetch` custom event details.
 
-当通过呈现新的应用程序视图来向用户公开新的代码路径时，将触发 `qprefetch` 事件。（例如，呈现新的模型对话框将有一个新的按钮。我们希望确保新的按钮代码被预取，以便如果用户与按钮交互，就不会有延迟。）
-通常，服务工作器侦听 `qprefetch` 事件并将符号加载到缓存中。服务工作器具有符号到捆绑包的映射，并使用此信息根据符号确定要预取的捆绑包。
+`qprefetch` event is fired when a new code path is exposed to the user by rendering a new application view. (For example, rendering a new model dialog will have a new button. We would like the ensure that the new button code is prefetched so that if the user interacts with the button there will be no delay.)
+Usually, a service worker listens to the `qprefetch` event and loads the symbol into the cache. The service worker has a map of symbols to bundles, and it uses this information to determine which bundles to prefetch based on a symbol.
 
 ```typescript
 export interface QPrefetchDetail {
-  /// 要预取的符号列表。
+  /// A list of symbols to prefetch.
   symbols: string[];
 }
 ```
 
-### `qsymbol` 自定义事件详细信息。
+### `qsymbol` custom event details.
 
-每次 Qwik 需要解析符号时，都会触发 `qsymbol` 事件。监听此事件可以让您了解应用程序何时加载了不同的符号。然后可以使用这些信息通过将需要一起使用的符号放在同一个捆绑包中来更好地优化捆绑包。
+`qsymbol` event is fired every time Qwik needs to resolve a symbol. Listening to this event can give you insight into when different symbols are loaded by your application. The information can then be used to better optimize your bundles by putting symbols that are needed together in the same bundle.
 
 ```typescript
 export interface QSymbolDetail {
-  /// 触发符号解析的可选 DOM 事件。
+  /// Optional DOM event which triggered the symbol resolution.
   element?: Element;
-  /// 解析符号时的请求时间。
+  /// Request time when the symbol was resolved.
   reqTime: number;
-  /// 要解析的符号。
+  /// Symbol being resolved.
   symbol: string;
 }
 ```
 
-## 瀑布
+## Waterfall 
 
-服务工作器尝试通过预取捆绑包来最小化瀑布。为了能够做到这一点，服务工作器具有符号和块的 `manifest`。`manifest` 表示所有符号及其对应块的完整图。它还知道导入图，因此如果预取了一个符号，服务工作器还将预取作为导入图的一部分所需的所有其他符号。
+The service worker attempts to minimize the waterfall by prefetching the bundles. To be able to do that the service worker has a `manifest` of symbols and chunks. The `manifest` represents a full graph of all of the symbols and their corresponding chunks. It also knows the import graph, so if a symbol is prefetched, the service worker will also prefetch all other symbols which are needed as part of the import graph.

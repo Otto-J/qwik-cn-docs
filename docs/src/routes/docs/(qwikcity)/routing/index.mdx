@@ -1,6 +1,6 @@
 ---
-title: 路由 | Qwik City
-description: 了解 Qwik City 中的路由，它与其他基于文件系统的路由框架（如 Next.js、SvelteKit、SolidStart 或 Remix）类似。
+title: Routing | Qwik City
+description: Learn about routing in Qwik City which is like other file-system based such as Next.js, SvelteKit, SolidStart or Remix.
 contributors:
   - manucorporat
   - nnelgxorz
@@ -16,27 +16,27 @@ contributors:
   - maiieul
 ---
 
-# 路由
+# Routing
 
-Qwik City 中的路由是基于文件系统的，类似于 [Next.js](https://nextjs.org/docs/routing/introduction)、[SvelteKit](https://kit.svelte.dev/docs/routing)、[SolidStart](https://start.solidjs.com/core-concepts/routing) 或 [Remix](https://remix.run/docs/en/main/guides/routing)。`src/routes` 目录中的文件和目录在应用程序的路由中起到了作用。
+Routing in Qwik City is file-system based like [Next.js](https://nextjs.org/docs/routing/introduction), [SvelteKit](https://kit.svelte.dev/docs/routing), [SolidStart](https://start.solidjs.com/core-concepts/routing) or [Remix](https://remix.run/docs/en/main/guides/routing). Files and directories in the `src/routes` have a role in the routing of your application.
 
-- **📂 目录：** 定义路由器要匹配的 URL 片段。
-- **📄 `index.tsx/mdx` 文件：** 定义一个[页面](/docs/pages/)。
-- **📄 `index.ts` 文件：** 定义一个[端点](/docs/endpoints/)。
-- **🖼️ `layout.tsx` 文件：** 定义嵌套的[布局](/docs/layout/)和/或[中间件](/docs/middleware/)。
+- **📂 Directories:** Define the URL segments to match by the router.
+- **📄 `index.tsx/mdx` files:** Define a [page](/docs/pages/).
+- **📄 `index.ts` file:** Define an [endpoint](/docs/endpoints/).
+- **🖼️ `layout.tsx` files:** Define nested [layout](/docs/layout/) and/or a [middleware](/docs/middleware/).
 
 <video autoplay playsinline muted loop>
  <source src="https://cdn.builder.io/o/assets%2FYJIGb4i01jvw0SRdL5Bt%2Fabf8f471ba884b938d0863d85ed4c50f%2Fcompressed?apiKey=YJIGb4i01jvw0SRdL5Bt&token=abf8f471ba884b938d0863d85ed4c50f&alt=media&optimized=true"/>
 </video>
 
 
-## 基于目录的路由
+## Directory-based routing
 
-只有目录名称用于匹配传入的请求与页面/端点/中间件。
+Only the directory names are used to match the incoming requests to pages/endpoint/middleware.
 
-例如，如果在 `src/routes/some/path/index.tsx` 中有一个文件，则它将映射到 URL 路径 `https://example.com/some/path`。
+For example, if you have a file at `src/routes/some/path/index.tsx`, it will be mapped to the URL path `https://example.com/some/path`.
 
-```bash title="目录布局"
+```bash title="Directory layout"
 src/
 └── routes/
     ├── contact/
@@ -50,25 +50,25 @@ src/
     ├── [...catchall]/
     │   └── index.tsx         # https://example.com/anything/else/that/didnt/match
     │
-    └── layout.tsx            # 此布局用于所有页面
+    └── layout.tsx            # This layout is used for all pages
 ```
 
-- **`[id]`** 是表示动态路由片段的目录，在此示例中，`id` 是由 `useLocation().params.id` 访问的字符串参数。
-- **`[...catchall]`** 是表示动态捕获所有路由的目录，在此示例中，`catchall` 是由 `useLocation().params.catchall` 访问的字符串参数。
-- **`index.tsx|mdx` 文件** 是页面/端点/中间件。
-- **`layout.tsx` 文件** 是布局。
+- **`[id]`** is a directory that represents a dynamic route segment, in this example `id` is the string parameter accessible by `useLocation().params.id`.
+- **`[...catchall]`** is a directory that represents a dynamic catch-all route, in this example `catchall` is the string parameter accessible by `useLocation().params.catchall`.
+- **`index.tsx|mdx` files** are the pages/endpoints/middleware.
+- **`layout.tsx` files** are the layouts.
 
-### 动态路由片段
+### Dynamic route segments
 
-使用方括号（`[]`）命名的特殊目录，例如 `[paramName]` 和 `[...catchAll]`，可用于匹配动态的路由片段：
+Special named directories with square brackets, such as `[paramName]` and `[...catchAll]` can be used to match route segments which are dynamic:
 
-```bash title="目录布局"
+```bash title="Directory layout"
 src/routes/blog/index.tsx → /blog
 src/routes/user/[username]/index.tsx → /user/:username (/user/foo)
 src/routes/post/[...all]/index.tsx → /post/* (/post/2020/id/title)
 ```
 
-```bash title="目录布局"
+```bash title="Directory layout"
 src/
 └── routes/
     ├── blog/
@@ -81,7 +81,7 @@ src/
             └── index.tsx     # https://example.com/user/foo
 ```
 
-> 文件夹 `[username]` 可以是数据库中的数千个用户之一。为每个用户创建一个路由是不切实际的。相反，您需要定义一个路由参数（URL 的一部分），用于提取 `[username]`。
+> The folder `[username]` can be any of the thousands of users that you have in your database. It would be impractical to create a route for each user. Instead, you need to define a Route Parameter (a part of the URL) that will be used to extract the `[username]`.
 
 ```tsx title="src/routes/user/[username]/index.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -93,15 +93,15 @@ export default component$(() => {
 });
 ```
 
-## `index` 文件
+## `index` files
 
-在 `src/routes` 目录中，所有名为 `index` 的文件都被视为页面/端点/中间件，Qwik 支持以下扩展名：`.ts`、`.tsx`、`.md` 和 `.mdx`。
+Inside the `src/routes` directory, all files named `index` are considered pages/endpoint/middleware, Qwik supports the following extensions: `.ts`, `.tsx`, `.md` and `.mdx`.
 
-页面/端点/中间件是路由树的叶节点，即**处理请求并返回 HTTP 响应的模块**。
+Pages/endpoint/middleware are the leaf nodes of the routing tree, ie, **the modules that will handle the request and return an HTTP response**.
 
-### 页面 `index.tsx`
+### Page `index.tsx`
 
-当 `index.tsx` 或 `index.ts` 导出一个 Qwik 组件作为默认导出时，Qwik City 将渲染该组件并返回一个 HTML 响应作为网页。
+When `index.tsx` or `index.ts` exports a Qwik component as the default export, Qwik City will render the component and return an HTML response as a webpage.
 
 ```tsx title="src/routes/index.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -111,9 +111,9 @@ export default component$(() => {
 });
 ```
 
-### 端点 `index.ts`
+### Endpoint `index.ts`
 
-`index.ts` 也可以直接访问 HTTP 请求并返回一个原始的 HTTP 响应，而不涉及任何 Qwik 组件。通过导出一个 `onRequest` 方法或 `onGet`、`onPost`、`onPut`、`onDelete` 方法来实现。
+A `index.ts` can also access the HTTP request directly and return a raw HTTP response without involving any Qwik Component. This is done by exporting an `onRequest` method or `onGet`, `onPost`, `onPut`, `onDelete` depending on if you only want to handle a specific request given its HTTP method.
 
 ```tsx title="src/routes/index.ts"
 import type { RequestHandler } from '@builder.io/qwik-city';
@@ -123,11 +123,11 @@ export const onGet: RequestHandler = ({ json }) => {
 };
 ```
 
-> 注意，在最后一个示例中，没有默认导出。这是因为我们不是渲染 Qwik 组件，而是直接处理请求并返回 JSON 响应。这对于实现 RESTful API 或任何其他类型的 HTTP 端点非常有用。
+> Notice that in the last example, there is no default export. This is because we are not rendering a Qwik component, but rather we are handling the request directly and returning a JSON response. This is useful to implement RESTful APIs or any other type of HTTP endpoint.
 
-### 页面 + 端点
+### Page + Endpoint
 
-正如您在 Qwik City 中所看到的，页面和端点之间没有明确的分离，两者都是导出一个 Qwik 组件或一个 `onRequest` 方法的 `index.tsx` 文件。但是，可以将这两种方法结合起来使用。例如，您可以导出一个 `onRequest` 方法来处理请求，然后渲染一个 Qwik 组件。
+As you can see in Qwik City there is no clear separation between pages and endpoints, in both cases, it's a `index.tsx` file that exports a Qwik component or an `onRequest` method. However, it's possible to combine both approaches. For example, you can export a `onRequest` method that will handle the request, and then render a Qwik component.
 
 ```tsx title="src/routes/index.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -145,53 +145,53 @@ export default component$(() => {
 });
 ```
 
-> 在此示例中，请求处理程序将始终将 `Cache-Control` 标头设置为 `private`，并且页面将呈现为 HTML 页面，但是如果请求包含 `format=json` 查询参数，则端点将返回 JSON 响应。
+> In this example, a request handle will always set the `Cache-Control` header to `private` and the page will be rendered as an HTML page, but if the request contains a `format=json` query param, the endpoint will return a JSON response instead.
 
-## `layout.tsx` 文件
+## `layout.tsx` files
 
-布局模块与 `index` 文件非常相似，两者都可以处理请求并渲染 Qwik 组件，但是布局旨在像中间件一样工作，允许为一组路由共享 UI 和请求处理（中间件）。
+Layout modules are very similar to `index` files, both can handle requests and render Qwik components, however, layouts are designed to work like a middleware, allowing to **share UI and request handling (middleware)** to a set of routes.
 
-通常，不同的页面需要一些共同的请求处理并共享一些 UI。例如，想象一个仪表板网站，其中所有页面都在 `/admin/*` 目录下：
+Usually, different pages need some common request handling and share some UI. For example, picture a dashboard site where all the pages are under the `/admin/*` directory:
 
-- **共享的请求处理：** 在渲染页面之前，需要验证请求的 cookie，否则渲染一个空白的 401 页面。
-- **共享的 UI：** 所有页面共享一个常见的页眉，显示用户的名称和个人资料图片。
+- **Shared request handling:** The request cookies need to be validated before even rendering the page, otherwise, render a blank 401 page.
+- **Shared UI:** All pages share a common header showing the user's name and profile picture.
 
-而不是在每个路由中重复相同的代码，我们可以使用布局来自动重用常见部分，并添加中间件到路由中。
+Instead of repeating the same code in each route, we can use layouts to automatically reuse common parts, and also to add middleware to the route.
 
-以此 `src/routes` 目录为例：
+Take this `src/routes` directory as an example:
 
-```bash title="目录布局"
+```bash title="Directory layout"
 src/
 └── routes/
     ├── admin/
-    │   ├── layout.tsx  <-- 此布局用于 /admin/* 下的所有页面
+    │   ├── layout.tsx  <-- This layout is used for all pages under /admin/*
     │   └── index.tsx
-    ├── layout.tsx      <-- 此布局用于所有页面
+    ├── layout.tsx      <-- This layout is used for all pages
     └── index.tsx
 ```
 
-### 中间件布局
+### Middleware layouts
 
-由于布局可以使用 `onRequest` 或 `onGet`、`onPost`、`onPut`、`onDelete` 实现请求处理，因此它们可以用于实现中间件，例如，在渲染页面之前验证请求的 cookie。
+Since layouts can implement request handling with `onRequest` or `onGet`, `onPost`, `onPut`, `onDelete`, they can be used to implement middleware, for example, to validate the request cookies before rendering the page.
 
-对于路由 `https://example.com/admin`，`onRequest` 方法将按以下顺序执行：
+For the route `https://example.com/admin`, the `onRequest` methods will be executed in the following order:
 
-1. `src/routes/layout.tsx` 的 `onRequest`
-2. `src/routes/admin/layout.tsx` 的 `onRequest`
-3. `src/routes/admin/index.tsx` 的 `onRequest`
-4. `src/routes/admin/index.tsx` 的组件
+1. `src/routes/layout.tsx`'s `onRequest`
+2. `src/routes/admin/layout.tsx`'s `onRequest`
+3. `src/routes/admin/index.tsx`'s `onRequest`
+4. `src/routes/admin/index.tsx`'s component
 
-在 `src/routes/index.tsx` 中的 `onRequest` 处理程序不会被执行。
+An `onRequest` handler in `src/routes/index.tsx` doesn't get executed.
 
-### 嵌套布局
+### Nested layouts
 
-布局还**提供了一种向呈现的页面添加共享 UI**的方法。例如，如果要为所有路由添加一个常见的页眉，可以将 `Header` 组件添加到根布局中。
+Layouts also **provide a way to add common UI to the rendered page**. For example, if we want to add a common header to all the routes, we can add a `Header` component to the root layout.
 
-对于给定的示例，Qwik 组件将按以下顺序呈现：
+For the given example, the Qwik components will be rendered in the following order:
 
-1. `src/routes/layout.tsx` 的组件
-2. `src/routes/admin/layout.tsx` 的组件
-3. `src/routes/admin/index.tsx` 的组件
+1. `src/routes/layout.tsx`'s component
+2. `src/routes/admin/layout.tsx`'s component
+3. `src/routes/admin/index.tsx`'s component
 
 ```tsx
 <RootLayout>
@@ -201,18 +201,18 @@ src/
 </RootLayout>
 ```
 
-## SPA 导航
+## SPA Navigation
 
-使用 Qwik，MPA 和 SPA 之间的区别消失了；每个应用程序可以同时是 MPA 和 SPA。every app can be both at the same time.
+With Qwik, the distinction between MPA and SPA disappears; every app can be both at the same time.
 The choice is no longer an architectural design determined at the beginning of the project,
 instead, this decision can be made for every link.
 
-Qwik 可以使用 `<Link>` 组件和 `useNavigate()` 钩子来发起 SPA 刷新或页面之间的导航。
+Qwik provides a `<Link>` component and `useNavigate()` hook.
 These can be used to initiate an SPA refresh or navigation between pages.
 
-`Link` 组件是导航的推荐方式，它使用 HTML 的 `<a>` 标签，
-这是在页面之间移动最可访问的方式。
-但是，如果需要以编程方式导航，可以使用 `useNavigate()` 钩子。
+The `Link` component is the recommended way to navigate as it uses the HTML `<a>` tag,
+  which is the most accessible way to move between pages.
+However, if you need to navigate programmatically, you can use the `useNavigate()` hook.
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -222,26 +222,26 @@ export default component$(() => {
   const nav = useNavigate();
   return (
     <div>
-      <Link href="/about">About（首选）</Link>
+      <Link href="/about">About (preferred)</Link>
       <button onClick$={() => nav('/about')}>About</button>
     </div>
   );
 });
 ```
 
-> `Link` 组件在内部使用 `useNavigate()` 钩子 [实现](https://github.com/BuilderIO/qwik/blob/e452582f4728cbcb7bf85d03293e757302286683/packages/qwik-city/runtime/src/link-component.tsx#L33)。
+> The `Link` component uses the `useNavigate()` hook [internally](https://github.com/BuilderIO/qwik/blob/e452582f4728cbcb7bf85d03293e757302286683/packages/qwik-city/runtime/src/link-component.tsx#L33).
 
-### 刷新
+### Refreshing
 
-使用具有 `reload` 属性的 `Link` 可以刷新当前页面。
-你还可以调用 `useNavigate()` 钩子的 `nav()` 函数，不带参数。
+The `Link` with the `reload` prop can be used to refresh the current page.
+You can also call the `nav()` function from the `useNavigate()` hook, without arguments.
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
 import { Link, routeLoader$, useNavigate } from '@builder.io/qwik-city';
 
 export const useServerTime = routeLoader$(() => {
-  // 这将在页面刷新时在服务器上重新执行。
+  // This will re-execute in the server when the page refreshes.
   return Date.now();
 });
 
@@ -259,118 +259,118 @@ export default component$(() => {
 });
 ```
 
-> 当页面刷新时，所有匹配的 `routeLoader$` 和服务器处理程序（`onRequest`）将在服务器上重新执行，并相应地重新呈现 UI。
+> When the page refreshes, all the matching `routeLoader$` and server handlers (`onRequest`) will re-execute in the server and the UI will re-render accordingly.
 
-> 在刷新页面时，直到页面完全呈现，`useLocation()` 的 `isNavigating` 布尔值将为 `true`。
+> While refreshing the page, the `isNavigating` boolean from `useLocation()` will be `true` until the page is fully rendered.
 
-### 预取
+### Prefetching
 
-`Link` 组件的 `prefetch` 属性可用于提高应用程序的感知性能。尽管 Qwik 页面在延迟加载 JavaScript 方面表现出色，但这个功能对于内容密集的页面或需要等待数据库或 API 调用的 SSR 页面非常有用。
+The Link component's `prefetch` prop can be used to improve the perceived performance of the application. Although Qwik pages excel at lazy loading javascript, this feature can come in handy for content-heavy pages or SSR pages that need to wait for database or API calls.
 
 ```tsx
 <Link prefetch href="/about">About</Link>
 ```
 
-只需添加 `prefetch` 属性，您的 `Link` 组件将在用户悬停在链接上时立即开始预取页面。如果应用程序在用户单击链接时完成预取，下一个页面将立即显示。
+By simply adding the `prefetch` prop, your Link component will start prefetching the page as soon as the user hovers over the link. If the application is done prefetching when the user clicks on the link, the following page will appear instantly.
 
-### 滚动恢复 - need review
+### Scroll Restoration
 
-Qwik 提供了最佳的滚动恢复功能，几乎与原生浏览器体验相同。
-您的用户应该获得与 MPA 中原生体验完全相同的体验，
-只是多了 SPA 的所有附加优势。
+Qwik provides best-in-class scroll restoration for SPA that closely mimics the native browser experience.
+Your users should receive the exact same experience they've come to expect natively from MPA,
+except with all the added benefits of SPA.
 
-在使用上述任何一种方法导航后，用户将自动升级为 SPA。
-这意味着当前页面和他们来自的页面现在都与 SPA 上下文相关联。
+After you use one of the above methods to navigate, the user is automatically upgraded to SPA.
+This means that the current page, and the page they came from, now have an `SPA` context associated with them.
 
-如果用户随后点击常规的 `<a>` 标签，它们将执行常规导航。这个新页面将没有 SPA 上下文，并且实际上被降级为 MPA。
-您可以根据需要在这两者之间切换，用户的体验将在 MPA 和 SPA 之间无缝切换，
-就像它们都是相同的一样。
+If a user then clicks a regular `<a>` tag, they will perform a regular navigation. This new page will have no SPA context,
+and is effectively downgraded back to MPA. You can swap between these however you see fit,
+and the user's experience will seamlessly switch between MPA and SPA as if it were all the same.
 
-当用户重新访问启用了 SPA 的历史记录条目时，例如刷新、后退/前进按钮、浏览器会话重启等，
-Qwik 将自动恢复他们的滚动位置，并根据需要将自身引导回 SPA 上下文中。
+When a user re-visits the SPA-enabled history entries, such as with a refresh, back/forward button, browser session restarts, etc.,
+Qwik will automatically restore their scroll position and bootstrap itself back into the SPA context as needed.
 
-> 用于提供这种强大体验的脚本在用户的浏览器中永远不会加载，也永远不会发送给用户的浏览器，除非历史记录条目具有 SPA 上下文。
-> 这就是 Qwik 的魔力所在。
+> The script required to provide this robust experience never loads, nor is it ever even sent to the user's browser,
+> unless the history entry has had an SPA context. Pure MPA pages never load this script. This is the magic of Qwik.
 
-> Qwik 的滚动恢复完全基于 `history`。这与许多其他框架不同，后者依赖于诸如 `sessionStorage` 等内容。
+> Scroll restoration in Qwik always occurs synchronously with render. When combined with Qwik's resumable and
+> first-class SSR/MPA nature, the user should never experience scroll flashing.
 
-Qwik 记住并恢复滚动位置的能力非常强大，可以经受从浏览器会话重启到用户清除浏览器数据的一切考验，而这对于许多其他框架来说并非如此。
+Qwik's scroll restoration is entirely `history` based. This is different from many other frameworks
+which rely on things like `sessionStorage`.
 
-> **在 SPA 中使用 `pushState()` 和 `replaceState()` 的注意事项：**
+Qwik's ability to remember and restore scroll positions is extremely robust
+and will survive everything from browser session restarts to users clearing their browser data,
+which is not the case for these many other frameworks.
 
-
-need review.
-
-
-
+> **Notes on using `pushState()` and `replaceState()` during SPA:**
 >
-> 在具有 SPA 上下文的页面上，Qwik 将在 `history` 全局对象上修补 `pushState()` 和 `replaceState()` 函数。
-> 这是为了确保您作为开发人员添加的任何自定义状态也接收到 SPA 上下文。
+> On a page with an SPA context, Qwik will patch the `pushState()` and `replaceState()` functions on the `history` global.
+> This is to ensure that any custom states you add as a developer, also receive the SPA context.
 >
-> 在修补这些函数时，您 `push` 或 `replace` 的状态应始终是一个实际的 `Object` 类型。
-> 这是因为 Qwik 需要能够自动将 SPA 上下文附加到状态作为属性。
+> While these are patched, states you `push` or `replace` should always be an actual `Object` type.
+> This is because Qwik needs to be able to automatically append the SPA context to the state as a property.
 >
-> 如果提供的值不是对象，则 Qwik 将为状态创建一个新对象，并将您提供的值添加到一个新的键中：
-> `{ _data: <your_value> }`
+> If you provide a value that is not an object, Qwik will create a new object for state and add your provided
+> value to a new key: `{ _data: <your_value> }`
 >
-> 当发生这种情况时，Qwik 还将在浏览器的控制台中以 `dev` 模式警告您。
+> Qwik will also warn you in the browser's console in `dev` mode when this occurs.
 
 
-## 请求事件
+## Request Event
 
-每个请求处理程序（例如 `onRequest`、`onGet`、`onPost` 等）都作为第一个参数传递给 `RequestEvent` 对象。`RequestEvent` 对象包含用于获取和设置服务器请求和响应的实用函数和属性。该对象包含以下属性：
+Each request handler, such as `onRequest`, `onGet`, `onPost`, etc., are passed in a `RequestEvent` object as the first argument to the handler. The `RequestEvent` object contains utility functions and properties to get and set values to the server's request and response. This object contains the following properties:
 
-- `basePathname`：请求的基本路径名，可以在构建时配置。默认为 `/`。
-- `cacheControl`：设置 [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) 响应头的便捷函数。
-- `cookie`：HTTP 请求和响应的 [cookie](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)。使用 `get()` 方法检索请求 cookie 值。使用 `set()` 方法设置响应 cookie 值。
-- `env`：平台提供的环境变量。
-- `error`：调用时，响应将立即以给定的状态代码结束。这对于以 `404` 结束响应并在路由目录中使用 404 处理程序非常有用。有关应使用哪个状态代码，请参阅[状态代码](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)。
-- `getWritableStream`：低级访问 HTTP 响应流的写入。一旦调用了 `getWritableStream()`，状态和标头将无法再修改，并将通过网络发送。
-- `headers`：HTTP [响应头](https://developer.mozilla.org/en-US/docs/Glossary/Response_header)。
-- `html`：发送 HTML 响应的便捷方法。响应将自动将 `Content-Type` 标头设置为 `text/html; charset=utf-8`。只能调用一次 `html()` 响应。
-- `json`：将数据转换为 JSON 字符串并在响应中发送。响应将自动将 `Content-Type` 标头设置为 `application/json; charset=utf-8`。只能调用一次 `json()` 响应。
-- `locale`：内容所在的区域设置。可以使用 `getLocale()` 从选定的方法中检索区域设置值。
-- `method`：HTTP 请求的 [方法](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) 值。
-- `next`：调用下一个请求处理程序。这对于中间件非常有用。
-- `params`：从当前 URL 路径段解析出的 URL 路径参数。使用 `query` 来代替检索查询字符串搜索参数。
-- `parseBody`：此方法将检查请求标头中的 `Content-Type` 标头并相应地解析请求正文。它支持 `application/json`、`application/x-www-form-urlencoded` 和 `multipart/form-data` 内容类型。如果未设置 `Content-Type` 标头，它将返回 `null`。
-- `pathname`：URL 路径名值。不包括协议、域名、查询字符串（搜索参数）或哈希。
-- `platform`：特定于平台的数据和函数。
-- `query`：URL 查询字符串 [URLSearchParams](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams) 值。使用 `params` 来代替检索在 URL 路径中找到的路由参数。
-- `redirect`：要重定向的 URL。调用时，响应将立即以正确的重定向状态和标头结束。有关应使用哪个状态代码，请参阅[重定向](https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections)。
-- `request`：HTTP [请求](https://developer.mozilla.org/en-US/docs/Web/API/Request)。
-- `send`：发送响应正文。使用 `send()` 时，`Content-Type` 响应头不会自动设置，必须手动设置。只能调用一次 `send()` 响应。
-- `sharedMap`：所有请求处理程序之间共享的共享 Map。每个 HTTP 请求都会获得共享 Map 的新实例。共享 Map 对于在请求处理程序之间共享数据非常有用。
-- `status`：HTTP 响应的 [状态代码](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)。在调用时设置状态代码。始终返回状态代码，因此可以使用不带参数调用 `status()` 来返回当前状态代码。
-- `text`：发送文本响应的便捷方法。响应将自动将 `Content-Type` 标头设置为 `text/plain; charset=utf-8`。只能调用一次 `text()` 响应。
-- `url`：HTTP 请求的 [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL)。
+- `basePathname`: The base pathname of the request, which can be configured at build time. Defaults to `/`.
+- `cacheControl`: Convenience function to set the [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) response header.
+- `cookie`: HTTP request and response [cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies). Use the `get()` method to retrieve a request cookie value. Use the `set()` method to set a response cookie value.
+- `env`: Platform provided environment variables.
+- `error`: When called, the response will immediately end with the given status code. This could be useful to end a response with `404`, and use the 404 handler in the routes directory. See [Status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) for which status code should be used.
+- `getWritableStream`: Low-level access to write to the HTTP response stream. Once `getWritableStream()` is called, the status and headers can no longer be modified and will be sent over the network.
+- `headers`: HTTP [response headers](https://developer.mozilla.org/en-US/docs/Glossary/Response_header).
+- `html`: Convenience method to send an HTML body response. The response will be automatically set the `Content-Type` header to`text/html; charset=utf-8`. An `html()` response can only be called once.
+- `json`: Convenience method to JSON stringify the data and send it in the response. The response will be automatically set the `Content-Type` header to`application/json; charset=utf-8`. A `json()` response can only be called once.
+- `locale`: Which locale the content is in. The locale value can be retrieved from selected methods using `getLocale()`.
+- `method`: HTTP request [method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) value.
+- `next`: Call the next request handler. This is useful for middleware.
+- `params`: URL path params which have been parsed from the current url pathname segments. Use `query` to instead retrieve the query string search params.
+- `parseBody`: This method will check the request headers for a `Content-Type` header and parse the body accordingly. It supports `application/json`, `application/x-www-form-urlencoded`, and `multipart/form-data` content types. If the `Content-Type` header is not set, it will return `null`.
+- `pathname`: URL pathname value. Does not include the protocol, domain, query string (search params) or hash.
+- `platform`: Platform specific data and functions.
+- `query`: URL query string [URLSearchParams](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams) value. Use `params` to instead retrieve the route params found in the url pathname.
+- `redirect`: URL to redirect to. When called, the response will immediately end with the correct redirect status and headers. See [Redirects](https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections) for which status code should be used.
+- `request`: HTTP [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request).
+- `send`: Send a body response. The `Content-Type` response header is not automatically set when using `send()` and must be set manually. A `send()` response can only be called once.
+- `sharedMap`: Shared Map across all the request handlers. Every HTTP request will get a new instance of the shared map. The shared map is useful for sharing data between request handlers.
+- `status`: HTTP response [status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status). Sets the status code when called with an argument. Always returns the status code, so calling `status()` without an argument can be used to return the current status code.
+- `text`: Convenience method to send a text body response. The response will be automatically set the `Content-Type` header to`text/plain; charset=utf-8`. A `text()` response can only be called once.
+- `url`: HTTP request [URL](https://developer.mozilla.org/en-US/docs/Web/API/URL).
 
-## 重写路由
+## Rewrite routes
 
-您可以重写路径名，以便为多个页面重用单个页面组件及其自己的中间件和布局。
-这对于 SEO 目的或将页面翻译为不同语言非常有用。
+You can rewrite your pathnames in order to reuse one single page component with its own middlewares and layouts for multiple pages.
+This could be useful for SEO purposes or to translate your pages in different languages.
 
-> **使用前缀翻译本地化的 URL：**
+> **Translate localized urls with prefix:**
 >
-> 为了本地化目的，您可能希望将路由从 `/products` 翻译为 `/it/prodotti` 
-> 或 `/fr/produits`，将 `/products/product-name` 翻译为 `/it/prodotti/nome-prodotto` 或 `/fr/produits/nom-du-produit`，
-> 而不需要为每个语言环境创建多个路由文件，而是重用相同的页面组件、布局、中间件等。
+> For localization purposes you may want to translate your routes from `/products` to `/it/prodotti`
+> or to `/fr/produits` and `/products/product-name` to `/it/prodotti/nome-prodotto` or `/fr/produits/nom-du-produit`
+> without having multiple routes files for each locale but reusing the same page component, layouts, middlewares and so on.
 >
-> 参数名称不会更改，因此如果路由文件是 `/products/[slug]/index.tsx`，URL 是 `/products/product-name`、
-> `/it/prodotti/nome-prodotto` 或 `/fr/produits/nom-du-produit`，您将收到相同的路径参数 `slug`，
-> 其值为 `product-name`、`nome-prodotto` 或 `nom-du-produit`。
+> Parameters name will not be changed so if the route file is `/products/[slug]/index.tsx` and the url is `/products/product-name`,
+> `/it/prodotti/nome-prodotto` or `/fr/produits/nom-du-produit` you will receive the same path parameter `slug` with
+> the values `product-name`, `nome-prodotto` or `nom-du-produit`.
 
-> **重写没有前缀的 URL：**
+> **Rewrite urls without prefix:**
 >
-> 这很少见，但您可能希望为相同路径具有别名。
-> 例如，您可能希望 `/docs` 和 `/documents` 都从同一个页面组件呈现，
-> 或者您可能希望将 `/products` 翻译为 `/prodotti` 而不添加 `/it` 前缀。
+> It's rare but you may want to have aliases for the same path.
+> For example you may want both `/docs` and `/documents` to be rendered from the same page component or
+> you may want to translate `/products` to `/prodotti` without adding the `/it` prefix.
 
-对于 routes 下的每个文件夹，如果 pathname 中存在 `paths` 键的出现，
-则将复制路由节点，将所有 `paths` 键的出现替换为相关的 `paths` 值。
-所有路径参数将保留相同的名称。如果有前缀，它将添加到重写的 pathname 的开头。
+For each folder under the routes one if there are occurrences of the `paths` keys
+in the pathname the route node will be copied replacing all the occurrences of `paths` keys with the related `paths` values.
+All path parameters will preserve the same name. If there is a prefix it will be added at the beginning of the rewritten pathname.
 
-您可以在 `vite.config.ts` 中设置重写规则，如下所示：
+You can set the rewrite rules as follows in your `vite.config.ts`:
 
 ```tsx
 import { defineConfig } from 'vite';
@@ -401,13 +401,13 @@ export default defineConfig(async () => {
 });
 ```
 
-## 高级路由
+## Advanced routing
 
-Qwik City 还支持：
+Qwik City also supports:
 
-- [路由参数](/docs/(qwikcity)/advanced/routing/index.mdx)
-- [嵌套布局](/docs/(qwikcity)/advanced/routing/index.mdx#nested-layout)
-- [菜单](/docs/(qwikcity)/advanced/menu/index.mdx)
-- [请求处理](/docs/(qwikcity)/advanced/request-handling/index.mdx)
+- [Route Parameters](/docs/(qwikcity)/advanced/routing/index.mdx)
+- [Nested layouts](/docs/(qwikcity)/advanced/routing/index.mdx#nested-layout)
+- [Menus](/docs/(qwikcity)/advanced/menu/index.mdx)
+- [Request Handling](/docs/(qwikcity)/advanced/request-handling/index.mdx)
 
-这些将在后面讨论。
+These are discussed later.

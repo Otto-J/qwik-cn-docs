@@ -1,5 +1,5 @@
 ---
-title: React | 集成
+title: React | Integrations
 contributors:
   - manucorporat
   - swwind
@@ -8,36 +8,36 @@ contributors:
   - AnthonyPAlicea
   - adamdbradley
 ---
-import CodeSandbox, { CodeFile } from '../../../../components/code-sandbox/index.tsx';
+import CodeSandbox, {CodeFile} from '../../../../components/code-sandbox/index.tsx';
 
 # Qwik React ⚛️
 
-Qwik React 允许您在 [Qwik](https://qwik.dev/) 中使用 [React](https://react.dev/)。使用 Qwik React 的优势是您可以在 Qwik 中使用现有的 React 组件和库。这使您可以利用 React 组件和库的大型生态系统，例如 [Material UI](https://mui.com/)、[Threejs](https://github.com/pmndrs/react-three-fiber) 和 [React Spring](https://react-spring.io/)。这也是一种在不必重写 React 应用程序的情况下获得 Qwik 的好处的方法。
+Qwik React allows you to use [React](https://react.dev/) within [Qwik](https://qwik.dev/). The advantage of using Qwik React is that you can use existing React components and libraries within Qwik. This allows you to take advantage of the large ecosystem of React components and libraries such as [Material UI](https://mui.com/), [Threejs](https://github.com/pmndrs/react-three-fiber) and [React Spring](https://react-spring.io/). It is also a good way to get the benefits of Qwik without having to rewrite your React application.
 
-## 基本用法
+## Basic Usage
 
-Qwik React 的基本用法是将现有的 React 组件包装在 `qwikify$` 函数中。这个函数将创建一个 Qwik 组件，可以在 Qwik 中使用，并将 React 组件转换为一个岛屿，使您可以自由地微调 React 组件何时进行水合。
+The basic usage of Qwik React is to take existing React components and wrap them in a `qwikify$` function. This function will create a Qwik component that can be used within Qwik and which will turn the React component into an island allowing you the freedom to fine-tune when the React component should hydrate.
 
-基本用法
+Basic usage
 ```tsx
-// 这个 pragma 是必需的，以便使用 React JSX 而不是 Qwik JSX
+// This pragma is required so that React JSX is used instead of Qwik JSX
 /** @jsxImportSource react */
 import { qwikify$ } from '@builder.io/qwik-react';
 
-// 一个现有的 React 组件
+// An existing React component
 function Greetings() {
   return <div>Hello from React</div>;
 }
 
-// 包装 React 组件的 Qwik 组件
+// Qwik component wrapping the React component
 export const QGreetings = qwikify$(Greetings);
 ```
 
-## 0. 安装
+## 0. Installation
 
-在使用 Qwik React 之前，您需要配置 Qwik 项目以使用 Qwik React。最简单的方法是运行以下命令：
+Before you can use Qwik React you need to configure the Qwik project to use Qwik React. The simplest way is to run the following command:
 
-> 如果您还没有 Qwik 应用程序，请先 [创建一个](/docs/(qwik)/getting-started/index.mdx)，然后按照说明运行命令将 React 添加到您的应用程序中。
+> If you don't have a Qwik app yet, then you need to [create one first](/docs/(qwik)/getting-started/index.mdx), then, follow the instructions and run the command add React to your app.
 
 
 ```bash
@@ -45,9 +45,9 @@ npm run qwik add react
 ```
 
 
-上述命令将执行以下操作：
+The above command will perform the following:
 
-1. 在 `package.json` 中安装所需的依赖项：
+1. Install the required dependencies in `package.json`:
    ```json
    {
     ...,
@@ -61,8 +61,8 @@ npm run qwik add react
      }
    }
    ```
-   > **注意**：这不是 React 的仿真。我们使用的是实际的 React 库。
-2. 配置 Vite 使用 `@builder.io/qwik-react` 插件：
+   > **Note**: This is not an emulation of React. We are using the actual React library.
+2. configure Vite to use the `@builder.io/qwik-react` plugin:
    ```ts
    // vite.config.ts
    import { qwikReact } from '@builder.io/qwik-react/vite';
@@ -72,43 +72,43 @@ npm run qwik add react
         ...,
         plugins: [
           ..., 
-          // 这是重要的部分
+          // The important part
           qwikReact()
         ],
       };
    });
    ```
 
-> **注意**：`npm run qwik add react` 还会配置一个演示路由，展示 Qwik React 集成。这些是：
+> **Note**: The `npm run qwik add react` will also configure a demo route showcasing the Qwik React integration. These are:
 > - `package.json` `dependencies`:
 >   - `@emotion/react 11.10.6`
 >   - `@emotion/styled 11.10.6`
 >   - `@mui/material 5.11.9`
 >   - `@mui/x-data-grid 5.17.24`
 > - `src/route`:
->   - `/src/routes/react`: 展示 React 集成的新公共路由
->   - `/src/integrations/react`: 这是 React 组件所在的位置
+>   - `/src/routes/react`: New public route showcasing react integration 
+>   - `/src/integrations/react`: Here's where the react component lives
 >
-> 在本指南中，我们将忽略这些内容，而是从头开始介绍整个过程。
+> We will ignore these in this guide and instead take you through the process from the beginning.
 
 
 ## 1. Hello World
 
-让我们从一个简单的示例开始。我们将创建一个简单的 React 组件，然后将其包装在一个 Qwik 组件中。然后，我们将在 Qwik 路由中使用该 Qwik 组件。
+Let's start with a simple example. We will create a simple React component and then wrap it in a Qwik component. We will then use the Qwik component in a Qwik route.
 
-<CodeSandbox url="/src/routes/demo/react/hello-world/" tabs={["react.tsx", "index.tsx"]} style={{ height: '6em' }}>
-<div  q: slot="0">
+<CodeSandbox url="/src/routes/demo/react/hello-world/" tabs={["react.tsx","index.tsx"]} style={{ height: '6em' }}>
+<div  q:slot="0">
 <CodeFile src="/src/routes/demo/react/hello-world/react.tsx">
 ```tsx /qwikify$/ /QGreetings/
 /** @jsxImportSource react */
 import { qwikify$ } from '@builder.io/qwik-react';
 
-// 创建标准的 React 组件
+// Create React component standard way
 function Greetings() {
   return <p>Hello from React</p>;
 }
 
-// 将 React 组件转换为 Qwik 组件
+// Convert React component to Qwik component
 export const QGreetings = qwikify$(Greetings);
 ```
 </CodeFile>
@@ -132,17 +132,17 @@ export default component$(() => {
 </div>
 </CodeSandbox>
 
-`@builder.io/qwik-react` 包导出了 `qwikify$()` 函数，该函数允许您将 React 组件转换为 Qwik 组件，您可以在应用程序中使用这些组件。
+The `@builder.io/qwik-react` package exports the `qwikify$()` function that lets you convert React components into Qwik components, that you can use across your application.
 
-> **注意：**在将 React 组件用于 Qwik 之前，必须先将其转换为 Qwik 组件，使用 `qwikify$()`。尽管 [React 和 Qwik 组件看起来相似](/docs/(qwikcity)/guides/react-cheat-sheet/index.mdx)，但它们在本质上是非常不同的。
+> **Note:** You CAN NOT use React components in Qwik without converting them first, using `qwikify$()`. Even though [React and Qwik components look similar](/docs/(qwikcity)/guides/react-cheat-sheet/index.mdx), they are fundamentally very different.
 
-React 和 Qwik 组件不能在同一个文件中混合使用。如果在运行安装命令后立即检查项目，您将看到一个名为 `src/integrations/react/` 的新文件夹，我们建议您将 React 组件放在其中。
+React and Qwik components can not be mixed in the same file, if you check your project right after running the installation command, you will see a new folder `src/integrations/react/`, we recommend that you place your React components there.
 
-## 2. 水合 React 岛屿
+## 2. Hydrating react islands
 
-上面的示例展示了如何在服务器端静态渲染 React 内容。好处是该组件永远不会在浏览器中重新渲染，因此其代码永远不会下载到客户端。但是，如果组件需要交互性，因此我们需要在浏览器中下载其行为时怎么办？让我们从构建一个简单的计数器示例开始。
+The above example shows how to SSR static React content on the server. The benefit is that that component will never re-render in the browser and therefore its code never downloads to the client. But what if the component needs to be interactive, and therefore we need to download its behavior in the browser? Let's start with building a simple counter example in React.
 
-<CodeSandbox url="/src/routes/demo/react/counter-simple/" tabs={["react.tsx", "index.tsx"]} style={{ height: '6em' }}>
+<CodeSandbox url="/src/routes/demo/react/counter-simple/" tabs={["react.tsx","index.tsx"]} style={{ height: '6em' }}>
 <div  q:slot="0">
 <CodeFile src="/src/routes/demo/react/counter-simple/react.tsx">
 ```tsx /qwikify$/ /QGreetings/
@@ -150,7 +150,7 @@ React 和 Qwik 组件不能在同一个文件中混合使用。如果在运行�
 import { qwikify$ } from '@builder.io/qwik-react';
 import { useState } from 'react';
 
-// 创建标准的 React 组件
+// Create React component standard way
 function Counter() {
   const [count, setCount] = useState(0);
   return (
@@ -160,7 +160,7 @@ function Counter() {
   );
 }
 
-// 将 React 组件转换为 Qwik 组件
+// Convert React component to Qwik component
 export const QCounter = qwikify$(Counter);
 ```
 </CodeFile>
@@ -183,10 +183,10 @@ export default component$(() => {
 </div>
 </CodeSandbox>
 
-请注意，单击 `Count` 按钮不会发生任何操作。这是因为 React 尚未下载，因此组件未被水合。我们需要告诉 Qwik 下载 React 组件并进行水合，但我们需要指定何时执行该操作。急切地执行此操作将丧失将 React 应用程序转换为岛屿的所有优势。在这种情况下，我们希望在用户悬停在按钮上时下载组件，我们可以通过在 `qwikify$()` 中添加 `{: eagerness: 'hover' }` 来实现。
+Notice that clicking on the `Count` button does nothing. This is because the React has not been downloaded and therefore the component was not hydrated. We need to tell Qwik to download the React component and hydrate it, but we need to specify the condition under which we want to do that. Doing it eagerly would lose all of the benefits of turning the React application into islands. In this case, we want to download the component when the user hovers over the button, we do so by adding `{: eagerness: 'hover' }` to `qwikify$()`.
 
 <CodeSandbox url="/src/routes/demo/react/counter-simple-hover/" console={true}
-            tabs={["react.tsx", "index.tsx"]} style={{ height: '20em' }}>
+             tabs={["react.tsx","index.tsx"]} style={{ height: '20em' }}>
 <div  q:slot="0">
 <CodeFile src="/src/routes/demo/react/counter-simple-hover/react.tsx">
 ```tsx /qwikify$/ /{: eagerness: 'hover' }/
@@ -194,9 +194,9 @@ export default component$(() => {
 import { qwikify$ } from '@builder.io/qwik-react';
 import { useState } from 'react';
 
-// 创建标准的 React 组件
+// Create React component standard way
 function Counter() {
-  // 打印到控制台以显示组件何时被渲染。
+  // Print to console to show when the component is rendered.
   console.log('React <Counter/> Render');
   const [count, setCount] = useState(0);
   return (
@@ -206,7 +206,7 @@ function Counter() {
   );
 }
 
-// 指定渴望度以在悬停事件上水合组件。
+// Specify eagerness to hydrate component on hover event.
 export const QCounter = qwikify$(Counter, { eagerness: 'hover' });
 ```
 </CodeFile>
@@ -230,18 +230,18 @@ export default component$(() => {
 </div>
 </CodeSandbox>
 
-在此示例中，我们打开了控制台以显示背后的操作。当您将鼠标悬停在按钮上时，您将看到 React 组件被渲染。这是因为我们要求 Qwik 在 `hover` 事件上水合组件。现在，组件已经水合，您可以与之交互，并且计数将正确更新。
+In this example, we have brought up the console to show what is going on behind the scene. When you hover over the button, you will see that the React component is rendered. This is because we asked Qwik to hydrate the component on `hover`. Now that the component is hydrated you can interact with it and it will correctly update the count.
 
-通过在 `qwikify$()` 中给出 `eagerness` 属性，您可以微调组件的水合条件，这将影响应用程序的启动性能。
+By giving the `eagerness` property to `qwikify$()`, we are allowing you to fine-tune the conditions under which the component is hydrated which will impact the startup performance of your application.
 
 
-## 3. 岛屿间通信
+## 3. Inter-island communication
 
-在前面的示例中，我们有一个延迟水合的单个岛屿。但是，一旦您拥有多个岛屿，就需要在它们之间进行通信。此示例展示了如何在 Qwik 中进行岛屿间通信。
+In the previous example, we had a single island that we delay-hydrated. But once you have multiple islands, there will be a need to communicate between them. This example shows how to do inter-island communication with Qwik.
 
 
 <CodeSandbox url="/src/routes/demo/react/counter-two-islands/" console={true}
-          tabs={["react.tsx", "index.tsx"]} style={{ height: '20em' }}>
+             tabs={["react.tsx","index.tsx"]} style={{ height: '20em' }}>
 <div  q:slot="0">
 <CodeFile src="/src/routes/demo/react/counter-two-islands/react.tsx">
 ```tsx /qwikify$/ /{: eagerness: 'hover' }/
@@ -289,30 +289,30 @@ export default component$(() => {
 </div>
 </CodeSandbox>
 
-在上面的示例中，我们有两个岛屿，一个用于按钮（`QButton`），一个用于显示（`QDisplay`）。按钮岛屿在 `hover` 上水合，显示岛屿在任何事件上都不水合。
+In the above example, we have two islands, one for the button (`QButton`) and one for the display (`QDisplay`). The button island is hydrated on `hover` and the display island is not hydrated on any event.
 
-`react.tsx` 文件包含以下内容：
-- `QButton` - 一个按钮，点击时会增加计数。此岛屿在 `hover` 上水合。
-- `QDisplay` - 一个显示当前计数的组件。此岛屿在任何事件上都不水合，但在其 props 更改时会由 Qwik 进行水合。
-- 两个 React 组件都有 `console.log`，以显示组件何时被水合或重新渲染。
+The `react.tsx` file has:
+- `QButton` - a button that increments the count when clicked. This island is hydrated on `hover`.
+- `QDisplay` - a display that shows the current count. This island is not hydrated on any event but will be hydrated by Qwik when its props change.
+- Both of the React components have `console.log` to show when the component is hydrated or re-rendered.
 
-`index.tsx` 文件包含以下内容：
-- `count` - 一个信号，用于跟踪当前计数。
-- 实例化 `QButton` 岛屿。`onClick$` 处理程序递增 `count` 信号。请注意，Qwik 会自动将 `onClick` 转换为 `onClick$` 属性，从而实现事件处理程序的延迟加载。
-- 实例化 `QDisplay` 岛屿。将 `count` 信号作为 prop 传递给岛屿。
+The `index.tsx` file has:
+- `count` - a signal that is used to track the current count.
+- Instantiates the `QButton` islands. The `onClick$` handler increments the `count` signal. Notice that Qwik automatically converts the `onClick` to `onClick$` prop allowing lazy loading of the event handlers.
+- Instantiates the `QDisplay` islands. The `count` signal is passed as a prop to the island.
 
-当您将鼠标悬停在按钮上时，您将看到 `QButton` 岛屿被水合。当您点击按钮时，您将看到 `QDisplay` 岛屿被水合，并且计数被更新。（`QDisplay` 的双重执行是由于首先进行初始水合，然后更新计数。）
+When you hover over the button, you will see that the `QButton` island is hydrated. When you click the button, you will see that the `QDisplay` island is hydrated and the count is updated. (The double execution of `QDisplay` is due to initial hydration first, and then updating the count second.)
 
-请注意，Qwik React 只需要急切水合具有交互性的组件。具有动态性但没有交互性的组件（例如本示例中的 `QDisplay`）不需要急切水合，而是在其 props 更改时自动水合。
+Notice that Qwik React only needs to eagerly hydrate components that have interactivity. Components that are dynamic, but don't have interactivity (such as `QDisplay` in this example) do not need to be eagerly hydrated instead they hydrate automatically when their props change.
 
-还请注意，`console.log('Qwik Render');` 在浏览器中永远不会执行。
+Also notice that `console.log('Qwik Render');` never executes in the browser.
 
-## 4. `host:` 事件监听器
+## 4. `host:` Listeners
 
-在前面的示例中，我们有两个岛屿。`QButton` 必须急切水合，以便 React 可以设置 `onClick` 事件处理程序。这有点浪费，因为 `QButton` 岛屿永远不需要重新渲染，因为其输出是静态的。单击 `QButton` 不会导致 `QButton` 岛屿重新渲染。在这种情况下，我们可以要求 Qwik 注册 `click` 事件监听器，而不是急切水合整个组件以附加监听器。使用 `host:` 前缀在事件名称中实现此目的。
+In the previous example, we had two islands. The `QButton` had to be eagerly hydrated so that React can set up the `onClick` event handler. This is a bit wasteful because the `QButton` island will never need to be re-rendered as its output is static. Clicking on the `QButton` will not cause the `QButton` island to re-render. In such a case, we can ask Qwik to register the `click` listener instead of hydrating the whole component in React just to attach a listener. This is done by using the `host:` prefix in the event name.
 
 <CodeSandbox url="/src/routes/demo/react/counter-two-islands-host/" console={true}
-            tabs={["index.tsx", "react.tsx"]} style={{ height: '20em' }}>
+             tabs={["index.tsx","react.tsx"]} style={{ height: '20em' }}>
 <div  q:slot="0">
 <CodeFile src="/src/routes/demo/react/counter-two-islands-host/index.tsx">
 ```tsx /host:onClick$/
@@ -363,15 +363,15 @@ export const QDisplay = qwikify$(Display);
 </div>
 </CodeSandbox>
 
-现在，悬停在按钮上将不会执行任何操作（没有 React 水合）。单击按钮将导致 Qwik 处理事件并更新信号，这将进而导致 `QDisplay` 岛屿的水合。请注意，`QButton` 岛屿永远不会被水合。因此，此更改允许我们在服务器端仅呈现岛屿，并且在浏览器中永远不需要水合，从而节省了用户的时间。
+Now hovering over the button will not do anything (no React hydration). Clicking on the button will cause Qwik to handle the event and update the signal which will in turn cause the hydration of the `QDisplay` island. Notice that the `QButton` island is never hydrated. Therefore this change allowed us to have an island that renders server side only and never needs to be hydrated in the browser, saving our user time.
 
 
-## 5. 投影 `children`
+## 5. Projecting `children`
 
-常见的用例是将内容子项传递给组件。在 Qwik React 中，这也适用。只需在 props 中声明 `children` 并按预期使用它们（请参阅 `react.tsx`）。
+A common use case is to pass content children to components. This works with Qwik React as well. In the React component just declare `children` in your props and use them as expected (See `react.tsx`).
 
 <CodeSandbox url="/src/routes/demo/react/children/" console={true}
-tabs={["index.tsx", "react.tsx"]} style={{ height: '20em' }}>
+             tabs={["index.tsx","react.tsx"]} style={{ height: '20em' }}>
 <div  q:slot="0">
 <CodeFile src="/src/routes/demo/react/children/index.tsx">
 ```tsx /host:onClick$/
@@ -427,15 +427,15 @@ export const QFrame = qwikify$(Frame);
 </div>
 </CodeSandbox>
 
-请注意，`QFrame` 岛屿永远不会被水合，因为它没有 `eagerness` 或任何会触发水合的 props。但是还请注意，子项在信号更改时会重新渲染，并且在正确投影到 React 的 `QFrame` 岛屿中时，岛屿不会被水合。这允许更多的页面在服务器端呈现，并且在客户端上永远不会呈现。
+Notice that the `QFrame` island is never hydrated because it has no `eagerness` or any props which would trigger hydration. But also notice that the children do re-render when the signal changes and are correctly projected into the React `QFrame` island without the island being hydrated. This allows even more of the page to be rendered server-side and never rendered on the client.
 
-## 6. 使用 React 库
+## 6. Using React libraries
 
-最后，您可以在 Qwik 应用程序中使用 React 库。在此示例中，使用 [Material UI](https://mui.com/) 和 [Emotion](https://emotion.sh/docs/introduction) 渲染了此 React 示例。
+Finally, it is possible to use React libraries in your Qwik application. In this example [Material UI](https://mui.com/) and [Emotion](https://emotion.sh/docs/introduction) are used to render this React example. 
 
 
 <CodeSandbox url="/src/routes/demo/react/mui/"
-tabs={["react.tsx", "index.tsx"]} style={{ height: '8em' }}>
+             tabs={["react.tsx", "index.tsx"]} style={{ height: '8em' }}>
 <div  q:slot="0">
 <CodeFile src="/src/routes/demo/react/mui/react.tsx">
 ```tsx /host:onClick$/
@@ -502,11 +502,11 @@ export default component$(() => {
 </div>
 </CodeSandbox>
 
-React 示例在悬停时急切水合，并按预期工作。
+The React example is hydrated on hover and works as you would expect. 
 
-# 规则
+# Rules
 
-让我们通过这个示例更好地理解 Qwik React 的规则。
+Let's look at this example to better understand the rules of Qwik React.
 
 ```tsx title="src/integrations/react/mui.tsx"
 /** @jsxImportSource react */
@@ -520,16 +520,16 @@ export const MUIAlert = qwikify$(Alert);
 export const MUISlider = qwikify$(Slider, { eagerness: 'hover' });
 ```
 
-> **重要：**您需要在文件顶部导入 `/** @jsxImportSource react */`，这是一条指令，告诉编译器使用 React 作为 JSX 工厂。
+> **Important:** You need to import `/** @jsxImportSource react */` at the top of your file, this is an instruction to the compiler to use React as the JSX factory.
 
-简而言之，规则如下：
+In a nutshell, the rules are:
 
-1. 不要在同一个文件中混合使用 React 和 Qwik 组件。
-2. 我们建议将所有 React 代码放在 `src/integrations/react` 文件夹中。
-3. 在包含 React 代码的文件顶部添加 `/** @jsxImportSource react */`。
-4. 使用 `qwikify$()` 将 React 组件转换为 Qwik 组件，然后可以从 Qwik 模块中导入它们。
+1. Don't mix React and Qwik components in the same file.
+2. We recommend that you place all your react code inside the `src/integrations/react` folder.
+3. Add `/** @jsxImportSource react */` at the top of the files containing React code.
+4. Use `qwikify$()` to convert React components into Qwik components, that you can then import from Qwik modules.
 
-现在，您的 Qwik 可以导入 `MUIButton` 并像其他 Qwik 组件一样使用它：
+Now your Qwik can import `MUIButton` and use it as any other Qwik component:
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -548,15 +548,15 @@ export default component$(() => {
 
 ## `qwikify$()`
 
-`qwikify$(ReactCmp, options?): QwikCmp` 允许实现 React 组件的部分水合。它通过将 React 的 SSR 和水合逻辑包装在一个 Qwik 组件中来工作，该组件可以在 SSR 期间执行 React 的 `renderToString()`，并在指定时动态调用 `hydrateRoot()`。
+The `qwikify$(ReactCmp, options?): QwikCmp` allows to implement partial hydration of React components. It works by wrapping the SSR and hydration logic of React into a Qwik component that can execute React's `renderToString()` during SSR and dynamically call `hydrateRoot()` when specified.
 
-请注意，默认情况下，浏览器中不会运行任何 React 代码，这意味着 React 组件默认情况下不会是交互式的。例如，在以下示例中，我们将 MUI 的 [Slider](https://mui.com/material-ui/react-slider/) 组件转换为 Qwik 组件，但它不会是交互式的（缺少一个 `eagerness` 属性，告诉 Qwik 何时在浏览器中水合 React 组件）。
+Notice that by default no React code will run in the browser, meaning that React component will NOT be interactive by default, for example, in the following example, we _qwikify_ the [Slider](https://mui.com/material-ui/react-slider/) component from MUI, but it will not be interactive (it is missing an `eagerness` property to tell Qwik when the React component should be hydrated in the browser.)
 
 <CodeSandbox url="/src/routes/demo/react/slider/" console={true}
-tabs={["react.tsx", "index.tsx"]} style={{ height: '20em' }}>
+             tabs={["react.tsx","index.tsx"]} style={{ height: '20em' }}>
 <div  q:slot="0">
 <CodeFile src="/src/routes/demo/react/slider/react.tsx">
-```tsx /qwikify$/ /QGreetings/
+```tsx /host:onClick$/
 /** @jsxImportSource react */
 import { qwikify$ } from '@builder.io/qwik-react';
 import { Slider } from '@mui/material';
@@ -596,11 +596,11 @@ export default component$(() => {
 </div>
 </CodeSandbox>
 
-## 限制
+## Limitations
 
-### 每个 qwikified react 组件都是独立的
+### Every qwikified react component is isolated
 
-每个 qwikified 组件实例都成为一个独立的 React 应用程序。完全隔离。
+Each instance of a qwikified react component becomes an independent React app. Fully isolated.
 
 ```tsx
 export const MUISlider = qwikify$(Slider);
@@ -609,31 +609,31 @@ export const MUISlider = qwikify$(Slider);
 <MUISlider></MUISlider>
 ```
 
-- 每个 `MUISlider` 都是一个完全隔离的 React 应用程序，具有自己的状态、生命周期等。
-- 样式将被复制
-- 状态不会共享
-- [上下文](https://react.dev/learn/passing-data-deeply-with-context) 不会被继承。
-- 岛屿将独立水合
+- Each `MUISlider` is a fully isolated React application, with its own state, lifecycle, etc.
+- Styles will be duplicated
+- State will not be shared
+- [Context](https://react.dev/learn/passing-data-deeply-with-context) will not be inherited.
+- Islands will [hydrate](https://react.dev/reference/react-dom/client/hydrateRoot) independently
 
-### 默认情况下禁用交互性
+### By default interactivity is disabled
 
-默认情况下，qwikified 组件不会是交互式的，请查看下一节以了解如何启用交互性。
+By default, qwikified components will not be interactive, please look at the next section to learn how to enable interactivity.
 
-### 使用 `qwikify$()` 作为迁移策略
+### Use `qwikify$()` as a migration strategy
 
-在 Qwik 中使用 React 组件是将应用程序迁移到 Qwik 的好方法，但它不是万能的，您需要重写组件以利用 Qwik 的功能。
+Using React components in Qwik is a great way to migrate your application to Qwik, but it's not a silver bullet, you will need to rewrite your components to take advantage of Qwik's features.
 
-这也是使用 React 生态系统的好方法，例如 [threejs](https://github.com/pmndrs/react-three-fiber) 或 [data-grid libs](https://mui.com/x/react-data-grid/)。
+It's also a great way to enjoy the React ecosystem, like [threejs](https://github.com/pmndrs/react-three-fiber) or [data-grid libs](https://mui.com/x/react-data-grid/).
 
-> 不要滥用 `qwikify$()` 来构建应用程序，过度使用会导致性能下降。
+> Don't abuse `qwikify$()` to build your application, as overusing will cause performance gains to be lost.
 
-### 构建宽岛屿，而不是叶节点
+### Build wide islands, not leaf nodes
 
-例如，如果您需要使用多个 MUI 组件构建列表，请不要将每个单独的 MUI 组件 qwikify，而是将整个列表作为单个 qwikified React 组件构建。
+For example, if you need to use several MUI components, to build a list, don't qwikify each individual MUI component, instead, build the whole list as a single qwikified React component.
 
-#### 好的：宽岛屿
+#### GOOD: Wide island
 
-一个单独的 qwikified 组件，其中包含所有的 MUI 组件。样式不会被复制，上下文和主题将按预期工作。
+A single qwikified component, with all the MUI components inside. Styles will not be duplicated, and context and theming will work as expected.
 
 ```tsx
 import * as React from 'react';
@@ -646,7 +646,7 @@ import ImageIcon from '@mui/icons-material/Image';
 import WorkIcon from '@mui/icons-material/Work';
 import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 
-// 将整个列表作为单个 qwikified 组件
+// Qwikify the whole list
 export const FolderList = qwikify$(() => {
   return (
     <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
@@ -679,9 +679,9 @@ export const FolderList = qwikify$(() => {
 });
 ```
 
-#### 不好：叶节点
+#### BAD: Leaf nodes
 
-叶节点独立地 qwikify，实际上渲染了数十个嵌套的 React 应用程序，每个应用程序都是完全隔离的，样式被复制。
+Leaf nodes are qwikified independently, effectively rendering dozens of nested react applications, each fully isolated from the others, and styles being duplicated.
 
 ```tsx
 import * as React from 'react';
@@ -705,8 +705,8 @@ export const MUIBeachAccessIcon = qwikify$(BeachAccessIcon);
 ```
 
 ```tsx
-// 使用数十个嵌套的 React 岛屿的 Qwik 组件
-// 每个 MUI-* 都是一个独立的 React 应用程序
+// Qwik component using dozens of nested React islands
+// Each MUI-* it's an independent React application
 export const FolderList = component$(() => {
   return (
     <MUIList sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
@@ -739,11 +739,11 @@ export const FolderList = component$(() => {
 });
 ```
 
-## 添加交互性
+## Adding interactivity
 
-为了添加交互性，在 React 术语中，我们需要进行[水合](https://react.dev/reference/react-dom/hydrate)，通常在 React 应用程序中，此水合任务在加载时无条件进行，[增加了巨大的开销](https://www.builder.io/blog/hydration-is-pure-overhead)，使网站变慢。
+In order to add interactivity, in React terminology we need to [hydrate](https://react.dev/reference/react-dom/hydrate), usually in React applications this hydration task happens unconditionally at load time, [adding a massive overhead](https://www.builder.io/blog/hydration-is-pure-overhead) and making sites slow.
 
-Qwik 允许您决定何时对组件进行水合，通过使用 `client:` JSX 属性，这种技术通常称为部分水合，由 [Astro](https://astro.build/) 推广。
+Qwik allows you decide when to hydrate your components, by using the `client:` JSX properties, this technique is commonly called partial hydration, popularized by [Astro](https://astro.build/).
 
 ```diff
 export default component$(() => {
@@ -756,51 +756,51 @@ export default component$(() => {
 });
 ```
 
-Qwik 提供了不同的策略：
+Qwik comes with different strategies out of the box:
 
 ### `client:load`
 
-组件在文档加载时急切水合。
+The component eagerly hydrates when the document loads.
 
 ```tsx
 <MUISlider client:load></MUISlider>
 ```
 
-**用例：**需要尽快交互的立即可见的 UI 元素。
+**Use case:** Immediately-visible UI elements that need to be interactive as soon as possible.
 
 ### `client:idle`
 
-组件在浏览器首次变为空闲时急切水合，即在重要的所有操作之后。
+The component eagerly hydrates when the browser first becomes idle, ie, when everything important has already run before.
 
 ```tsx
 <MUISlider client:idle></MUISlider>
 ```
 
-**用例：**不需要立即交互的较低优先级 UI 元素。
+**Use case:** Lower-priority UI elements that don’t need to be immediately interactive.
 
 ### `client:visible`
 
-组件在视口中可见时急切水合。
+The component eagerly hydrates when it becomes visible in the viewport.
 
 ```tsx
 <MUISlider client:visible></MUISlider>
 ```
 
-**用例：**不需要立即交互的较低优先级 UI 元素，要么在页面下方（“折叠”）或者资源密集型到只有在用户看到元素时才希望加载。
+**Use case:** Low-priority UI elements that are either far down the page (“below the fold”) or so resource-intensive to load that you would prefer not to load them at all if the user never saw the element.
 
 ### `client:hover`
 
-组件在鼠标悬停在组件上时急切水合。
+The component eagerly hydrates when the mouse is over the component.
 
 ```tsx
 <MUISlider client:hover></MUISlider>
 ```
 
-**用例：**交互性不是关键的最低优先级 UI 元素，只需要在桌面上运行。
+**Use case:** Lowest-priority UI elements which interactivity is not crucial, and only needs to run in desktop.
 
 ### `client:signal`
 
-这是一个高级 API，允许在传递的信号变为 `true` 时水合组件。
+This is an advanced API that allows to hydrate the component whenever the passed signal becomes `true`.
 
 ```tsx
 export default component$(() => {
@@ -815,11 +815,11 @@ export default component$(() => {
 });
 ```
 
-这实际上允许您为水合实现自定义策略。
+This effectively allows you to implement custom strategies for hydration.
 
 ### `client:event`
 
-当指定的 DOM 事件被触发时，组件会急切地进行水合。
+The component eagerly hydrates when specified DOM events are dispatched.
 
 ```tsx
 <MUISlider client:event="click"></MUISlider>
@@ -827,25 +827,25 @@ export default component$(() => {
 
 ### `client:only`
 
-当为 `true` 时，组件将只在浏览器中运行，而不在 SSR 中运行。
+When `true`, the component will not run in SSR, only in the browser.
 
 ```tsx
 <MUISlider client:only></MUISlider>
 ```
 
-## 监听 React 事件
+## Listening to React events
 
-在 React 中，通过将函数作为属性传递给组件来处理事件，例如：
+Events in React are handled by passing a function as a property to the component, for example:
 
 ```tsx
-// React 代码（在 Qwik 中不起作用）
+// React code (won't work in Qwik)
 
 import { Slider } from '@mui/material';
 
 <Slider onChange={() => console.log('value changed')}></Slider>;
 ```
 
-`qwikify()` 函数将把此代码转换为一个 Qwik 组件，该组件还将将 React 事件公开为 Qwik [QRLs](/docs/(qwik)/advanced/qrl/index.mdx)：
+The `qwikify()` function will convert this into a Qwik component that will also expose the React events as Qwik [QRLs](/docs/(qwik)/advanced/qrl/index.mdx):
 
 ```tsx
 import { Slider } from '@mui/material';
@@ -855,11 +855,11 @@ const MUISlider = qwikify$(Slider);
 <MUISlider client:visible onChange$={() => console.log('value changed')} />;
 ```
 
-> 请注意，我们使用 `client:visible` 属性来急切地进行水合，否则组件将无法交互，事件也将永远不会被触发。
+> Notice that we use the `client:visible` property to eagerly hydrate the component, otherwise the component would not be interactive and the events would never be dispatched.
 
-## 宿主元素
+## Host element
 
-当使用 `qwikify$()` 包装 React 组件时，在幕后会创建一个新的 DOM 元素，例如：
+When wrapping a React component with `qwikify$()`, under the hood, a new DOM element is created, such as:
 
 ```html
 <qwik-react>
@@ -867,11 +867,11 @@ const MUISlider = qwikify$(Slider);
 </qwik-react>
 ```
 
-> 请注意，包装器元素的标签名称可以通过 `tagName` 进行配置：`qwikify$(ReactCmp, { tagName: 'my-react' })`。
+> Notice, that the tag name of the wrapper element is configurable via `tagName`: `qwikify$(ReactCmp, { tagName: 'my-react' })`.
 
-### 在不进行水合的情况下监听 DOM 事件
+### Listen to DOM events without hydration
 
-宿主元素不是 React 的一部分，这意味着不需要进行水合即可监听事件。为了向宿主元素添加自定义属性和事件，您可以在 JSX 属性中使用 `host:` 前缀，例如：
+The host element is not part of React, meaning that hydration is not necessary to listen for events, in order to add custom attributes and events to the host element, you can use the `host:` prefix in the JSX properties, such as:
 
 ```tsx
 <MUIButton
@@ -881,6 +881,6 @@ const MUISlider = qwikify$(Slider);
 />
 ```
 
-这将有效地允许您在不下载任何 React 代码的情况下响应 [MUI button](https://mui.com/material-ui/react-button/) 的点击事件。
+This will effectively allow you to respond to a click in a [MUI button](https://mui.com/material-ui/react-button/) without downloading a single byte of React code.
 
-🧑‍💻祝您编程愉快！
+🧑‍💻Happy hacking!

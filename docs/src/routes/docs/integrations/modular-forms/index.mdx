@@ -1,25 +1,25 @@
 ---
-title: 模块化表单 | 集成
-keywords: '表单, 库, 验证, 类型安全'
+title: Modular Forms | Integrations
+keywords: 'form, library, validation, type-safe'
 contributors:
   - fabian-hiller
 ---
 
 import CodeSandbox from '../../../../components/code-sandbox/index.tsx';
 
-# 模块化表单
+# Modular Forms
 
-[Modular Forms](https://modularforms.dev/) 是一个基于 Qwik 构建的类型安全表单库。它的无头设计使您可以完全控制表单的视觉外观。该库负责状态管理和输入验证。
+[Modular Forms](https://modularforms.dev/) is a type-safe form library built natively on Qwik. The headless design gives you full control over the visual appearance of your form. The library takes care of state management and input validation.
 
-要开始使用，请安装 npm 包：
+To get started, install the npm package:
 
 ```bash
 npm install @modular-forms/qwik
 ```
 
-## 定义表单
+## Define your form
 
-在开始创建表单之前，您需要定义字段的结构和数据类型。除了字符串，Modular Forms 还可以处理布尔值、数字、文件、日期、对象和数组。
+Before you start creating a form, you define the structure and data types of the fields. Besides strings, Modular Forms can also handle booleans, numbers, files, dates, objects and arrays.
 
 ```ts
 type LoginForm = {
@@ -28,30 +28,30 @@ type LoginForm = {
 };
 ```
 
-由于 Modular Forms 支持 [Valibot](https://valibot.dev/) 和 [Zod](https://zod.dev/) 进行输入验证，您可以选择从模式派生类型定义。
+Since Modular Forms supports [Valibot](https://valibot.dev/) and [Zod](https://zod.dev/) for input validation, you can optionally derive the type definition from a schema.
 
 ```ts
 import { email, type Input, minLength, object, string } from 'valibot';
 
 const LoginSchema = object({
   email: string([
-    minLength(1, '请输入您的电子邮件。'),
-    email('电子邮件地址格式不正确。'),
+    minLength(1, 'Please enter your email.'),
+    email('The email address is badly formatted.'),
   ]),
   password: string([
-    minLength(1, '请输入您的密码。'),
-    minLength(8, '您的密码必须包含 8 个或更多字符。'),
+    minLength(1, 'Please enter your password.'),
+    minLength(8, 'Your password must have 8 characters or more.'),
   ]),
 });
 
 type LoginForm = Input<typeof LoginSchema>;
 ```
 
-如果您想知道为什么本指南更喜欢 Valibot 而不是 Zod，请阅读这篇[公告文章](https://www.builder.io/blog/introducing-valibot)。
+If you're wondering why this guide favors Valibot over Zod, I recommend reading this [announcement post](https://www.builder.io/blog/introducing-valibot).
 
-## 设置初始值
+## Set initial values
 
-在创建类型定义之后，继续使用您的表单的初始值。为此，请创建一个 [`routeLoader$`](../../route-loader/) 并将您之前创建的类型作为泛型使用。
+After you have created the type definition, continue with the initial values of your form. To do this, create a [`routeLoader$`](../../route-loader/) and use as generic your previously created type.
 
 ```ts
 export const useFormLoader = routeLoader$<InitialValues<LoginForm>>(() => ({
@@ -60,11 +60,11 @@ export const useFormLoader = routeLoader$<InitialValues<LoginForm>>(() => ({
 }));
 ```
 
-在 `routeLoader$` 中，您可以查询和传递来自数据库的值，而不仅仅是空字符串。根据传递的对象，您的表单的存储将被初始化，以便 Qwik 可以可靠地在服务器上预渲染您的网站。稍后还将使用初始值来检查用户输入后字段的值是否发生了更改。
+Instead of empty strings, in `routeLoader$` you can also query and pass values from your database. Based on the passed object, the store of your form will be initialized to enable Qwik to reliably pre-render your website on the server. The initial values are also used later to check if the value of a field has changed after user input.
 
-## 创建表单
+## Create a form
 
-要创建表单，您可以使用 [`useForm`](https://modularforms.dev/qwik/api/useForm) 钩子。它返回您的表单的存储和一个包含 `Form`、`Field` 和 `FieldArray` 组件的对象。您可以将一个对象作为参数传递给 `useForm`，其中包含之前创建的加载器。
+To create a form, you use the [`useForm`](https://modularforms.dev/qwik/api/useForm) hook. It returns the store of your form and an object with a `Form`, `Field` and `FieldArray` component. As a parameter you pass an object to `useForm`, with the previously created loader.
 
 ```ts
 export default component$(() => {
@@ -74,9 +74,9 @@ export default component$(() => {
 });
 ```
 
-您可以使用 `loginForm` 对象来访问表单的当前状态。此外，您还可以将其传递给库提供的各种方法，例如 [`reset`](https://modularforms.dev/qwik/api/reset) 或 [`setValue`](https://modularforms.dev/qwik/api/setValue)，以对状态进行手动更改。
+You can use the `loginForm` object to access the current state of your form. Furthermore, you can pass it to various methods provided by the library, such as [`reset`](https://modularforms.dev/qwik/api/reset) or [`setValue`](https://modularforms.dev/qwik/api/setValue), to make manual changes to the state.
 
-在组件的 JSX 部分中，您可以继续使用 [`Form`](https://modularforms.dev/qwik/api/Form) 组件。它包围了表单的字段，并通过其属性定义表单提交时发生的事件。
+In the JSX part of your component you continue with the [`Form`](https://modularforms.dev/qwik/api/Form) component. It encloses the fields of your form and through its properties you can define what happens when the form is submitted.
 
 ```tsx
 export default component$(() => {
@@ -88,9 +88,9 @@ export default component$(() => {
 });
 ```
 
-## 添加表单字段
+## Add form fields
 
-现在，您可以继续处理表单的字段。使用 [`Field`](https://modularforms.dev/qwik/api/Field) 和 [`FieldArray`](https://modularforms.dev/qwik/api/FieldArray) 组件注册字段或字段数组。这两个组件都是无头的，并直接访问其当前状态。渲染属性的第二个参数必须传递给 `<input />`、`<select />` 或 `<textarea />` 元素，以将其连接到您的表单。
+Now you can proceed with the fields of your form. With the [`Field`](https://modularforms.dev/qwik/api/Field) and [`FieldArray`](https://modularforms.dev/qwik/api/FieldArray) component you register a field or field array. Both components are headless and provide you direct access to their current state. The second parameter of the render prop must be passed to an `<input />`, `<select />` or `<textarea />` element to connect it to your form.
 
 ```tsx
 <Form>
@@ -104,17 +104,17 @@ export default component$(() => {
       <input {...props} type="password" value={field.value} />
     )}
   </Field>
-  <button type="submit">登录</button>
+  <button type="submit">Login</button>
 </Form>
 ```
 
-这种 API 设计产生了一个完全类型安全的表单。此外，它还使您完全控制用户界面。您可以开发自己的 [`TextInput`](https://modularforms.dev/qwik/guides/input-components) 组件或连接预构建的组件库。
+This API design results in a fully type-safe form. Furthermore, it gives you full control over the user interface. You can develop your own [`TextInput`](https://modularforms.dev/qwik/guides/input-components) component or connect a pre-built component library.
 
-## 输入验证
+## Input validation
 
-模块化表单的核心功能之一是输入验证。您可以使用 Valibot 或 Zod 模式，也可以使用我们的内部验证函数。为了使本指南简单，我们使用之前创建的 Valibot 模式，并将其传递给 `useForm` 钩子。
+One of the core functionalities of Modular Forms is input validation. You can use a Valibot or Zod schema for this or our internal validation functions. To keep this guide simple, we use the Valibot schema we created earlier and pass it to the `useForm` hook.
 
-> `valiForm$` 是一个适配器，将 Valibot 的错误消息转换为模块化表单所期望的格式。对于 Zod，请使用 `zodForm$`。
+> `valiForm$` is an adapter that converts Valibot's error messages to the format expected by Modular Forms. For Zod use `zodForm$` instead.
 
 ```ts
 const [loginForm, { Form, Field, FieldArray }] = useForm<LoginForm>({
@@ -123,7 +123,7 @@ const [loginForm, { Form, Field, FieldArray }] = useForm<LoginForm>({
 });
 ```
 
-现在，您只需要在出现错误时显示字段的错误消息。
+Now you only need to display the error messages of your fields in case of an error.
 
 ```tsx
 <Field name="email">
@@ -136,13 +136,13 @@ const [loginForm, { Form, Field, FieldArray }] = useForm<LoginForm>({
 </Field>
 ```
 
-## 处理提交
+## Handle submission
 
-在最后一步中，您只需要在提交表单时通过函数访问值以进行处理和进一步使用。您可以使用 [`formAction$`](https://modularforms.dev/qwik/api/formAction$) 或 `Form` 组件的 `onSubmit$` 属性来实现这一点。
+In the last step you only have to access the values via a function when submitting the form to process and use them further. You can use [`formAction$`](https://modularforms.dev/qwik/api/formAction$) for this or the `onSubmit$` property of the `Form` component.
 
 ```tsx
 export const useFormAction = formAction$<LoginForm>((values) => {
-  // 在服务器上运行
+  // Runs on server
 }, valiForm$(LoginSchema));
 
 export default component$(() => {
@@ -153,7 +153,7 @@ export default component$(() => {
   });
 
   const handleSubmit = $<SubmitHandler<LoginForm>>((values, event) => {
-    // 在客户端上运行
+    // Runs on client
   });
 
   return (
@@ -164,9 +164,9 @@ export default component$(() => {
 });
 ```
 
-## 最终表单
+## Final form
 
-现在，我们将所有构建块组合在一起，就可以得到一个可工作的登录表单。下面是组装的代码，并可以在附带的沙箱中尝试它。
+If we now put all the building blocks together, we get a working login form. Below you can see the assembled code and try it out in the attached sandbox.
 
 <CodeSandbox src="/src/routes/demo/integration/modular-forms/index.tsx">
 ```tsx
@@ -237,8 +237,8 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-## 总结
+## Summary
 
-您已经学会了使用模块化表单的基础知识，并准备创建您的第一个简单表单。有关更多信息和详细信息，您可以在我们的网站上找到更多指南和 API 参考：[modularforms.dev](https://modularforms.dev/)
+You have learned the basics of Modular Forms and are ready to create your first simple form. For more info and details you can find more guides and the API reference on our website: [modularforms.dev](https://modularforms.dev/)
 
-> 到目前为止，您是否喜欢模块化表单？我们将非常荣幸地在 [GitHub](https://github.com/fabian-hiller/modular-forms) 上得到您的星星！
+> Do you like Modular Forms so far? It would be a great honor for us to get a star from you on [GitHub](https://github.com/fabian-hiller/modular-forms)!

@@ -1,6 +1,6 @@
 ---
-title: 请求处理 | 高级
-description: 如何在 Qwik City 中处理请求，包括 REST 端点和中间件。
+title: Request Handling | Advanced
+description: How to handle requests in Qwik City, including REST endpoints, and middlewares.
 contributors:
   - adamdbradley
   - manucorporat
@@ -8,28 +8,28 @@ contributors:
   - hamatoyogi
 ---
 
-# 请求处理
+# Request handling
 
-`src/routes` 目录中的每个 `layout.ts` 和 `index.ts` 文件都可以访问当前的 HTTP 请求、响应和 URL。这使您可以检索和修改数据，甚至可以响应自定义内容。
+Each `layout.ts` and `index.ts` file inside the `src/routes` directory has the ability to access the current HTTP request, response, and URL. This allows you to retrieve and modify data, and even respond with custom content.
 
-Qwik City 实现了一个基于 `src/routes` 目录层次结构的中间件系统。中间件系统用于处理 HTTP 请求和响应，并可用于页面、布局和[端点](/docs/(qwikcity)/endpoints/index.mdx)。
+Qwik City implements a middleware system based on the hirarchy of the `src/routes` directory. The middleware system is used to handle HTTP requests and responses and is available to pages, layouts, and [endpoints](/docs/(qwikcity)/endpoints/index.mdx).
 
-每个路由都可以添加 HTTP 请求和响应处理程序，允许开发人员检索和修改数据。这些处理程序也可以被[端点](/docs/(qwikcity)/endpoints/index.mdx)使用，端点只响应数据，而不是页面的 HTML。
+Each route can add HTTP request and response handlers, allowing developers to retrieve and modify data. The handlers can also be used by [endpoints](/docs/(qwikcity)/endpoints/index.mdx), which only respond with data rather than a page's HTML.
 
-这个功能使您能够处理任何请求事件，在渲染组件之前对请求管道产生副作用，并响应自定义内容。它适用于页面、布局和端点路由，但不适用于常规组件。
+This feature enables you to handle any request event, have side effects on the request pipeline, just before you render the component and respond with custom content. It is available to pages, layouts and endpoint routes, but not on regular components.
 
-## 请求和响应处理程序
+## Request and Response Handlers
 
-在页面、布局和[端点](/docs/(qwikcity)/endpoints/index.mdx)上，我们可以通过实现请求处理程序函数（如 `onGet`、`onPost`、`onPut` 等）来访问请求数据。这些函数根据用于此路由的[HTTP 方法](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods)执行。
+On pages, layouts, and [endpoints](/docs/(qwikcity)/endpoints/index.mdx), we can access request data by implementing request handler functions such as `onGet`, `onPost`, `onPut`, etc. These functions are executed according to the [HTTP method](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) used for this route.
 
-此外，可以使用 `onRequest` 函数来处理任何请求方法，而不是特定的请求方法，以[中间件](/docs/(qwikcity)/middleware/index.mdx)的形式。例如，如果同时提供了 `onGet` 和 `onRequest`，对于 `GET` 请求，将调用 `onGet`。然而，在这种情况下，如果收到一个 `POST` 请求方法，则会调用 `onRequest` 处理程序，因为没有提供 `onPost`。
-`onRequest` 是一个捕获所有没有特定方法的请求方法的方法。
+Additionally, an `onRequest` function can be used to handle any request method, rather than a specific one, in the form of a [middleware](/docs/(qwikcity)/middleware/index.mdx). For example, if both `onGet` and `onRequest` is provided, for a `GET` request, the `onGet` will be called. However, in this scenario, if a `POST` request method came in, then the `onRequest` handler would be called since an `onPost` was not provided.
+The `onRequest` is available as a catch-all to any request methods that do not have a specific method.
 
 ```tsx
 import type { RequestHandler } from '@builder.io/qwik-city';
 
 export const onGet: RequestHandler<ProductData> = async ({ params }) => {
-  // 在这里放置您的数据库访问（为简单起见，硬编码数据）
+  // put your DB access here (hard coding data for simplicity)
   return {
     skuId: params.skuId,
     price: 123.45,
@@ -38,20 +38,20 @@ export const onGet: RequestHandler<ProductData> = async ({ params }) => {
 };
 ```
 
-## 请求事件
+## Request Event
 
-请求处理程序函数接收一个 `RequestEvent` 参数，该参数具有以下属性：
+The request handler functions receive a `RequestEvent` argument which has the following properties:
 
-| 字段       | 描述                                                                 |
-| ---------- | -------------------------------------------------------------------- |
-| `request`  | 请求对象                                                             |
-| `response` | 响应对象，可用于设置响应的 `headers` 和 `status`                      |
-| `url`      | URL，包括 `pathname`、`hostname` 等                                    |
-| `next`     | 下一个中间件函数                                                     |
-| `abort`    | 请求中止函数                                                         |
-| `params`   | URL 中的自定义用户参数                                                |
-| `cookie`   | 获取和设置 cookie                                                    |
-| `platform` | 平台数据对象（对 Cloudflare、Netlify 等很有用）                        |
+| Field      | Description                                                                   |
+| ---------- | ----------------------------------------------------------------------------- |
+| `request`  | The request object                                                            |
+| `response` | The response object, which can be used to set response `headers` and `status` |
+| `url`      | URL which includes `pathname`, `hostname`, etc.                               |
+| `next`     | Next middleware function                                                      |
+| `abort`    | Request abort function                                                        |
+| `params`   | Custom user params found within the URL                                       |
+| `cookie`   | Get and set cookies.                                                          |
+| `platform` | Platform data object (useful for Cloudflare, Netlify, etc)                    |
 
 ### Cookie
 
@@ -65,7 +65,7 @@ interface Cookie {
 ```
 
 **get**
-接受一个字符串作为 cookie 名称，并返回 `CookieValue`，如果存在则返回，否则返回 null。
+Takes a string with the cookie name and returns the `CookieValue`, if present and null if not.
 
 ```tsx
 interface CookieValue {
@@ -75,19 +75,19 @@ interface CookieValue {
 }
 ```
 
-Cookie 值是一个简单的记录，包含三个字段：
+A cookie value is a simple record with three fields:
 
-1. `value`：包含 cookie 值的字符串
-2. `json()`：对值运行 `JSON.parse()` 并返回结果
-3. `number()`：对值运行 `Number()` 并返回结果
+1. `value`: Contains the cookie value as a string
+2. `json()`: Runs `JSON.parse()` on the value and returns the result
+3. `number()`: Runs `Number()` on the value and returns the result
 
 **getAll**
-返回一个包含所有 cookie 的对象（如果有）。_如果 cookie 的名称未知且必须通过解析来获取，则有时需要使用此方法。_
+Returns an object with all cookies, if any. _This is sometimes required if the names of cookies are unknown and must be parsed through._
 
 **set**
-接受一个键和值，并创建一个将附加到响应的标头。值可以是 `string | number | Record<string, any>`
+Takes a key and value and creates a header that will be appended to the response. Value can be a `string | number | Record<string, any>`
 
-作为第三个参数，您可以选择提供一个 `CookieOptions` 记录以设置其他字段。
+As a third argument, you can optionally provide a `CookieOptions` record for setting additional fields.
 
 ```tsx
 export interface CookieOptions {
@@ -101,25 +101,25 @@ export interface CookieOptions {
 }
 ```
 
-有关这些属性及其值的更多信息，请参阅[MDN 上关于 Set-Cookie 标头的文章](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#attributes)。
+For more information on these attributes and their values, please refer to [the MDN article on the Set-Cookie header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#attributes).
 
 **delete**
-向 cookie 添加一个具有提供的键的标头。新标头的 `expires` 字段中将有一个过期日期，告诉浏览器将其删除。
+Appends a header with the provided key to the cookie. The new header will have an expired date in the `expires` field, telling the browers to remove it.
 
 ```tsx
 cookie.delete('my-cookie');
-// 等同于
+// equivalent to
 cookie.set('my-cookie', 'deleted', new Date(0));
 ```
 
-可选地，您可以在删除 cookie 时设置路径和/或域。如果您的 cookie 是使用路径/域创建的，则必须设置这些字段才能使删除生效。
+Optionally, you can set the path and/or domain when deleting the cookie. If your cookie was created with a path/domain, you must set these fields for the deletion to take effect.
 
 ```tsx
 cookie.delete('my-cookie', { domain: 'https://qwik.builder.io', path: '/docs/' });
 ```
 
 **has**
-一个方便的方法，根据 cookie 中是否存在提供的键返回 true 或 false。
+A convenience method which returns true or false based on the presence of the provided key in cookie.
 
 ```tsx
 cookie.has('my-cookie');

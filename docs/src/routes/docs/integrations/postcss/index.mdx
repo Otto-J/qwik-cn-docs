@@ -1,6 +1,6 @@
 ---
-title: PostCSS | 集成
-keywords: '样式, 样式化'
+title: PostCSS | Integrations
+keywords: 'styles, styling'
 contributors:
   - manucorporat
   - manuelsanchezweb
@@ -11,17 +11,17 @@ contributors:
 
 # PostCSS
 
-[PostCSS](https://postcss.org/) 允许开发者编写现代 CSS，同时保持向后兼容性并提高性能。它解析 CSS 代码并通过一系列插件对其进行修改、优化和扩展，然后输出最终结果。
+[PostCSS](https://postcss.org/) allows developers to write modern CSS while still maintaining backwards compatibility and improving performance. It parses CSS code and passes it through a series of plugins that can modify, optimize, and extend the CSS before outputting the final result.
 
-## 使用方法
+## Usage
 
-您可以通过使用以下 Qwik 脚本将 PostCSS 添加到您的项目中：
+You can add PostCSS to your project by using the following Qwik starter script:
 
 ```shell
 npm run qwik add postcss
 ```
 
-这将在项目的根目录下创建一个新的 `postcss.config.js` 文件，其中包含以下依赖项和配置。
+This will create a new `postcss.config.js` file at the root of the project with following dependencies and configuration.
 
 - [Autoprefixer](https://github.com/postcss/autoprefixer)
 - [PostCSS Preset Env](https://preset-env.cssdb.org/)
@@ -40,7 +40,7 @@ module.exports = {
 }
 ```
 
-如果您希望添加一个新的插件，比如 [CssNano](https://cssnano.co/)，请运行以下命令并更新 `postcss.config.js`。
+If you wish to add a new plugin like [CssNano](https://cssnano.co/) run the following command and update the `postcss.config.js`.
 
 ```shell
 npm install cssnano --save-dev
@@ -49,7 +49,7 @@ npm install cssnano --save-dev
 ```ts title="postcss.config.js"
 module.exports = {
   plugins: {
-    /* 先前的插件配置 */
+    /* previous plugin configuration */
     "cssnano": {
       preset: "default"
     }
@@ -57,4 +57,4 @@ module.exports = {
 }
 ```
 
-如需进一步了解，请查阅 [PostCSS 文档](https://postcss.org/docs/)。
+For further documentation, checkout [PostCSS Docs](https://postcss.org/docs/)

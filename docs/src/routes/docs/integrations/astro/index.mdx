@@ -1,6 +1,6 @@
 ---
-title: Astro | 集成
-description: 学习如何在 Astro 项目中使用 Qwik。
+title: Astro | Integrations
+description: Learn how to use Qwik inside an Astro project.
 keywords: 'astro'
 contributors:
   - thejackshelton
@@ -9,57 +9,57 @@ contributors:
 
 # Astro
 
-[Astro](https://astro.build/) 是一个灵活的元框架，适用于各种工具和集成，使您能够利用众多生态系统。
+[Astro](https://astro.build/) is a flexible meta-framework that accommodates a wide range of tools and integrations, enabling you to leverage numerous ecosystems.
 
-它还允许您使用您喜欢的 UI 框架（或根本不使用框架）编写组件，并在构建时将页面渲染为静态 HTML，或者在服务器上使用服务器端渲染（SSR）动态渲染。
+It also allows you to write components using your favorite UI framework (or no framework at all) and renders your pages to static HTML at build time, or dynamically on the server using Server-Side Rendering (SSR). 
 
-这样可以得到快速、对 SEO 友好的输出，可以部署到任何静态托管环境或服务器上。
+This results in a fast, SEO-friendly output that can be deployed to any static hosting environment or server.
 
-## Astro 替代 Qwik City
+## Astro instead of Qwik City
 
-在将 Astro 与 Qwik 集成时，重要的是要注意 Qwik City 的 API 与 Astro 不兼容。
+When integrating Astro with Qwik, it's important to note that Qwik City APIs are not compatible with Astro. 
 
-Astro 是一个元框架，提供了自己的一套用于处理这些问题的 API 和功能。
-这些包括：
-- 路由
-- 页面
-- 布局
-- 数据获取
-- 服务器端渲染（SSR）
+Astro is a meta-framework that provides its own set of APIs and features for handling these concerns. 
+These include:
+- routing 
+- pages
+- layouts
+- data fetching
+- server-side rendering (SSR) 
 
-> 因此，在将 Qwik 与 Astro 集成时，应使用 Astro 的 API 和功能，而不是 Qwik City 的 API。这将确保您的 Qwik 组件在 Astro 环境中正常工作。有关更多信息，请参阅[Astro 文档](https://docs.astro.build)。
+> Therefore, when integrating Qwik with Astro, you should use Astro's APIs and features instead of Qwik City's APIs. This will ensure that your Qwik components work correctly within the Astro environment. For more information, see the [Astro documentation](https://docs.astro.build).
 
 ## @qwikdev/astro 💜
 
-此集成利用了 [Resumability](https://qwik.builder.io/docs/concepts/resumable/) 在 Astro 中的强大功能，使用 Qwik 组件。
+This integration leverages the power of [Resumability](https://qwik.builder.io/docs/concepts/resumable/) inside of Astro, using Qwik components.
 
-## 安装
+## Installation
 
-有两种方法可以添加集成。让我们从最简单的方法开始！
+There are two methods to add the integration. Let's begin with the easiest one!
 
-### Astro CLI
+### The Astro CLI
 
-Astro 提供了一个命令行工具来集成内置的集成：`astro add`。此命令将：
+Astro comes with a command-line tool for incorporating built-in integrations: `astro add`. This command will:
 
-1. 可选地安装所有必需的依赖项和对等依赖项
-2. 可选地修改您的 `astro.config.*` 文件以应用集成
+1. Optionally install all required dependencies and peer dependencies
+2. Optionally modify your `astro.config.*` file to apply the integration
 
-要安装 `@qwikdev/astro`，请从项目目录中运行以下命令，并按照提示操作：
+To install `@qwikdev/astro`, run the following from your project directory and follow the prompts:
 
 ```sh
-# 使用 NPM
+# Using NPM
 npx astro add @qwikdev/astro
 
-# 使用 Yarn
+# Using Yarn
 yarn astro add @qwikdev/astro
 
-# 使用 PNPM
+# Using PNPM
 pnpm astro add @qwikdev/astro
 ```
 
-### 设置 TypeScript 配置
+### Setting up the TypeScript Config
 
-集成需要在 `tsconfig.json` 中添加以下内容，以便 TypeScript 可以识别 Qwik 的 JSX 类型。
+The integration needs the following in `tsconfig.json` for typescript to recognize Qwik's JSX types.
 
 ```ts
 "compilerOptions": {
@@ -68,23 +68,23 @@ pnpm astro add @qwikdev/astro
 }
 ```
 
-如果遇到任何问题，请[在 Github 上发布](https://github.com/QwikDev/astro/issues)，然后尝试下面的手动安装。
+If you face any issues, please [post them on Github](https://github.com/QwikDev/astro/issues) and attempt the manual installation below.
 
-### 手动安装
+### Manual Installation
 
-首先，像这样安装 `@qwikdev/astro` 集成：
+First, install the `@qwikdev/astro` integration like so:
 
 ```sh
 npm install @qwikdev/astro
 ```
 
-通常，软件包管理器会安装对等依赖项。但是，如果在启动 Astro 时收到 `Cannot find package '@builder.io/qwik'` 警告，请安装 Qwik。
+Typically, package managers install peer dependencies. However, if you get a `Cannot find package '@builder.io/qwik'` warning when starting Astro, install Qwik.
 
 ```sh
 npm install @builder.io/qwik
 ```
 
-现在，使用 `integrations` 属性将集成添加到您的 `astro.config.*` 文件中：
+Now, add the integration to your `astro.config.*` file using the `integrations` property:
 
 ```diff lang="js" "qwikdev()"
   // astro.config.mjs
@@ -98,17 +98,17 @@ npm install @builder.io/qwik
   });
 ```
 
-## Qwik 不进行水合，它是**根本不同的**
+## Qwik does not hydrate, it is **fundamentally different**
 
-Astro 以其部分水合方法而闻名，而 Qwik [不需要水合](https://www.builder.io/blog/hydration-tree-resumability-map#resumability-is-fundamentally-a-different-algorithm)。
+Astro is popular for its partial hydration approach, whereas Qwik [does not require hydration](https://www.builder.io/blog/hydration-tree-resumability-map#resumability-is-fundamentally-a-different-algorithm).
 
-### 添加 Qwik 组件
+### Adding a Qwik component
 
-在其他 UI 框架中，需要使用水合指令来实现交互性，例如 `client:only` 或 `client:load`。但是在 Qwik 中，这些都不需要，因为没有水合！
+In other UI frameworks, a hydration directive would be needed for interactivity, such as `client:only` or `client:load`. These are not needed with Qwik, because there is no hydration!
 
-在像 Astro 或 Qwik City 这样的元框架中使用 Qwik 时，组件在服务器上加载，以独立线程预取，并在客户端上“恢复”。
+When using Qwik inside a meta framework like Astro or Qwik City, components are loaded on the server, prefetched in a separate thread, and "resumed" on the client.
 
-例如，这是如何在 Qwik 中创建一个计数器组件（例如在 `src/components/counter.tsx` 中）。
+For example here's how we create a counter component in Qwik (e.g. at `src/components/counter.tsx`).
 
 ```tsx
 import { component$, useSignal } from "@builder.io/qwik";
@@ -120,7 +120,7 @@ export const Counter = component$(() => {
 });
 ```
 
-可以在我们的 `index.astro` 页面中这样使用它：
+It can be consumed in our `index.astro` page like so:
 
 ```astro
     ---
@@ -137,29 +137,29 @@ export const Counter = component$(() => {
         </head>
         <body>
             <h1>Astro.js - Qwik</h1>
-            /* 没有水合指令！ */
+            /* no hydration directive! */
             <Counter />
         </body>
     </html>
 ```
 
-### 路线图
+### Roadmap
 
-Astro 还有一些缺失的功能，我们希望在将来添加。这包括更好的[预取](https://qwik.builder.io/docs/advanced/prefetching/#prefetching)和[洞察](https://qwik.builder.io/docs/labs/insights/)。
+There are some things missing from Astro that we would like to add in the future. That being better [prefetching](https://qwik.builder.io/docs/advanced/prefetching/#prefetching) and [Insights](https://qwik.builder.io/docs/labs/insights/).
 
-如果您认为在 Astro 和 Qwik 中还有其他令人惊叹的功能，请随时尝试一下。
+If there's anything else you think would be awesome with Astro & Qwik, feel free to take a crack at it.
 
-## 贡献
+## Contributing
 
-我们非常欢迎您的贡献！首先阅读我们的[贡献指南](https://github.com/QwikDev/astro/blob/main/contributing.md)。其中包含了您参与的所有信息，包括关于集成在内部是如何工作的详细部分。
+We'd love for you to contribute! Start by reading our [Contributing Guide](https://github.com/QwikDev/astro/blob/main/contributing.md). It's got all the info you need to get involved, including an in-depth section on how the integration works under the hood.
 
-在 builder.io 的 Discord 中还有一个 `qwik-astro` 频道，用于讨论 API 更改、集成的可能想法和其他有趣的内容。😊
+There's also a `qwik-astro` channel in the builder.io discord to discuss API changes, possible ideas to the integration, and other cool stuff. 😊
 
-## 鸣谢
+## Credits
 
-特别感谢 Astro 核心团队的 Matthew 和 Nate！没有他们的帮助，这个集成是不可能的。
+Special thanks to Matthew and Nate from the Astro core team! This integration would not be possible without their help.
 
-Nate 的联系方式：
+Nate's handles:
 - [Twitter](https://twitter.com/n_moore)
 - [GitHub](https://github.com/natemoo-re)
 

@@ -1,6 +1,6 @@
 ---
-title: Markdown 和 MDX | 指南
-description: 学习如何在 Qwik City 中使用 Markdown 和 MDX。
+title: Markdown and MDX | Guides
+description: Learn how to use Markdown and MDX in Qwik City.
 contributors:
   - manucorporat
   - adamdbradley
@@ -15,9 +15,9 @@ contributors:
 
 # MDX
 
-使用 `.mdx` 文件（[Markdown JSX](https://mdxjs.com/)）是一种替代的内容编写方式。这些文件以 Markdown 的形式编写，但会被编译为 Qwik 组件。除了 Markdown 语法，`.mdx` 文件还可以引用其他组件。
+An alternative way to author content is using `.mdx` files ([Markdown JSX](https://mdxjs.com/)). These files are authored as Markdown, but they are compiled down to Qwik components. In addition to Markdown syntax, `.mdx` files can also refer to other components.
 
-假设你的路由设置如下：
+Let's assume you have your routes set up like this:
 
 ```bash
 src/
@@ -29,18 +29,18 @@ src/
 
 ```Markdown title="src/routes/some/path/index.mdx"
 ---
-title: 你好，世界
+title: Hello World Title
 ---
 
-这是一个简单的你好世界组件。
+This is a simple hello world component.
 
 ```
 
-上述组件将在 `https://example.com/some/path` 渲染。
+The above component will be rendered at `https://example.com/some/path`.
 
-## 导入其他组件
+## Importing other components.
 
-[MDX](https://mdxjs.com/) 是一个创造性的机会，可以让你快速创建新内容（"Qwikly" 🙂），如果你需要页面上的更多交互，可以无缝集成你的 Qwik 组件，如下所示：
+[MDX](https://mdxjs.com/) is a creative opportunity for you to come up with new content quickly ("Qwikly" 🙂) and if you need more interaction on your page you can seamlessly integrate your Qwik components like so:
 
 ```bash
 src/
@@ -55,11 +55,11 @@ src/
 
 ```Markdown title="src/routes/some/path/index.mdx"
 ---
-title: 你好，世界
+title: Hello World Title
 ---
 import { Counter } from "../../../components/counter/counter";
 
-这是一个简单的你好世界组件。
+This is a simple hello world component.
 
 <Counter />
 
@@ -73,30 +73,30 @@ export const Counter = component$(() => {
 
   return (
     <button class="counter" type="button" onClick$={() => count.value++}>
-      增加 {count.value}
+      Increment {count.value}
     </button>
   );
 });
 ```
 
-**注意**：Qwik City 与许多当前的元框架之间的一个关键区别是基于目录的路由。每个路由都需要定义为 `a-directory/index.(tsx,ts,js,jsx,md,mdx)`。
+**Note**: A key difference between Qwik City and many current meta-frameworks is directory-based routing. Every route needs to be defined as `a-directory/index.(tsx,ts,js,jsx,md,mdx)`.
 
-在其他元框架中，你习惯于 `about.mdx` 将渲染为路由 `http://example.com/about`。然而，在 Qwik City 中，这样是行不通的。你必须将文件重命名为 `about/index.mdx`，Qwik City 才能知道如何渲染它。
+In other meta-frameworks you're used to `about.mdx` will render a route `http://example.com/about`. However, this will not work in Qwik City. You must rename the file to `about/index.mdx` for Qwik City to know to render it.
 
-## 禁用默认的 MDX 插件
+## Disabling default MDX plugins included.
 
-Qwik City 默认包含 3 个插件。
+Qwik City includes 3 plugins by default.
 
-- [remarkGfm](https://github.com/remarkjs/remark-gfm)：[GFM](https://github.github.com/gfm/) 支持（自动链接文字、脚注、删除线、表格、任务列表）。
-- [rehypeSyntaxHighlight](https://github.com/wooorm/refractor)：使用 Prism 进行轻量、强大、优雅的虚拟语法高亮。
-- [rehypeAutolinkHeadings](https://github.com/rehypejs/rehype-autolink-headings)：在 HTML 中添加标题链接的插件。
+- [remarkGfm](https://github.com/remarkjs/remark-gfm): [GFM](https://github.github.com/gfm/) support (autolink literals, footnotes, strikethrough, tables, tasklists).
+- [rehypeSyntaxHighlight](https://github.com/wooorm/refractor): Lightweight, robust, elegant virtual syntax highlighting using Prism.
+- [rehypeAutolinkHeadings](https://github.com/rehypejs/rehype-autolink-headings): Plugin to add links to headings in HTML.
 
-可以通过以下方式独立禁用这些插件：
+These plugins can be disabled independently in the following way:
 
 ```tsx title="vite.config.js"
 import { defineConfig } from 'vite';
 import { qwikCity } from '@builder.io/qwik-city/vite';
-// 请参阅下面
+// See below
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 export default defineConfig(() => {
   return {
@@ -109,63 +109,63 @@ export default defineConfig(() => {
         },
         mdx: {
           rehypePlugins: [
-            // 现在可以手动添加插件以使用不同的配置
+            // Plugins can now be added manually to use a different configuration
             [rehypeAutolinkHeadings, { behavior: 'wrap' }],
           ],
         },
       }),
-      /* 其余的配置 */
+      /* the rest of the configuration */
     ],
   };
 });
 ```
 
-## Open Graph 属性
+## Open Graph Properties
 
-你可以使用 `og` 或 `opengraph` 属性来定义 [Open Graph 协议](https://ogp.me/) 的元数据。
+You can use `og` or `opengraph` property to define [Open Graph protocol](https://ogp.me/) metadata.
 
 ```yaml
-title: 我的标题
-description: 我的描述
+title: My Title
+description: My Description
 og:
-  - title: 我的自定义标题
+  - title: My Custom Title
     description: true
   - image: https://example.com/rock.jpg
-    image:alt: 一个闪亮的红苹果被咬了一口
+    image:alt: A shiny red apple with a bite taken out
   - image: https://example.com/rock2.jpg
 ```
 
-将 `og:title` 或 `og:description` 设置为 `true` 将检查并使用外部的 `title` 和 `description` 属性。因此，你可以避免重复编写相同的标题和描述。
+Setting `og:title` or `og:description` to `true` will check and use outside `title` and `description` property instead. Thus, you can avoid writing a same title and description twice.
 
-上述示例将生成以下 HTML 代码。
+The above example will generate the following HTML code.
 
 ```html
-<title>我的标题</title>
-<meta name="description" content="我的描述" />
+<title>My Title</title>
+<meta name="description" content="My Description" />
 
-<meta property="og:title" content="我的自定义标题" />
-<meta property="og:description" content="我的描述" />
+<meta property="og:title" content="My Custom Title" />
+<meta property="og:description" content="My Description" />
 
 <meta property="og:image" content="https://example.com/rock.jpg" />
-<meta property="og:image:alt" content="一个闪亮的红苹果被咬了一口" />
+<meta property="og:image:alt" content="A shiny red apple with a bite taken out" />
 
 <meta property="og:image" content="https://example.com/rock2.jpg" />
 ```
 
-## 读取前置数据
-可以通过利用 `useDocumentHead()` 钩子来访问前置数据的键。
+## Reading frontmatter data
+Frontmatter keys are accessible by leveraging the `useDocumentHead()` hook.
 
 ```Markdown title="src/routes/some/path/index.mdx"
 ---
-title: 你好，世界
+title: Hello World Title
 tags:
-  - 超级
-  - 令人兴奋
-  - 文档
+  - super
+  - exiting
+  - docs
 ---
 import { Tags } from "../../../components/tags/tags";
 
-这是一个简单的你好世界组件。
+This is a simple hello world component.
 
 <Tags />
 ```

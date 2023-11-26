@@ -1,18 +1,18 @@
 ---
-title: 生成站点地图 | 高级
-description: 学习如何在 Qwik City 中为您的站点生成站点地图。
+title: Generating Sitemaps | Advanced
+description: Learn how to generate a sitemap for your site in Qwik City.
 contributors:
   - adamdbradley
   - hamatoyogi
 ---
 
-# 生成站点地图
+# Generating Sitemaps
 
-默认情况下，当构建静态站点生成（SSG）页面时，会为站点生成一个 [站点地图](https://en.wikipedia.org/wiki/Sitemaps)。`sitemap.xml` 文件是根据构建的页面自动生成的。这意味着如果您有一个未构建的页面，它将不会包含在站点地图中。
+By default, when Static Site Generated (SSG) pages are built, a [sitemap](https://en.wikipedia.org/wiki/Sitemaps) is generated for the site. The `sitemap.xml` is automatically generated based on the pages that were built. This means that if you have a page that is not built, it will not be included in the sitemap.
 
-## 配置
+## Configuration
 
-可以使用适配器的 vite 配置文件来配置站点地图。下面的示例是配置 Cloudflare 适配器。默认的站点地图文件路径是 `sitemap.xml`，但您可以使用 `sitemapOutFile` 选项来更改文件路径。
+The sitemap can be configured using the adapter's vite config file. The example below is configuring the Cloudflare adapter. The default sitemap file path is `sitemap.xml`, but you can use the `sitemapOutFile` option to change the file path. 
 
 ```ts
   plugins: [
@@ -26,13 +26,13 @@ contributors:
   ]
 ```
 
-`include` 选项用于指定应构建哪些页面，同时将它们添加到站点地图中。将页面添加到 `exclude` 选项中将从站点地图中排除它们。
+The `include` option is used to specify which pages should be built, which also adds them to the sitemap. Any pages added to the `exclude` option will also exclude them from the sitemap. 
 
-`origin` 选项用于指定站点的来源，并用于生成站点地图的绝对 URL。
+The `origin` option is used to specify the origin of the site and is used to generate the absolute URLs for the sitemap.
 
 ## robots.txt
 
-根据您的站点设置，您可能希望为您的站点添加一个 [robots.txt](https://en.wikipedia.org/wiki/Robots.txt) 文件。可以通过将 `robots.txt` 文件添加到 `public` 目录来实现。`public` 目录中的任何文件都被视为静态文件，并与构建一起部署。以下是 `public/robots.txt` 文件的示例：
+Depending on your site setup, you'll probably want to add a [robots.txt](https://en.wikipedia.org/wiki/Robots.txt) file to your site. This can be done by adding a `robots.txt` file to the `public` directory. Any file in the `public` directory is treated as a static file and deploy alongside the build. The following is an example of a `public/robots.txt` file:
 
 ```bash
 User-agent: *
@@ -41,4 +41,4 @@ Allow: /
 Sitemap: https://<YOUR_HOSTNAME>/sitemap.xml
 ```
 
-请注意，在 `robots.txt` 文件中添加了 `Sitemap` 指令，告诉搜索引擎在哪里找到您站点的站点地图。请确保将 `<YOUR_HOSTNAME>` 替换为您站点的主机名。
+Note the added `Sitemap` directive to the `robots.txt` file which tells search engines where to find the sitemap for your site. Be sure to replace `<YOUR_HOSTNAME>` with the hostname of your site.

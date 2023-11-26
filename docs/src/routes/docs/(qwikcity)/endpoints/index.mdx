@@ -1,6 +1,6 @@
 ---
-title: 端点 | Qwik City
-description: 端点是用于控制和返回各种格式数据的中间件函数，如 RESTful API、GraphQL API、JSON、XML、反向代理或其他类型的 API。
+title: Endpoints | Qwik City
+description: Endpoints are middleware functions used to control and return data in various formats like RESTful API, GraphQL API, JSON, XML, reverse proxy, or other API types.
 contributors:
   - adamdbradley
   - manucorporat
@@ -12,17 +12,17 @@ contributors:
 import CodeSandbox from '../../../../components/code-sandbox/index.tsx';
 
 
-# 端点
+# Endpoints
 
 
-返回响应的中间件函数称为端点。端点用于返回数据，例如 RESTful API、GraphQL API、JSON、XML、反向代理或任何其他需要控制 HTTP 响应所有方面的 API 类型。返回响应（例如使用 `json`）将停止在中间件链中此点之后的后续中间件函数的执行。
+A [middleware function](/docs/middleware) that returns a response is called an endpoint. Endpoints are useful for returning data such as  RESTful API, GraphQL API, JSON, XML, reverse proxy or any other type of API where you need to control all aspects of the HTTP response. Returning a response (using `json` for example) will stop the execution of subsequent middleware functions past this point in the middleware chain. 
 
-所有端点都接收一个 [`RequestEvent`](/docs/middleware/#requestevent) API，用于控制端点的响应。
+All endpoints receive a [`RequestEvent`](/docs/middleware/#requestevent) API for controlling the response of the endpoint. 
 
 
-例如，当导航到 `/greet/` URL 时，此端点将返回 `{"hello":"world"}`。
+For example, when navigating to `/greet/` URL this endpoint will return `{"hello":"world"}`.
 
-文件：`src/routes/greet/index.tsx`
+File: `src/routes/greet/index.tsx`
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/json/index.tsx">
 ```tsx
 import { type RequestHandler } from '@builder.io/qwik-city';
@@ -33,13 +33,13 @@ export const onGet: RequestHandler = async ({ json }) => {
 ```
 </CodeSandbox>
 
-> 发送响应是将端点与中间件区分开的关键。因此，发送响应（例如使用 `json()`）将隐式地停止中间件链的执行。
+> Sending a response is what differentiates an endpoint from a middleware. Sending a response (using `json()` for example) will therefore implicitly halt the middleware chain.
 
 
 
-## 使用 fetch 创建反向代理
+## Create a reverse proxy using a fetch
 
-可以使用 `fetch()` 方法创建反向代理，通过向另一个服务器发出请求，然后使用 `send()` 方法将响应发送回客户端。
+A reverse proxy can be created by using the `fetch()` method to make a request to another server, and then using the `send()` method to send the response back to the client.
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/proxy/index.tsx">
 ```tsx
@@ -54,9 +54,9 @@ export const onGet: RequestHandler = async ({ send, url }) => {
 ```
 </CodeSandbox>
 
-## 手动创建流式响应
+## Create a stream response manually
 
-端点可以使用 `getWritableStream()` 方法手动写入 HTTP 响应流。这对于创建流式端点（例如服务器发送事件端点）非常有用。
+Endpoints can manually write to the HTTP response stream, using the `getWritableStream()` method. This can be useful for creating a streaming endpoint, such as a server-sent events endpoint.
 
 <CodeSandbox src="/src/routes/demo/qwikcity/middleware/getWritableStream/index.tsx">
 ```tsx
@@ -81,9 +81,9 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 ```
 </CodeSandbox>
 
-## 端点 vs `server$`
+## Endpoint vs `server$`
 
-端点是低级别的 API，允许开发人员完全控制 HTTP 响应。只有在需要创建供移动应用或第三方服务等外部实体使用的 API 时才推荐使用端点。
+Endpoints are low level APIs that give developers full control over the HTTP response. They are only recommended when you need to create an API to be consumed by an external entity such as a mobile app or a third-party service.
 
-当需要在服务器上运行一些代码并将响应返回给应用程序时，通常更好的选择是 [`server$`](/docs/(qwikcity)/server$/index.mdx) 函数。`server$` 具有强类型，并提供了更方便的 API 用于返回数据。
+The [`server$`](/docs/(qwikcity)/server$/index.mdx) functions are usually a better option when you need to run some code on the server and return a response back to the app. The `server$` is strongly typed and provides a more convenient API for returning data.
 

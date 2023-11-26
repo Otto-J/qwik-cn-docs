@@ -1,6 +1,6 @@
 ---
-title: Styled Vanilla Extract | 集成
-keywords: '样式, 样式化, CSS-in-JS, vanilla-extract, styled-components'
+title: Styled Vanilla Extract | Integrations
+keywords: 'styles, styling, css-in-js, vanilla-extract, styled-components'
 contributors:
   - manucorporat
   - literalpie
@@ -11,26 +11,26 @@ contributors:
 
 # Styled Vanilla Extract
 
-Styled-vanilla-extract 是一个构建在 [vanilla-extract](https://vanilla-extract.style/) 之上的 CSS 框架，提供了现代化且高性能的零运行时 CSS-in-JS 解决方案。
+Styled-vanilla-extract is a CSS framework built on top of [vanilla-extract](https://vanilla-extract.style/) that delivers a modern and performant CSS-in-JS with Zero-runtime.
 
-该集成支持两种样式化的方式：
+This integration supports two ways of styling:
 
-- 直接使用 [Vanilla Extract](https://vanilla-extract.style/)。
-- 使用由 Vanilla-extract 提供支持的 [Styled-components](https://styled-components.com/)。
+- Using [Vanilla Extract](https://vanilla-extract.style/) directly.
+- [Styled-components](https://styled-components.com/) powered by Vanilla-extract
 
-## 使用方法
+## Usage
 
-您可以通过使用以下 Qwik 脚本轻松添加 `styled-vanilla-extract`：
+You can add `styled-vanilla-extract` easily by using the following Qwik starter script:
 
 ```shell
 npm run qwik add styled-vanilla-extract
 ```
 
-安装完成后，您的项目中将创建一个新的路由，展示了在一个新组件中使用该库的用法。
+After the installation a new route will be created in your project, showcasing the usage of the library in a new component.
 
-### 使用 Vanilla Extract
+### The Vanilla Extract way
 
-有关 [Vanilla Extract](https://vanilla-extract.style/documentation/getting-started) 的更多信息，请参阅官方文档。
+Please refer to the official docs for more information about [Vanilla Extract](https://vanilla-extract.style/documentation/getting-started).
 
 ```tsx title="styles.css.ts"
 import { style } from 'styled-vanilla-extract/qwik';
@@ -55,11 +55,11 @@ export const Cmp = component$(() => {
 npm run qwik add styled-vanilla-extract
 ```
 
-> **那么 Emotion 或其他 CSS-in-JS 库呢？** 虽然非常流行，但 Emotion 和其他 CSS-in-JS 库并不是 Qwik 的最佳选择。[它们在运行时性能上没有进行优化，并且没有良好的 SSR 流式支持](https://dev.to/srmagura/why-were-breaking-up-wiht-css-in-js-4g9b)，导致服务器和客户端性能下降。
+> **How about emotion or other CSS-in-JS libs?** While extremely popular, emotion and other CSS-in-JS libs are not the best choice for Qwik. [They are not optimized for runtime performance and they don't have a good SSR streaming support](https://dev.to/srmagura/why-were-breaking-up-wiht-css-in-js-4g9b), leading to a degraded server and client performance.
 
 ## Styled-components
 
-使用相同的集成，您可以使用由 Vanilla Extract 提供支持的 styled-components，使用导出的 `styled` 函数来创建您的组件。
+Using the same integration, you have a styled-components powered by Vanilla Extract, use the exported `styled` function to create your components.
 
 ```tsx title="styles.css.ts"
 import { styled } from 'styled-vanilla-extract/qwik';

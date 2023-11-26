@@ -1,14 +1,14 @@
 ---
-title: 项目结构 | Qwik City
+title: Project Structure | Qwik City
 contributors:
   - manucorporat
   - steve8708
   - mhevery
 ---
 
-# 项目结构
+# Project Structure
 
-一个典型的 Qwik 项目的结构如下所示：
+A typical Qwik project looks like this:
 
 ```bash
 qwik-app-demo
@@ -34,73 +34,73 @@ qwik-app-demo
 └── vite.config.ts
 ```
 
-## 项目文件
+## Project files
 
 ### `src/routes/`
 
-`src/routes/` 目录是 Qwik City 的特殊目录，因为它是 Qwik City 查找页面的目录。该目录中的文件和文件夹具有特殊含义，并将映射到应用的 URL。
+The `src/routes/` directory is a special directory for Qwik City since it's the directory where Qwik City will look for your pages. Folders and files inside this directory have a special meaning and they will be mapped to the URL of your app.
 
-- `src/routes/index.tsx` 是应用的首页。
-- `src/routes/layout.tsx` 是应用的根布局，所有页面都将在此布局中呈现。
+- `src/routes/index.tsx` is the homepage of your app.
+- `src/routes/layout.tsx` is the root layout of your app, all pages will be rendered inside this layout.
 
-> 有关更多信息，请参阅[路由](/docs/routing)部分。
+> Refer to the [Routing](/docs/routing) section for more information.
 
 ### `src/components/`
 
-`src/components/` 目录是按照约定的目录。所有的 Qwik 起始模板都会有这个目录，但你可以根据需要进行更改。这个目录是用来放置组件的，即可在多个地方重复使用的代码片段。它们不是路由或布局，但可以在它们内部使用。
+The `src/components/` directory is a directory by convention. All Qwik starters will have this directory, but you can change it if you want. This directory is where you should put your components, ie, reusable pieces of code that can be used in multiple places. They are not routes or layouts, but they can be used inside them.
 
-例如，一个 `Button` 组件应该放在 `src/components/button/button.tsx` 中。
+For example, a `Button` component should be inside `src/components/button/button.tsx`.
 
 ### `public/`
 
-`public/` 目录包含静态资源，如图像、字体和图标。当构建应用时，这些文件将被复制到 `dist/` 目录并在根目录下提供服务。
+The `public/` directory contains static assets such as images, fonts, and icons. When you build your app, these files will be copied to the `dist/` directory and served at the root.
 
-有关更多信息，请参阅[Vite 配置](https://vitejs.dev/guide/build.html#public-base-path)。
+Refer to [Vite configuration for more information](https://vitejs.dev/guide/build.html#public-base-path).
 
 ### `src/entry.ssr.tsx`
 
-SSR 入口点，在所有情况下，应用程序都在浏览器之外渲染，这个入口点将是通用的。
+SSR entry point, in all cases the application is rendered outside the browser, this entry point will be the common one.
 
-- 服务器 (express, cloudflare...)
+- Server (express, cloudflare...)
 - npm run start
 - npm run preview
 - npm run build
 
 ### `src/root.tsx`
 
-`src/root.tsx` 文件是应用程序树的入口点。它是将被渲染的第一个组件。它是树的根。
+The `src/root.tsx` file is the entry point for the application tree. It's the first component that will be rendered. It's the root of the tree.
 
 ### `src/global.css`
 
-`src/global.css` 文件是一个全局的 CSS 文件，如果你需要定义一些在应用的多个地方使用的 CSS，可以在这里定义。
+The `src/global.css` file is a global CSS file, if you need to define some CSS that is used in multiple places in your app, you can define it here.
 
-根组件 (`src/root.tsx`) 默认导入此文件。
+The root component (`src/root.tsx`) imports this file by default.
 
 ### `tsconfig.json`
 
-`tsconfig.json` 文件包含 TypeScript 编译器的配置。对于任何 TypeScript 项目来说，这是标准的。
+The `tsconfig.json` file contains the TypeScript compiler configuration. It's standard for any TypeScript project.
 
 ### `vite.config.ts`
 
-Qwik 使用 Vite 来构建项目。`vite.config.ts` 文件包含 Vite 的配置。对于任何 Vite 项目来说，这是标准的。请参阅[Vite 文档](https://vitejs.dev/config/)获取更多信息。
+Qwik uses Vite to build the project. The `vite.config.ts` file contains the Vite configuration. It's standard for any Vite project. Please refer to the [Vite documentation](https://vitejs.dev/config/) for more information.
 
-## 实用工具
+## Utilities
 
-Qwik 有一个名为 `new` 的实用命令，允许开发者轻松创建新的组件和路由。
+Qwik has a utility command called `new` that allows developers to easily create new components and routes.
 
-假设你想创建一个名为 `Button` 的新组件，你可以运行以下命令：
+Let's say you wanted to create a new component called `Button`, you would run the command:
 ```tsx
 pnpm qwik new Button
 ```
 
-也许你想为 `/contact` 页面创建一个新的路由。为了做到这一点，你可以使用以下命令：
+Maybe you want to create a new route for the /contact page. To do that, you could use the command:
 ```tsx
 pnpm qwik new /contact
 ```
 
-这些命令与 Qwik 的目录文件结构保持一致，可以更快地生成组件的脚手架。
+The following commands are consistent with Qwik's directory file structure, allowing you to scaffold components more quickly.
 
-如果我们将页面顶部的 `qwik-app-demo` 与之前的对比，额外的更改将如下所示：
+If we compare our `qwik-app-demo` from the top of the page, the additional changes would look like this:
 
 ```bash
 qwik-app-demo
@@ -130,12 +130,12 @@ qwik-app-demo
 └── vite.config.ts
 ```
 
-如果你更喜欢使用 `Button/index.tsx` 命名约定生成 `Button` 组件，你可以使用以下命令：
+If you prefer to generate the `Button` component with the `Button/index.tsx` naming convention, you can could use the command:
 ```tsx
 pnpm qwik new --barrel Button
 ```
 
-在这种情况下，`src/components` 文件夹的结构将如下所示：
+In that case, the `src/components` folder would look like this:
 ```bash
 src
 │   ├── components
@@ -145,4 +145,4 @@ src
 │   │       └── index.tsx
 ```
 
-> 此功能在 Qwik v1.2 中添加，使用较旧版本的用户将无法看到此功能。
+> This feature was added in Qwik v1.2, and those using an older version will not see this functionality.

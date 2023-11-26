@@ -1,37 +1,37 @@
 ---
-title: 🧪 开发工具
+title: 🧪 Devtools
 contributors:
   - mhevery
 ---
 
-# 🧪 开发工具
+# 🧪 Devtools
 
-**阶段:** `原型`
+**Stage:** `prototyping`
 
-这将最终成为浏览器中用于更好地调试应用程序的开发工具。目前它是一组工具，用于更好地了解应用程序的状态。
+This will eventually become Devtools for your browser to better debug application. For now it is a collection of utilities to better understand the state of your application.
 
 ## `qwik/json`
 
-Qwik将应用程序的状态序列化为 `<script type="qwik/json">` 标签。这使您可以通过查看 DOM 来检查应用程序的状态。不幸的是，这种格式并不是非常易读。以下步骤描述了如何将 JSON 解析为更易读的格式。
+Qwik serializes the state of the application into `<script type="qwik/json">` tag. This allows you to inspect the state of the application by looking at the DOM. Unfortunately the format is not very human readable. These steps describe how to parse the JSON into a more readable format.
 
-1. 打开浏览器的开发者工具。
-2. 在 `控制台` 中运行以下 JavaScript
+1. Open the browser's developer tools.
+2. In the `Console` run this JavaScript
 
 ```javascript
 import("https://qwik.builder.io/devtools/json/");
 ```
 
-3. 脚本将解析 `qwik/json` 并返回一个更易读的格式。
+3. The script will parse the `qwik/json` and will return a much more human readable format.
 
-大部分输出结果应该是不言自明的。但是我们在这里提供了一些高级要点，以帮助您定位。（这不是输出的完整文档。）
+Most of the resulting output should be self explanatory. But we provide few high level points here to get you oriented. (This is not meant to be a complete documentation of the output.)
 
-- `objs`: 这些是已序列化的系统中的对象。
-- `ctx`: 一组 `QContext` 对象。
-- `refs`: 一组 `QRef` 对象。
-- `sub`: 一组 `QSubscription` 对象。
-- `QContext`: 表示 Qwik 必须为给定组件序列化的状态。这包括组件的 `props` 以及组件可能需要执行的一组 `Task` 对象。
-- `QRef`: 如果一个元素有一个监听器，那么 `QRef` 将收集监听器以及监听器可能捕获的任何对象。
+- `objs`: These are the objects in the system which have been serialized.
+- `ctx`: A set of `QContext` objects.
+- `refs`: A set of `QRef` objects.
+- `sub`: A set of `QSubscription` objects.
+- `QContext`: Represents a state which Qwik had to serialize for a given component. This includes `props` for the component as well as a set of `Task` objects which the component may need to execute.
+- `QRef`: If an element has a listener, than a `QRef` collects the listeners as well as any objects which the listener may have captured.
 
-关于 Qwik 序列化的思考方式是，Qwik 希望序列化最小量的信息。因此，它只序列化从 `QContext` 或 `QRef` 可达的对象。这意味着，如果您有一个从这两者中都无法到达的对象，那么它将不会被序列化。这是一件好事，因为它意味着 Qwik 不会序列化整个应用程序状态，而只会序列化从正在呈现的组件可达的状态。
+The way to think about Qwik serialization is that Qwik wants to serialize minimal amount of information. For this reason it only serializes objects which are reachable from either `QContext` or from `QRef`. This means that if you have an object which is not reachable from either of these two, then it will not be serialized. This is a good thing, because it means that Qwik will not serialize the entire application state, but only the state which is reachable from the component which is being rendered.
 
-另一方面，如果您看到一个被序列化的对象，并且认为它不应该被序列化，您可以追溯它的引用，看看为什么它被序列化。为此，所有对象都包括一个 `__backRef` 属性，指向导致任何对象被保留的对象。通过追溯对象引用到它们的根源（应该是 `QContext` 或 `QRef`），我们可以确定为什么会序列化特定的对象。同样，我们可以看看是否可以重构我们的代码以防止序列化该对象。
+The flip side is that if you see an object being serialized and you think it should not be you can trace it backwards to see why it is being serialized. For this purpose all objects include a `__backRef` property which points to the object which is causing any object to be retained. By tracing the objects references back to their roots (which should be `QContext` or `QRef`) we can determine which a particular object is being serialized. Similarly we can see if we can refactor our code to prevent serialization of said object.

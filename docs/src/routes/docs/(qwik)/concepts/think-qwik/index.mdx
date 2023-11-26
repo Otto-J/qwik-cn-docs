@@ -1,5 +1,5 @@
 ---
-title: Think Qwik | 概念
+title: Think Qwik | Concepts
 contributors:
   - manucorporat
   - hayley
@@ -10,92 +10,93 @@ contributors:
 
 # Think Qwik
 
-Qwik 在高层次上与其他 Web 框架非常相似。Qwik 是一个渲染组件树的框架，从而实现交互式应用程序。
+Qwik is very similar to other web frameworks at a high level. Qwik is a framework that renders a tree of components resulting in an interactive application.
 
-Qwik 的独特之处不在于它做什么，而在于它如何实现其目标。Qwik 的目标是实现即时启动的应用程序，即使在移动设备上也是如此。Qwik 通过两个主要策略实现这一目标：
+The unique part of Qwik is not in what it does but in how it achieves its goals. Qwik's goal is to have instant-on applications, even on mobile devices. Qwik achieves this through two main strategies:
 
-1. 尽可能延迟执行和下载 JavaScript。
-2. 序列化应用程序和框架的执行状态，并在客户端上恢复执行。
+1. Delay execution and download of JavaScript for as long as possible.
+2. Serialize the execution state of the application and the framework on the server and resume it on the client.
 
-Qwik 的目标是只需下载和执行应用程序的最少部分。
+The goal of Qwik is having only to download and execute the bare minimum of the application.
 
-## 延迟执行
+## Delay Execution
 
-> 尽可能延迟执行 JavaScript。
+> Delay execution of JavaScript as much as possible.
 
-Qwik 应用程序启动快，因为需要执行的 JavaScript 代码量很少。（简单来说，一个 Qwik 应用程序只需要大约 1KB 的 JavaScript 就可以实现交互。）
+Qwik applications startup fast because there is a minimal amount of JavaScript code to execute. (At its simplest, a Qwik application only needs about 1KB of JavaScript to become interactive.)
 
-通过积极地延迟应用程序的下载和执行，Qwik 可以提供接近即时的启动性能，这是当前一代 Web 框架无法匹敌的。
+By aggressively delaying the application download and execution, Qwik can provide near-instant startup performance that the current generation of web frameworks can't match.
 
-Qwik 之所以快，并不是因为它使用了聪明的算法，而是因为它的设计方式使得大部分 JavaScript 不需要下载或执行。它的速度来自于不执行其他框架必须执行的操作（如水合）。
+Qwik is fast not because it uses clever algorithms but because it is designed in a way where most of the JavaScript never needs to be downloaded or executed. Its speed comes from not doing things (such as hydration) that other frameworks have to do.
 
-## 可恢复性和序列化
+## Resumability & Serialization
 
-可恢复性在[这里](../resumable/index.mdx)有详细讨论。可恢复性允许 Qwik 应用程序在服务器停止的地方继续执行。所有框架都需要跟踪关于应用程序状态的内部数据结构。当前一代框架在从服务器过渡到浏览器时不会保留这些信息。因此，框架的数据结构需要在浏览器中重新构建，重复服务器上的工作。重新构建数据结构和添加监听器的过程称为水合。
+Resumability is discussed in detail [here](../resumable/index.mdx). Resumability allows Qwik applications to continue execution where the server left off. All frameworks need to keep track of internal data structures about the application's state. The current generation of frameworks does not preserve this information when transitioning from the server to the browser. As a result, the framework's data structures need to be rebuilt in the browser, duplicating the work that was done on the server. The rebuilding of data structures and attaching of listeners is called hydration.
 
-Qwik 将监听器、内部数据结构和应用程序状态序列化到 HTML 中，在服务器和浏览器之间进行交接。因为所有信息都被序列化在 HTML 中，客户端可以在服务器停止的地方恢复执行。
+Qwik serializes listeners, internal data structures, and application state into the HTML during the server-browser handoff. Because all of the information is serialized in HTML, the client can just resume execution where the server left off.
 
-## 问题是什么？
+## What is the problem?
 
-现代网站需要大量的 JavaScript 才能实现交互。太多的 JavaScript 会导致两个问题：
+Modern websites require vast amounts of JavaScript to become interactive. Too much JavaScript manifests itself in two problems:
 
-1. **网络带宽**：大量的代码被传输到客户端，可能在慢速网络上花费很长时间。
-2. **启动时间**：一旦在客户端上，代码需要执行（作为水合的一部分）才能使网站实现交互。
+1. **Network bandwidth**: A large amount of code is shipped to the client, which may take a long time on slow networks.
+2. **Startup time**: Once on the client, the code needs to be executed (as part of hydration) to get the site interactive.
 
-随着我们的应用程序变得越来越复杂，交互性越来越高，多年来代码量稳步增加，没有停止的迹象。简而言之，我们的网站变得越来越复杂。网站复杂性的增加反过来又需要更多的代码。所有这些代码都对网站的启动性能产生负面影响。
+As our applications get more complex with a higher fidelity of interactivity, the amount of code has steadily increased over the years with no sign of stopping. Simply put, our sites are getting more complex. An increase in site complexity, in turn, requires more code. All of this code negatively impacts site startup performance.
 
-更糟糕的是，JavaScript 是单线程的，因此我们复杂的网站无法充分利用现代多核 CPU。
+To make matters worse, JavaScript is single-threaded; therefore, our complex sites can't take advantage of modern multi-core CPUs.
 
-### 我们是如何到达这里的？
+### How did we get here?
 
-解决上述问题的方法既明显又困难：减少 JavaScript 的传输量。
+The solution to the above problem is both obvious and hard: Ship less JavaScript.
 
-这是显而易见的，因为我们都同意，少量 JavaScript 的网站性能更好。
+It's obvious because we all agree that sites with less JavaScript would perform better.
 
-这是困难的，因为我们的工具没有帮助我们实现这一目标。几乎所有的工具都以一种使得减少 JavaScript 传输量变得困难的方式解决问题。这是因为我们的大多数工具都是为了解决特定问题而设计的，而没有考虑它们生成的 JavaScript 量。
+It is hard because our tools don't help us to get there. Almost all of our tools solve problems in a way that makes shipping less JavaScript hard. This is because most of our tools are designed to solve a specific problem without thinking about the amount of JavaScript they generate.
 
-您需要解决渲染、样式、动画、A/B 测试、分析等问题吗？有相应的工具。只需导入或添加一个 `<script>` 标签，这些工具就会解决您的问题，但代价是初始捆绑包变得更大。
+Do you need to solve rendering, styling, animation, A/B testing, analytics, etc.? There is a tool for that. Just import or add a `<script>` tag, and these tools will solve your problems, but at the expense of making the initial bundle bigger.
 
-作为一个行业，我们没有考虑捆绑包大小的影响。每个工具都单独解决一个特定的问题，但大小不是方程式的一部分。当您将所有工具放在一起时，大小就成了问题，而此时开发人员几乎无能为力。
+As an industry, we have failed to think about the implication of bundle size. Each tool solves a specific problem individually, but the size is not part of the equation. Size is the problem that emerges when you put all of the tools together, and by that point, there is very little the developer can do about it.
 
-### 解决方案是什么？
+### What's the solution?
 
-Qwik 从根本上解决了大小问题。小的捆绑包大小是它的初始目标，所有其他设计决策都是为了实现这个目标。
+Qwik is designed from the ground up to address the size problem. Small bundle size is its initial goal, and all other design decisions are subservient to that goal.
 
-Qwik 不是为了创建更少的 JavaScript。Qwik 是为了在应用程序启动时不必一次性将所有 JavaScript 都传输到客户端。当您将“延迟加载 JavaScript”的想法推向极致时，就会得到 Qwik。
+Qwik is not about creating less JavaScript. Qwik is about not having to ship all of that JavaScript to the client at once on application startup. Qwik is what you end up with when you take the idea of "delay loading of JavaScript" to the extreme.
 
-是的，Qwik 需要一种不同的思考和设计应用程序的方式，但结果是初始 JavaScript 几乎为零，根据用户交互进行渐进式 JavaScript 下载。
+Yes, Qwik requires a different way of thinking and designing your application, but the result is near zero initial JavaScript with progressive JavaScript download based on user interactions.
 
-### 大小不应该是开发人员的问题
+### Size should not be a developer problem
 
-如今，大小是开发人员的问题。如果您遵循每个框架、工具等的最佳实践，您的捆绑包大小将会很大。这时，开发人员开始通过某种懒加载边界等方式来缓解问题（但是，正如任何这样做过的人会告诉您的那样：选项有限）。
+Today, size is the developers' problem. If you follow best practices for each of the frameworks, tools, etc., you will have a large bundle size. It is at that time when developers start to mitigate the problem with some sort of lazy loading boundaries etc. (But as anyone who has done this will tell you: the options are limited.)
 
-我们行业的最佳实践导致了大型捆绑包，网络上充斥着这样的例子。
+Our industry best practices lead to large bundles, and the web is full of examples.
 
-Qwik 的口号是捆绑包大小不应该是开发人员需要考虑的事情。它应该自然地成为框架设计的一部分。
+The mantra of Qwik is that bundle size should not be something that developers should think about. It should just naturally emerge as part of how the framework is designed.
 
-Qwik 从根本上设计为产生大量可懒加载边界。工具可以将您的应用程序拆分成许多可懒加载的块，运行时只在需要时下载它们。
+Qwik is designed from the ground up to produce lots of lazy loadable boundaries. Tooling can break up your application into many lazy-loadable chunks, and the runtime can download them only when needed.
 
-### 为什么不修复现有的框架/工具？
+### Why not fix existing frameworks/tools?
 
-简而言之，懒加载的哲学必须在低层次上完成，不能在现有的框架/工具中添加。这样的根本性变化将与框架/工具及其各自的生态系统不兼容，使它们变得无用。
+In short, the lazy loading philosophy must be done at a low level and can not be retroactively added to the existing frameworks/tools without changing them fundamentally. Such fundamental change would be incompatible with the framework/tools and their respective ecosystems, rendering them useless.
 
-当一个框架做出某些假设时，比如所有渲染都是同步的，添加异步懒加载就几乎不可能。或者，如果一个框架从模板中恢复监听器位置，那么在网站可以交互之前，必须下载和执行这些模板。这只是一些比较明显的例子，但实际上，当前的思维模式不符合可恢复性要求的原因有很多。
+When a framework makes certain assumptions, such as that all rendering is synchronous, adding asynchronous lazy loading becomes pretty close to impossible. Or, if a framework recovers the listener location from templates, then download and execution of those templates is a must before the site can be interactive. These are just some of the more obvious examples, but in practice, there is a long tail of endless reasons why the current mental model does not fit the requirements of resumability.
 
-上述也意味着现有的框架无法添加可恢复性作为一个功能。现有的框架永远无法像 Qwik 那样做到这一点（而不会破坏向后兼容性）。
+The above also means that it is not feasible for existing frameworks to add resumability as a feature. Existing frameworks will never be able to do what Qwik can (without breaking backward compatibility).
 
-### 为什么我们要构建 Qwik？
+### Why are we building Qwik?
 
-因为我们相信有一种更好的构建网站的方式。一种不需要在网站变得交互之前急切下载大量 JavaScript 的方式。一种允许开发人员考虑添加功能而不是如何将庞大的代码库分解成较小块的方式。一种为了更好的用户体验而具有即时启动的方式。而且所有这些，与应用程序代码库的大小无关。
+Because we believe there is a better way to build sites. A way that does not involve massive amounts of JavaScript that must be downloaded eagerly on startup before your site becomes interactive. A way that allows the developer to think about adding features rather than how to break up the huge codebase into smaller chunks. A way to have instant-on sites for a better user experience. And all of that, in a way that is independent of the size of the application codebase.
 
-## 页面速度真的很重要吗？
+## Does page speed really matter?
 
-简单来说：慢速网站会阻止访问者，给企业造成巨大损失。快速网站具有更好的搜索引擎优化、更好的用户体验和更高的盈利能力。
+Put simply: slow sites deter visitors, costing businesses millions. Fast sites have better SEO, better UX, and are more profitable.
 
-以下是来自 [web.dev](https://web.dev/tags/case-study/) 的一些例子：
+Some examples from [web.dev](https://web.dev/tags/case-study/):
 
 |                                                                                                                                                                                                                                               |                                                                                                                                                        |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **每快 100 毫秒 → 增加 1% 的转化率** <br /> 对于 Mobify 来说，主页加载速度每减少 100 毫秒，会导致基于会话的转化率增加 1.11%，从而使年均收入增加近 38 万美元。       | **快 50% → 销售增加 12%** <br /> 当 AutoAnything 将页面加载时间减少一半时，销售额增加了 12% 到 13%。                      |
-| **快 20% → 转化率增加 10%** <br /> 零售商 Furniture Village 审查了他们的网站速度，并制定了解决发现问题的计划，导致页面加载时间减少了 20%，转化率增加了 10%。 | **快 40% → 注册增加 15%** <br /> Pinterest 将感知等待时间减少了 40%，这增加了搜索引擎流量和注册用户数 15%。  |
-| **快 850 毫秒 → 转化率增加 7%** <br /> COOK 将平均页面加载时间减少了 850 毫秒，这使转化率增加了 7%，跳出率减少了 7%，每次会话的页面数增加了 10%。                                | **1 秒的延迟 → 用户减少 10%** <br /> BBC 发现，他们的网站每多加载一秒，就会额外损失 10% 的用户。 |
+| **Every 100ms faster → 1% more conversions** <br /> For Mobify, every 100ms decrease in homepage load speed worked out to a 1.11% increase in session-based conversion, yielding an average annual revenue increase of nearly $380,000.       | **50% faster → 12% more sales** <br /> When AutoAnything reduced page load time by half, they saw a boost of 12% to 13% in sales.                      |
+| **20% faster → 10% more conversions** <br /> Retailer Furniture Village audited their site speed and developed a plan to address the problems they found, leading to a 20% reduction in page load time and a 10% increase in conversion rate. | **40% faster → 15% more sign-ups** <br /> Pinterest reduced perceived wait times by 40% and this increased search engine traffic and sign-ups by 15%.  |
+| **850ms faster → 7% more conversions** <br /> COOK reduced average page load time by 850 milliseconds which increased conversions by 7%, decreased bounce rates by 7%, and increased pages per session by 10%.                                | **1 seconds slowness → 10% less users** <br /> The BBC found they lost an additional 10% of users for every additional second their site took to load. |
+|                                                                                                                                                                                                                                               |                                                                                                                                                        |

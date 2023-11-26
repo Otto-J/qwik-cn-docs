@@ -1,6 +1,6 @@
 ---
-title: 菜单 | 高级
-description: 如何使用菜单定义网站导航。
+title: Menu | Advanced
+description: How to use menus to define site navigation.
 contributors:
   - manucorporat
   - adamdbradley
@@ -14,16 +14,16 @@ contributors:
   - hamatoyogi
 ---
 
-# 菜单
+# Menu
 
-菜单允许您以简单的声明方式描述网站导航结构。菜单分为两个步骤：
+Menus allow you to describe the site navigation structure in a simple declarative way. Menus come in two steps:
 
-1. 定义一个包含所在目录菜单结构的 `menu.md` 文件。
-2. 使用 [`useContent()`](/docs/(qwikcity)/api/index.mdx#usecontent) 函数在模板中检索菜单结构以进行渲染。[在此处阅读更多](/docs/(qwikcity)/api/index.mdx#usecontent)
+1. Defining a `menu.md` file that contains the menu structure for the directory it's in.
+2. Using the [`useContent()`](/docs/(qwikcity)/api/index.mdx#usecontent) function to retrieve the menu structure in a template for rendering. [Read more here](/docs/(qwikcity)/api/index.mdx#usecontent)
 
-## 文件结构
+## File Structure
 
-首先按照以下方式布局文件：
+First layout files as follows:
 
 ```bash
 src/
@@ -35,55 +35,55 @@ src/
             └── index.tsx  # https://example.com/some/path
 ```
 
-访问 `https://example.com/some/path` 会激活：
+Navigating to `https://example.com/some/path` activates:
 
-- `src/routes/some/path/index.tsx`：此组件将用于渲染页面内容。
-- `src/routes/some/layout.tsx`：此布局将用于为 `src/routes/some/path/index.tsx` 提供内容。在内部，布局可以使用 `src/routes/some/menu.md` 来渲染菜单。
-- `src/routes/some/menu.md`：此文件将用于声明菜单结构，该结构将由 `src/routes/some/layout.tsx` 渲染。
+- `src/routes/some/path/index.tsx`: This component will be used for rendering the page content.
+- `src/routes/some/layout.tsx`: This layout will be used to provide content around the `src/routes/some/path/index.tsx`. Internally the layout can use `src/routes/some/menu.md` to render the menus.
+- `src/routes/some/menu.md`: This file will be used to declare the menu structure which will be rendered by `src/routes/some/layout.tsx`.
 
-## 声明菜单结构
+## Declaring Menu Structure
 
-使用 `menu.md` 来声明菜单结构。
+Use `menu.md` to declare the menu structure.
 
-- 使用标题 (`#`, `##` 等) 来定义菜单深度。
-- 使用项目符号 (`-`) 来定义菜单项。
+- Use the headings (`#`, `##`, etc..) to define menu depth
+- Use the bulleted list (`-`) to define menu items.
 
 ```markdown title="src/route/some/menu.md"
-# 文档
+# Docs
 
-## 开始入门
+## Getting Started
 
-- [介绍](introduction/index.md)
+- [Introduction](introduction/index.md)
 
-## 组件
+## Components
 
-- [基础](/docs/(qwik)/components/basics/index.mdx)
+- [Basics](/docs/(qwik)/components/basics/index.mdx)
 ```
 
-## 检索菜单结构
+## Retrieving Menu Structure
 
-在运行时，任何组件都可以使用 [`useContent()`](/docs/(qwikcity)/api/index.mdx#usecontent) 钩子函数检索菜单。返回的类型是 `ContentMenu`。
+At runtime, any component can retrieve the menu with [`useContent()`](/docs/(qwikcity)/api/index.mdx#usecontent) hook. The type returned is `ContentMenu`.
 
-上面的示例将返回：
+The example above will return:
 
 ```javascript
 {
-  text: "文档",
+  text: "Docs",
   items: [
     {
-      text: "开始入门",
+      text: "Getting Started",
       items: [
         {
-          text: "介绍",
+          text: "Introduction",
           href: "/docs/introduction"
         }
       ],
     },
     {
-      text: "组件",
+      text: "Components",
       items: [
         {
-          text: "基础",
+          text: "Basics",
           href: "/docs/(qwik)/components/basics"
         }
       ],
@@ -92,9 +92,9 @@ src/
 }
 ```
 
-## 在布局中使用 `ContentMenu`
+## Using `ContentMenu` in a layout
 
-虽然 [`useContent()`](/docs/(qwikcity)/api/index.mdx#usecontent) 可以从当前路由的任何组件中调用，但通常在布局组件（或布局使用的组件）中使用它来渲染菜单。以下是一个示例用法：
+While [`useContent()`](/docs/(qwikcity)/api/index.mdx#usecontent) can be invoked from any component that is part of the current route. It is typically used in a layout component (or a component used by layout) to render the menu. An example usage is shown here:
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
