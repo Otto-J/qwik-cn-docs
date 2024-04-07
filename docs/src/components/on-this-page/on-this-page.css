@@ -1,10 +1,10 @@
 .on-this-page {
-  @apply py-8 pt-10 ml-8;
+  @apply py-8 pt-10;
   @apply text-base;
 
   position: sticky;
   top: var(--header-height);
-  min-width: fit-content;
+  min-width: var(--aside-width);
   max-height: calc(100vh - var(--header-height));
 }
 
