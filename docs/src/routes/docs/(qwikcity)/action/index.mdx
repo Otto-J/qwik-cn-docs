@@ -15,15 +15,24 @@ contributors:
   - ulic75
   - CoralWombat
   - tzdesign
+  - igorbabko
+  - gioboa
+  - mrhoodz
+  - VinuB-Dev
+  - aivarsliepa
+  - wtlin1228
+  - adamdbradley
+  - gioboa
+  - jemsco
+updated_at: '2023-12-15T11:00:00Z'
+created_at: '2023-03-20T23:45:13Z'
 ---
 
 # `routeAction$()`
 
-Actions allow to handle form submissions, allowing to perform side effects such as writing to a database or sending an email.
+`routeAction$()` is used to define functions called actions that execute exclusively on the server, and only when explicitly called. Actions can have side effects such as writing to a database or sending an email, that cannot happen during client-side rendering. This makes them ideal for handling form submissions, performing operations with side effects, and then returning data back to the client/browser where it can be used to update the UI.
 
-Actions can also return data back to the client/browser, allowing to update the UI accordingly, i.e. showing a success message after a form submission.
-
-Actions can be declared using the `routeAction$()` or `globalAction$()` exported from `@builder.io/qwik-city`.
+Actions can be declared using `routeAction$()` or `globalAction$()` exported from `@builder.io/qwik-city`.
 
 ```tsx {4,16} /useAddUser/ /firstName/#a /lastName/#b /email/#c title="src/routes/layout.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -62,7 +71,6 @@ export default component$(() => {
 
 > Since actions are not executed during rendering, they can have side effects such as writing to a database, or sending an email. An action only runs when called explicitly.
 
-
 ## Using actions with `<Form/>`
 
 The best way to call an action is using the `<Form/>` component exported in `@builder.io/qwik-city`.
@@ -93,7 +101,7 @@ export default component$(() => {
 
 Under the hood, the `<Form/>` component uses a native HTML `<form>` element, so it will work without JavaScript.
 
-When JS is enabled, the `<Form/>` component will intercept the form submission and trigger the action in SPA mode, allowing to have a full SPA experience.
+When JS is enabled, the `<Form/>` component will intercept the form submission and trigger the action in SPA mode. Allowing for a full SPA experience.
 
 > This is to clarify that the server re-renders the whole page and re-executes everything, so if you have any [routeLoader$](/docs/route-loader/) they will be executed too.
 
@@ -101,7 +109,7 @@ When JS is enabled, the `<Form/>` component will intercept the form submission a
 
 ## Using actions programmatically
 
-Actions can also be triggered programmatically using the `action.submit()` method, i.e. you don't need a `<Form/>` component, but you can trigger the action from a button click or any other event, just like you would do with a function.
+Actions can also be triggered programmatically using the `action.submit()` method (i.e. you don't need a `<Form/>` component). However, you can trigger the action from a button click or any other event, just like you would do with a function.
 
 ```tsx {18} title="src/routes/index.tsx"
 import { component$ } from '@builder.io/qwik';
@@ -137,7 +145,7 @@ In the example above, the `addUser` action is triggered when the user clicks the
 
 ## Actions with Event Handlers
 
-We can use the `onSubmitCompleted$` event handler after an action is executed successfully and returns some data. It is particularly useful when you need to perform additional tasks, such as resetting UI elements or updating the application state, once an action has been completed successfully.
+The `onSubmitCompleted$` event handler can be used after an action is successfully executed and returns some data. This is useful for performing tasks, such as resetting UI elements or updating the application state, once an action has been completed.
 
 Here's an example of the `onSubmitCompleted$` handler used to edit an item in a EditForm component of a todo app.
 
@@ -151,41 +159,35 @@ export interface EditFormProps {
   editingIdSignal: Signal<string>;
 }
 
-const EditForm = component$(
-  ({ item, editingIdSignal }: EditFormProps) => {
-    const editAction = useEditFromListAction();
+const EditForm = component$(({ item, editingIdSignal }: EditFormProps) => {
+  const editAction = useEditFromListAction();
 
-    return (
+  return (
+    <div>
+      <Form
+        action={editAction}
+        onSubmitCompleted$={() => {
+          editingIdSignal.value = '';
+        }}
+        spaReset
+      >
+        <input
+          type="text"
+          value={item.text}
+          name="text"
+          id={`edit-${item.id}`}
+        />
+        {/* Sends item.id with form data on submission. */}
+        <input type="hidden" name="id" value={item.id} />
+        <button type="submit">Submit</button>
+      </Form>
+
       <div>
-        <Form
-          action={editAction}
-          onSubmitCompleted$={() => {
-            editingIdSignal.value = '';
-          }}
-          spaReset
-        >
-          <input
-            type="text"
-            value={item.text}
-            name="text"
-            id={`edit-${item.id}`}
-          />
-          {/* Sends item.id with form data on submission. */}
-          <input type="hidden" name="id" value={item.id} />
-          <button type="submit">
-            Submit
-          </button>
-        </Form>
-
-        <div>
-          <button onClick$={() => (editingIdSignal.value = '')}>
-            Cancel
-          </button>
-        </div>
+        <button onClick$={() => (editingIdSignal.value = '')}>Cancel</button>
       </div>
-    );
-  }
-);
+    </div>
+  );
+});
 
 export default EditForm;
 ```
@@ -218,7 +220,7 @@ export const useAddUser = routeAction$(
   zod$({
     firstName: z.string(),
     lastName: z.string(),
-  })
+  }),
 );
 
 export default component$(() => {
@@ -246,15 +248,14 @@ Please refer to the [Zod documentation](https://zod.dev/) for more information o
 
 ### Advanced event based validation
 
-The constructor of ```zod$``` can also take a function, as the first argument is zod itself, so you can use this directly to build the schema. 
+The constructor of `zod$` can also take a function, as the first argument is zod itself, so you can use this directly to build the schema.
 The second parameter is the RequestEvent to construct an event-based zod schema.
-Especially in combination with ```refine``` and ```superDefine``` in zod, the only limit is your imagination.
-
+Especially in combination with `refine` and `superDefine` in zod, the only limit is your imagination.
 
 ```tsx {5-5} /ev/#a  title="Advanced event based validation"
 export const useAddUser = routeAction$(
   async (user) => {
-    // The "user" is still strongly typed, but firstname 
+    // The "user" is still strongly typed, but firstname
     // is now optional: { firstName?: string | undefined, lastName: string }
     const userID = await db.users.add({
       firstName: user.firstName,
@@ -269,7 +270,7 @@ export const useAddUser = routeAction$(
   zod$((z, ev) => {
     // The first name is optional if the url contains the query parameter "firstname=optional"
     const firstName =
-      ev.url.searchParams.get("firstname") === "optional"
+      ev.url.searchParams.get('firstname') === 'optional'
         ? z.string().optional()
         : z.string().nonempty();
 
@@ -277,7 +278,7 @@ export const useAddUser = routeAction$(
       firstName,
       lastName: z.string(),
     });
-  })
+  }),
 );
 ```
 
@@ -298,9 +299,8 @@ export const useProductRecommendations = routeAction$(
     console.log('Request url:', requestEvent.url);
     console.log('Request params:', requestEvent.params);
     console.log('MY_ENV_VAR:', requestEvent.env.get('MY_ENV_VAR'));
-  }
+  },
 );
-
 ```
 
 ## Action Failures
@@ -325,7 +325,7 @@ export const useAddUser = routeAction$(
   },
   zod$({
     name: z.string(),
-  })
+  }),
 );
 ```
 
@@ -373,17 +373,19 @@ export default component$(() => {
 });
 ```
 
-The `action.formData` is especially useful as it allows to keep the form data filled by the user even on a page refresh, allowing to have a full SPA experience, even with JS disabled.
+The `action.formData` is especially useful for retaining user-filled form data even after a page refresh. This enables a seamless SPA experience, even with JS disabled.
 
 ## Route vs Global actions
 
 Actions can be declared using the `routeAction$()` or `globalAction$()` exported from `@builder.io/qwik-city`, the only difference between the two is that `routeAction$()` is scoped to a route, while `globalAction$()` is globally available across the whole app.
 
-We recommend starting with `routeAction$()` and only use `globalAction$()` when you need to share an action across multiple routes, or if you wish to use the action in a component that is not a route.
+It's recommended to start with `routeAction$()`. Use `globalAction$()` only when sharing an action across multiple routes, or if you wish to use the action in a component that is not a route.
 
 ### `routeAction$()`
 
 `routeAction$()` can only be declared inside the `src/routes` folder, in a `layout.tsx` or `index.tsx` file, and they MUST be exported, just like a `routeLoader$()`. Since `routeAction$()`s are only accessible within the route it's declared, they are recommended when the action needs to access some user data, or it's a protected route. Think about it like a "private" action.
+
+> If you want to manage common reusable routeAction$() it is essential that this function is re-exported from within 'layout.tsx' or 'index.tsx file of the existing route otherwise it will not run or throw exception. For more information [check the cookbook](/docs/cookbook/re-exporting-loaders/index.mdx).
 
 ```tsx title="src/routes/form/index.tsx"
 import { routeAction$ } from '@builder.io/qwik-city';

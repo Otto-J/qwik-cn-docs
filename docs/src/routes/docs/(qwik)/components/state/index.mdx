@@ -27,24 +27,33 @@ contributors:
   - sreeisalso
   - wmertens
   - nicvazquez
+  - mrhoodz
+  - eecopa
+  - fabian-hiller
+  - julianobrasil
+  - aivarsliepa
+  - Balastrong
+  - Jemsco
+updated_at: '2023-10-04T21:48:45Z'
+created_at: '2023-03-20T23:45:13Z'
 ---
 
 import CodeSandbox from '../../../../../components/code-sandbox/index.tsx';
 
-# State
+# 状态
 
-State management is an important part of any app. In Qwik, we can differentiate between two types of state, reactive and static:
+状态管理是任何应用程序的重要部分。在 Qwik 中，有两种类型的状态，响应式和静态：
 
-1. Static state is anything that can be serialized: a string, number, object, array... anything.
-2. A reactive state on the other hand is created with `useSignal()` or `useStore()`.
+1. 静态状态是任何可以序列化的东西：字符串、数字、对象、数组……任何东西。
+2. 另一方面，响应式状态是通过 `useSignal()` 或 `useStore()` 创建的。
 
-It is important to notice that state in Qwik is not necessarily a local component state, but rather an app state that can be instantiated by any component.
+重要的是要注意，在 Qwik 中的状态不一定是局部组件状态，而是可以由任何组件实例化的应用状态。
 
 ## `useSignal()`
 
-Use `useSignal()` to create a reactive signal (a form of state). The `useSignal()` takes an initial value and returns a reactive signal.
+使用 `useSignal()` 创建一个响应式信号（一种状态）。`useSignal()` 接受一个初始值并返回一个响应式信号。
 
-The reactive signal returned by `useSignal()` consists of an object with a single property `.value`. If you change the `value` property of the signal, any component that depends on it will be updated automatically.
+响应式信号返回一个对象，其中包含一个 `.value` 属性。如果更改信号的 `value` 属性，依赖于它的任何组件都将自动更新。
 
 <CodeSandbox src="/src/routes/demo/state/counter-signal/index.tsx" style={{ height: '6em' }}>
 ```tsx {4} /count/
@@ -62,34 +71,38 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-This example above shows how `useSignal()` can be used in a counter component to keep track of the count. Modifying the `count.value` property will cause the component to be updated automatically. For instance, when the property is changed in the button click handler as in the example above.
+这个例子展示了如何在计数器组件中使用 `useSignal()` 来跟踪计数。修改 `count.value` 属性将自动更新组件。例如，当在按钮点击处理程序中更改属性时，如上例所示。
 
 ## `useStore()`
 
-Works very similarly to `useSignal()`, but it takes an object as its initial value and the reactivity extends to nested objects and arrays by default. One can think of a store as a multiple-value signal or an object made of several signals.
+和 `useSignal()` 类似，但是它以对象作为初始值，并默认情况下将嵌套对象和数组的反应性扩展到深层。可以将存储视为多值信号或由多个信号组成的对象。
 
-Use `useStore(initialStateObject)` hook to create a reactive object. It takes an initial object (or a factory function) and returns a reactive object.
+使用 `useStore(initialStateObject)` 钩子创建一个响应式对象。它接受一个初始对象（或工厂函数）并返回一个响应式对象。
 
 <CodeSandbox src="/src/routes/demo/state/counter-store/index.tsx" style={{ height: '6em' }} >
 ```tsx {4} /state/ /count/#a
 import { component$, useStore } from '@builder.io/qwik';
 
 export default component$(() => {
-  const state = useStore({ count: 0 });
+  const state = useStore({ count: 0, name: 'Qwik' });
 
   return (
     <>
       <button onClick$={() => state.count++}>Increment</button>
       <p>Count: {state.count}</p>
+      <input
+        value={state.name}
+        onInput$={(_, el) => (state.name = el.value)}
+      />
     </>
   );
 });
 ```
 </CodeSandbox>
 
-> **NOTE** For reactivity to work as expected, make sure to keep a reference to the reactive object and not only to its properties. e.g. doing `let { count } = useStore({ count: 0 })` and then mutating `count` won't trigger updates of components that depend on the property.
+> **注意** 为了使响应性按预期工作，请确保保留对响应式对象的引用，而不仅仅是对其属性的引用。例如，执行 `let { count } = useStore({ count: 0 })`，然后对 `count` 进行突变不会触发依赖于该属性的组件的更新。
 
-Because [`useStore()`](/docs/(qwik)/components/state/index.mdx#usestore) tracks deep reactivity, that means that Arrays and Objects inside the store will also be reactive.
+因为 [`useStore()`](/docs/(qwik)/components/state/index.mdx#usestore) 跟踪深层反应性，这意味着存储中的数组和对象也将是响应式的。
 
 <CodeSandbox src="/src/routes/demo/state/counter-store-deep/index.tsx" style={{ height: '10em' }}>
 ```tsx
@@ -124,8 +137,8 @@ export default component$(() => {
         Add to list
       </button>
       <ul>
-        {store.list.map((item, index) => (
-          <li key={`items-${index}`}>{item}</li>
+        {store.list.map((item, key) => (
+          <li key={key}>{item}</li>
         ))}
       </ul>
     </>
@@ -134,7 +147,7 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-Notice that for `useStore()` to track all nested properties, it needs to allocate a lot of Proxy objects. This can be a performance issue if you have a lot of nested properties. In that case, you can use the `deep: false` option to only track the top-level properties.
+注意，为了跟踪所有嵌套属性，`useStore()` 需要分配大量的代理对象。如果有很多嵌套属性，这可能会导致性能问题。在这种情况下，可以使用 `deep: false` 选项仅跟踪顶级属性。
 
 ```tsx
 const shallowStore = useStore(
@@ -147,10 +160,23 @@ const shallowStore = useStore(
   { deep: false }
 );
 ```
+> **处理动态对象突变**
+>
+> 当动态操作对象属性时，例如在应用程序的某处渲染它们时删除它们，可能会遇到问题。如果组件呈现依赖于当前正在删除的对象属性的值，则可能会发生这种情况。为了防止这种情况，访问属性时请使用可选链接。例如，如果尝试删除属性：
+> ```tsx
+> delete store.propertyName;
+> ```
+> 请确认在组件中谨慎访问此属性，例如使用可选链接( ?. ):
+> ```tsx
+> const propertyValue = store.propertyName?.value;
+> ```
+
+
+
 
 ### Methods
 
-To provide methods on the store, you must make them into QRLs and refer to the store with `this`, like so:
+为了在 store 上提供方法，您必须将它们转换为 QRL，并使用 `this` 引用存储，如下所示：
 
 ```tsx
 import { component$, useStore, $, type QRL } from "@builder.io/qwik";
@@ -174,22 +200,24 @@ export default component$(() => {
 });
 ```
 
-## Computed state
+> 你知道为什么应该在 `useStore()` 中使用常规的 `function(){}` 而不是箭头函数吗？这是因为在 javascript 中，[箭头函数没有自己的 `this` 绑定](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions)。这意味着如果尝试使用箭头函数访问 `this`，`this.count` 可能指向另一个对象的 `count` 😱。
 
-In Qwik there are two ways to create computed values, each with a different use case (in order of preference):
+## 计算状态
 
-1. `useComputed$()`: `useComputed$()` is the preferred way of creating computed values. Use it when the computed value can be derived synchronously purely from the source state (current application state). For example, creating a lowercase version of a string or combining first and last name into a full name.
+在 Qwik 中，有两种创建计算值的方法，每种方法都有不同的用例（按优先顺序）：
 
-2. [`useResource$()`](/docs/(qwik)/components/state/index.mdx#useresource): `useResource$()` is used when the computed value is asynchronous or the state comes from outside of the application. For example, fetching the current weather (external state) based on a current location (application internal state).
+1. `useComputed$()`: `useComputed$()` 是创建计算值的首选方法。当计算值可以纯粹从源状态（当前应用程序状态）同步派生时，请使用它。例如，创建字符串的小写版本或将名字和姓氏组合成全名。
 
+2. [`useResource$()`](/docs/(qwik)/components/state/index.mdx#useresource): 当计算值是异步的或状态来自应用程序外部时，使用 `useResource$()`。例如，根据当前位置（应用程序内部状态）获取当前天气（外部状态）。
 
-In addition to the two ways of creating computed values described above, there is also a lower-level ([`useTask$()`](/docs/(qwik)/components/tasks/index.mdx#usetask)). This way does not produce a new signal, but rather modifies the existing state or produces a side effect.
+除了上面描述的两种创建计算值的方法之外，还有一种更低级别的方法（[`useTask$()`](/docs/(qwik)/components/tasks/index.mdx#usetask)）。这种方式不会产生新的信号，而是修改现有状态或产生副作用。
 
 ### `useComputed$()`
 
-Use `useComputed$` allows to memoize a value derived synchronously from other state.
+使用 `useComputed$()` 创建一个计算值，该值从其他状态同步派生。
 
-It is similar to `memo` in other frameworks, since it will only recompute the value when one of the input signals changes.
+它类似于其他框架中的 `memo`，因为它只会在输入信号之一发生更改时重新计算值。
+
 
 <CodeSandbox src="/src/routes/demo/state/computed/index.tsx" style={{ height: '8em' }}>
 ```tsx {5} /useComputed$/
@@ -213,15 +241,15 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-> **NOTE** Because `useComputed$()` is synchronous it is not necessary to explicitly track the input signals.
+> **注意** 由于 `useComputed$()` 是同步的，因此不需要显式跟踪输入信号。
 
 ### `useResource$()`
 
-Use `useResource$()` to create a computed value that is derived asynchronously. It's the asynchronous version of `useComputed$()`, which includes the `state` of the resource (loading, resolved, rejected) on top of the value.
+使用 `useResource$()` 创建一个异步派生的计算值。它是 `useComputed$()` 的异步版本，包括值之上的资源状态（加载中、已解析、已拒绝）。
 
-A common use case for `useResource$()` is to fetch data from an external API within the component itself, this means that the execution might happen in the server or the client.
+`useResource$()` 的常见用法是在组件内部从外部 API 获取数据，这可能发生在服务器端或客户端。
 
-The `useResource$` hook is meant to be used with `<Resource />`. The `<Resource />` component is a convenient way to render different UI based on the state of the resource.
+`useResource$` 钩子是为 `<Resource />` 设计的。`<Resource />` 组件是根据资源状态渲染不同 UI 的一种便捷方式。
 
 <CodeSandbox src="/src/routes/demo/state/resource/index.tsx" style={{ height: '8em' }}>
 ```tsx {11} /useResource$/
@@ -240,7 +268,7 @@ export default component$(() => {
     // this means this code will run on the server and the browser
     track(() => prNumber.value);
     const response = await fetch(
-      `https://api.github.com/repos/BuilderIO/qwik/pulls/${prNumber.value}`
+      `https://api.github.com/repos/QwikDev/qwik/pulls/${prNumber.value}`
     );
     const data = await response.json();
     return data.title as string;
@@ -263,22 +291,21 @@ export default component$(() => {
 
 
 
-> **Note:** The important thing to understand about `useResource$` is that it executes on the initial component render (just like `useTask$`). Often time it is desirable to start fetching the data on the server as part of the initial HTTP request before the component is rendered. Fetching data as part of SSR is a more common and preferred way of loading data and is done through [`routeLoader$`](/docs/(qwikcity)/route-loader/index.mdx) API instead. `useResource$` is more of a low-level API that is useful when you want to fetch data in the browser.
+> **注意** 关于 `useResource$` 的重要事项是它在初始组件渲染时执行（就像 `useTask$` 一样）。通常情况下，希望在服务器上的初始 HTTP 请求中开始获取数据，以便在组件渲染之前。在服务器端渲染（SSR）期间获取数据是一种常见且首选的数据加载方法，通常由 [`routeLoader$`](/docs/(qwikcity)/route-loader/index.mdx) API 处理。`useResource$` 是一种更低级别的 API，当您想在浏览器中获取数据时非常有用。
 >
 >
-> In many ways `useResource$` is similar to `useTask$`. The big differences are:
+> 很多方面 `useResource$` 与 `useTask$` 相似。主要区别是：
 >
-> - `useResource$` allows you to return a "value".
-> - `useResource$` does not block rendering while the resource is being resolved.
+> - `useResource$` 允许您返回一个“值”。
+> - `useResource$` 会在组件的初始渲染时运行，然后在资源状态更改时重新运行。
 >
-> See [`routeLoader$`](/docs/(qwikcity)/route-loader/index.mdx) for fetching data early as part of initial HTTP request.
+> 查阅 [`routeLoader$`](/docs/(qwikcity)/route-loader/index.mdx) 以获取数据的早期加载作为初始 HTTP 请求的一部分。
 
-> **NOTE**: During SSR the `<Resource>` component will pause rendering until the resource is resolved. This way the SSR will not render with the loading indicator.
+> **注意** 在 SSR 期间，`<Resource>` 组件将暂停渲染，直到资源解析。这样 SSR 将不会使用加载指示器渲染。
 
-#### Advanced example
+#### 高级示例
 
-A more complete example of fetching data with `AbortController`, `track` and `cleanup`. This example will fetch a list of jokes based on the query typed by the user,
-automatically reacting to changes in the query, including aborting requests that are currently pending.
+一个更完整的示例，使用 `AbortController`、`track` 和 `cleanup` 获取数据。这个示例将根据用户输入的查询获取笑话列表，自动响应查询的更改，包括中止当前正在进行的请求。
 
 <CodeSandbox src="/src/routes/demo/state/resource-joke/index.tsx" style={{ height: '40em' }}>
 ```tsx {11} /useResource$/
@@ -337,18 +364,19 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-As we see in the example above, `useResource$()` returns a `ResourceReturn<T>` object that works like a reactive promise, containing the data and the resource state.
+正如我们在上面的示例中看到的，`useResource$()` 返回一个 `ResourceReturn<T>` 对象，它的工作方式类似于一个响应式 promise，包含数据和资源状态。
 
-The state `resource.loading` can be one of the following:
+状态 `resource.loading` 可以是以下之一：
 
-- `false` - the data is not yet available.
-- `true` - the data is available. (Either resolved or rejected.)
+- `false` - 数据尚不可用。
+- `true` - 数据可用。 (已解析或已拒绝。)
 
-The callback passed to [`useResource$()`](/docs/(qwik)/components/state/index.mdx#useresource) runs right after the [`useTask$()`](/docs/(qwik)/components/tasks/index.mdx#usetask) callbacks complete. Please refer to the [Lifecycle](../tasks/index.mdx#lifecycle) section for more details.
+传递给 [`useResource$()`](/docs/(qwik)/components/state/index.mdx#useresource) 的回调在 [`useTask$()`](/docs/(qwik)/components/tasks/index.mdx#usetask) 回调完成后立即运行。有关更多详细信息，请参阅 [生命周期](../tasks/index.mdx#lifecycle) 部分。
 
 #### `<Resource />`
 
 `<Resource />` is a component meant to be used with the `useResource$()` that renders different content depending on if the resource is pending, resolved, or rejected.
+`<Resource />` 是一个组件，用于与 `useResource$()` 一起使用，根据资源的状态（pending、resolved、rejected）渲染不同的内容。
 
 ```tsx
 <Resource
@@ -361,10 +389,10 @@ The callback passed to [`useResource$()`](/docs/(qwik)/components/state/index.md
 />
 ```
 
-It is worth noting that `<Resource />` is not required when using `useResource$()`. It is just a convenient way to render the resource state.
+值得注意的是，使用 useResource$() 时，不需要 <Resource />。这只是一种方便的方式来渲染资源状态。
 
+这是一个更简单的示例，展示了如何使用 `useResource$` 来执行对 [agify.io](https://agify.io/) API 的 fetch 调用。这将根据用户输入的名称猜测一个人的年龄，并在用户输入名称时更新。
 
-This example shows how `useResource$` is used to perform a fetch call to the [agify.io](https://agify.io/) API. This will guess a person's age based on the name typed by the user, and will update whenever the user types in the name input.
 
 <CodeSandbox src="/src/routes/demo/state/resource-agify/index.tsx" style={{ height: '8em' }}>
 ```tsx {11} /useResource$/
@@ -397,11 +425,7 @@ export default component$(() => {
       <div>
         <label>
           Enter your name, and I'll guess your age!
-          <input
-            onInput$={(e: Event) =>
-              (name.value = (e.target as HTMLInputElement).value)
-            }
-          />
+          <input onInput$={(ev, el) => (name.value = el.value)} />
         </label>
       </div>
       <Resource
@@ -426,18 +450,18 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-## Passing state
+## 传递状态
 
-One of the nice features of Qwik is that the state can be passed to other components. Writing to the store will then only re-render the components which read from the store only.
+Qwik 的一个好特性是可以将状态传递给其他组件。这样，只有从存储中读取的组件会被重新渲染。
 
-There are two ways to pass state to other components:
+有两种方法可以将状态传递给其他组件：
 
-1. pass state to child component explicitly using props,
-2. or pass state implicitly through context.
+1. 通过 props 明确地将状态传递给子组件，
+2. 或者通过上下文隐式地传递状态。
 
-### Using props
+### 使用 props
 
-The simplest way to pass the state to other components is to pass it through props.
+将状态传递给其他组件最简单的方式是通过 props 传递。
 
 <CodeSandbox src="/src/routes/demo/state/passing-props/index.tsx" style={{ height: '6em' }}>
 ```tsx {9} /userData=/
@@ -462,11 +486,11 @@ export const Child = component$<ChildProps>(({ userData }) => {
 ```
 </CodeSandbox>
 
-### Using context
+### 使用上下文
 
-The context API is a way to pass state to components without having to pass it through props (i.e.: avoids prop drilling issues). Automatically, all the descendant components in the tree can access a reference to the state with read/write access to it.
+上下文 API 是一种将状态传递给组件的方式，无需通过 props 传递（即：避免了 prop 钻取问题）。自动地，树中的所有后代组件都可以访问状态的引用，并对其进行读/写访问。
 
-Check the [context API](../context/index.mdx) for more information.
+查看 [上下文 API](../context/index.mdx) 了解更多信息。
 
 <CodeSandbox src="/src/routes/demo/state/passing-context/index.tsx" style={{ height: '6em' }}>
 ```tsx /userData/ /export const CTX = createContextId<{ count: number }>('stuff');/ /useContextProvider(CTX, userData);/ /const userData = useContext(CTX);/
@@ -504,13 +528,12 @@ export const Child = component$(() => {
 
 ## `noSerialize()`
 
-Qwik ensures that all application state is always serializable. This is important to ensure that Qwik applications have a [resumability](/docs/(qwik)/concepts/resumable/index.mdx) property.
+Qwik 明确要求所有应用程序状态始终是可序列化的。这是为了确保 Qwik 应用程序具有 [可恢复性](/docs/(qwik)/concepts/resumable/index.mdx) 特性。
 
-At times it is necessary to store data that can't be serialized, `noSerialize()` tells Qwik not even bother trying to serialize the marked value.
+有时，需要存储无法序列化的数据；`noSerialize()` 指示 Qwik 不要尝试序列化标记的值。 
+例如，对于第三方库的引用，如 [Monaco 编辑器](https://microsoft.github.io/monaco-editor/)，将始终需要 `noSerialize()`，因为它不可序列化。
 
-For example a reference to a third-party library such as [Monaco editor](https://microsoft.github.io/monaco-editor/) will always need `noSerialize()`, as it is not serializable.
-
-If a value is marked as non-serializable then that value will not survive serialization events such as resuming the application on the client from server SSR. In such a situation the value will be set to `undefined` and it is up to the developer to re-initialize the value on the client.
+如果将值标记为不可序列化，则该值将不会在序列化事件（例如从 SSR 恢复应用程序时）中保留，此时该值将设置为 `undefined`，开发人员需要在客户端重新初始化该值。
 
 <CodeSandbox src="/src/routes/demo/state/no-serialize/index.tsx" style={{ height: '8em' }}>
 ```tsx /noSerialize/

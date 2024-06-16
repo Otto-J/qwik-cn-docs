@@ -1,5 +1,5 @@
 ---
-title: Tasks and Lifecycle | Components
+title: Task 和生命周期 | Components
 contributors:
   - mhevery
   - manucorporat
@@ -9,45 +9,60 @@ contributors:
   - sreeisalso
   - brunocrosier
   - harishkrishnan24
+  - gioboa
+  - bodhicodes
+  - zanettin
+  - blackpr
+  - mrhoodz
+  - ehrencrona
+  - julianobrasil
+  - adamdbradley
+  - aendel
+  - jemsco
+updated_at: '2023-10-18T07:33:22Z'
+created_at: '2023-03-31T02:40:50Z'
 ---
 
 import CodeSandbox from '../../../../../components/code-sandbox/index.tsx';
 
+# 任务
 
-# Tasks
+任务旨在作为组件初始化或组件状态变化的一部分来运行异步操作。
 
-Tasks are meant for running asynchronous operations as part of component initialization or change of component state.
-
-> **Note**: Tasks are similar to `useEffect()` in React, but there are enough differences that we did not want to call them the same so as not to bring preexisting expectations about how they work. The main differences are:
+> **注意**：任务与 React 中的 `useEffect()` 类似，但有足够的差异，我们不想将它们称为相同的名称，以免带来关于它们工作方式的预期。主要差异包括：
 >
-> - Tasks are asynchronous.
-> - Task run on server and browser.
-> - Tasks run before rendering and can block rendering.
+> - 任务是异步的。
+> - 任务在服务器和浏览器上运行。
+> - 任务在渲染之前运行，并且可以阻塞渲染。
 
-`useTask$()` should be your default go-to API for running asynchronous (or synchronous) work as part of component initialization or state change. It is only when you can't achieve what you need with `useTask$()` that you should consider using `useVisibleTask$()` or `useResource$()`.
+`useTask$()` 应该是你默认的 API，用于作为组件初始化或状态变化的一部分来运行同步或异步工作。只有当你无法通过 `useTask$()` 实现你需要的功能时，你才应该考虑使用 `useVisibleTask$()` 或 `useResource$()`。
 
-The basic use case for `useTask$()` is to perform work on component initialization. `useTask$()` has these properties:
-- It can run on either the server or in the browser.
-- It runs before rendering and blocks rendering.
-- If multiple tasks are running then they are run sequentially in the order they were registered. An asynchronous task will block the next task from running until it completes.
+`useTask$()` 的基本用例是在组件初始化时执行工作。`useTask$()` 有以下属性：
 
-Tasks can also be used to perform work when a component state changes. In this case, the task will rerun every time the tracked state changes. See: [`track()`](#track).
+- 它可以在服务器或浏览器上运行。
+- 它在渲染之前运行并阻塞渲染。
+- 如果有多个任务正在运行，则它们会按照注册的顺序依次运行。一个异步任务会阻塞下一个任务的运行，直到它完成。
 
-Sometimes a task needs to run only on the browser and after rendering, in that case, you should use [`useVisibleTask$()`](#usevisibletask).
+任务也可以用来在组件状态变化时执行工作。在这种情况下，每次跟踪的状态发生变化时，任务将重新运行。参见：[`track()`](#track)。
 
-Sometimes a task should fetch data asynchronously and produce a signal (and not block rendering), in that case, you should use [`useResource$()`](/docs/components/state/#useresource).
+有时，任务只需要在浏览器上且在渲染之后运行，在这种情况下，你应该使用 [`useVisibleTask$()`](#usevisibletask)。
 
-## Lifecycle
+> **注意**：如果你需要异步获取数据并且不阻塞渲染，你应该使用 [`useResource$()`](/docs/components/state/#useresource)。[`useResource$()`](/docs/components/state/#useresource) 在资源被解析时不会阻塞渲染。
 
-Thanks to [Resumability](/docs/(qwik)/concepts/resumable/index.mdx), component lifetime and its lifecycle extend across server and browser runtime. Sometimes the component will first be rendered in the server, and other times it could be rendered in the browser. However, in both cases, the lifecycle (order) will be the same, only its execution location will be in different environments (server vs browser).
+## 生命周期
 
-> **Note**: For systems that use hydration the execution of the application happens twice. Once on a server (SSR/SSG) and once on the browser (hydration). For this reason, many frameworks have "effects" which only execute on the browser. That means that the code that runs on the server is different than the code that runs on the browser. Qwik execution is unified, meaning if the code has already been executed on the server it does not re-execute it on the browser.
+可恢复性是“懒执行”，它是在服务器上构建“框架状态”（组件边界等）的能力，并且在客户端上存在而无需再次执行框架。
 
-**In Qwik, there are only 3 lifecycle stages:**
+应用程序环境——无论是客户端还是服务器端——由用户交互决定。在服务器端渲染中，应用程序最初在服务器上渲染。
+当用户与应用程序交互时，它在客户端上恢复，从服务器留下的状态继续。这种方法通过基于交互利用两种环境，确保了高效和响应式的用户体验。
 
-- `Task` - run before rendering and also when tracked state changes. (Tasks run sequentially, and block rendering.)
-- `Render` - runs after `TASK` and before `VisibleTask`
-- `VisibleTask` - runs after `Render` and when the component becomes visible
+> **注意**：对于使用水合作用的系统，应用程序的执行会发生两次。一次在服务器上（SSR/SSG），一次在浏览器上（水合作用）。这就是为什么许多框架有“效果”，这些效果只在浏览器上执行。这意味着在服务器上运行的代码与在浏览器上运行的代码不同。Qwik 执行是统一的，意味着如果代码已经在服务器上执行过，它不会在浏览器上重新执行。
+
+**在 Qwik 中，只有 3 个生命周期阶段：**
+
+- `Task` - 在渲染之前和跟踪状态变化时运行。`Tasks` 顺序运行，并阻塞渲染。
+- `Render` - 在 `TASK` 之后和 `VisibleTask` 之前运行
+- `VisibleTask` - 在 `Render` 之后和组件变得可见时运行
 
 ```bash /useTask$/#d /RENDER/#b /useVisibleTask$/#c
       useTask$ -------> RENDER ---> useVisibleTask$
@@ -57,11 +72,11 @@ Thanks to [Resumability](/docs/(qwik)/concepts/resumable/index.mdx), component l
                        pause|resume
 ```
 
-**SERVER**: Usually **the life of a component starts on the server** (during SSR or SSG), in that case, the `useTask$` and `RENDER` will run in the server, and then the `VisibleTask` will run in the browser, after the component is visible.
+**服务器**：通常**组件的生命周期从服务器开始**（在 SSR 或 SSG 期间），在这种情况下，`useTask$` 和 `RENDER` 将在服务器上运行，然后 `VisibleTask` 将在组件可见后在浏览器上运行。
 
-> **Notice** that because the component was mounted in the server, **only useVisibleTask$() runs in the browser**. This is because the browser continues the same lifecycle, that was paused in the server right after the render and resumed in the browser.
+> **注意**，因为组件是在服务器上挂载的，**只有 useVisibleTask$() 在浏览器上运行**。这是因为浏览器继续了在服务器上暂停的相同生命周期，在渲染后暂停并在浏览器中恢复。
 
-**BROWSER**: Sometimes a component will be first mounted/rendered in the browser, for example when the user SPA navigates to a new page, or a "modal" component first appears in the page. In that case, the lifecycle will run like this:
+**浏览器**：当组件首次在浏览器中挂载或渲染时，例如当用户导航到单页应用程序（SPA）中的新页面或当“模态”组件最初出现在页面上时，生命周期将按以下方式进行：
 
 ```bash
   useTask$ --> RENDER --> useVisibleTask$
@@ -69,19 +84,19 @@ Thanks to [Resumability](/docs/(qwik)/concepts/resumable/index.mdx), component l
 | -------------- BROWSER --------------- |
 ```
 
-> **Notice** that the lifecycle is exactly the same, but this time all the hooks run in the browser, and not in the server.
+> **注意**，生命周期完全相同，但这次所有钩子都在浏览器中运行，而不是在服务器中。
 
 ## `useTask$()`
 
-- **When:** BEFORE component's first render, and when tracked state changes
-- **Times:** at least once
-- **Platform:** server and browser
+- **何时运行：** 在组件首次渲染之前，以及当跟踪的状态发生变化时
+- **运行次数：** 至少一次
+- **平台：** 服务器和浏览器
 
-`useTask$()` registers a hook to be executed upon component creation, it will run at least once either in the server or in the browser, depending on where the component is initially rendered.
+`useTask$()` 注册一个在组件创建时执行的钩子，它将至少在服务器或浏览器上运行一次，具体取决于组件最初是在哪里渲染的。
 
-Additionally, this task can be reactive and will re-execute when **tracked** [state](/docs/(qwik)/components/state/index.mdx) changes.
+此外，这个任务可以是响应式的，并且当**跟踪的**[状态](</docs/(qwik)/components/state/index.mdx>)发生变化时会重新执行。
 
-**Notice that any subsequent re-execution of the task will always happen in the browser**, because reactivity is a browser-only thing.
+**注意，任何后续的任务重新执行都将始终在浏览器中发生**，因为响应性是浏览器独有的特性。
 
 ```bash
                       (state change) -> (re-execute)
@@ -94,11 +109,11 @@ Additionally, this task can be reactive and will re-execute when **tracked** [st
                    pause|resume
 ```
 
-> If `useTask$()` does not track any state, it will run **exactly once**, either in the server **or** in the browser (**not both**), depending where the component is initially rendered. Effectively behaving like an "on-mount" hook.
+如果 `useTask$()` 不跟踪任何状态，它将**仅运行一次**，无论是在服务器上**还是**在浏览器中（**不是两者都**），这取决于组件最初是在哪里渲染的。实际上，它的行为就像一个“挂载时”钩子。
 
-`useTask$()` will block the rendering of the component until after its async callback resolves, in other words, tasks execute sequentially even if they are asynchronous. (Only one task executes at a time / Tasks block rendering).
+`useTask$()` 会阻塞组件的渲染，直到其异步回调解决之后，换句话说，即使任务是异步的，任务也会顺序执行。（一次只执行一个任务）。
 
-Let's look at the simplest use case of the task to run some asynchronous work on component initialization.
+看看运行一些异步工作以在组件初始化时使用任务的最简单用例：
 
 <CodeSandbox src="/src/routes/demo/tasks/use-task/index.tsx" style={{ height: '6em' }}>
 ```tsx
@@ -107,46 +122,49 @@ import { component$, useSignal, useTask$ } from '@builder.io/qwik';
 export default component$(() => {
   const fibonacci = useSignal<number[]>();
 
-  useTask$(async () => {
-    const size = 40;
-    const array = [];
-    array.push(0, 1);
-    for (let i = array.length; i < size; i++) {
-      array.push(array[i - 1] + array[i - 2]);
-      await delay(100);
-    }
-    fibonacci.value = array;
-  });
+useTask$(async () => {
+const size = 40;
+const array = [];
+array.push(0, 1);
+for (let i = array.length; i < size; i++) {
+array.push(array[i - 1] + array[i - 2]);
+await delay(100);
+}
+fibonacci.value = array;
+});
 
-  return <p>{fibonacci.value?.join(', ')}</p>;
+return <p>{fibonacci.value?.join(', ')}</p>;
 });
 
 const delay = (time: number) => new Promise((res) => setTimeout(res, time));
-```
+
+````
 </CodeSandbox>
 
-> In this example
+
+> 在这个例子中
 >
-> - The `useTask$()` computes the fibonacci number one entry per 100 ms. So 40 entries take 4 seconds to render.
->   - The `useTask$()` executes on the server as part of the SSR (the result may be cached in CDN.)
->   - Because the `useTask$()` blocks rendering, the rendered HTML page takes 4 seconds to render.
-> - Because this task has no `track()` it will never rerun, making it effectively an initialization code.
->   - Because this component only renders on the server, the `useTask$()` will never run on the browser. (code will never download to browser.)
+> - `useTask$()` 每100毫秒计算一次斐波那契数，因此40个条目需要4秒钟来渲染。
+>   - `useTask$()` 作为SSR（服务器端渲染）的一部分在服务器上执行（结果可能被缓存在CDN中。）
+>   - 由于 `useTask$()` 阻塞了渲染，渲染的HTML页面需要4秒钟来渲染。
+> - 由于这个任务没有 `track()`，它将永远不会重新运行，使其有效地成为初始化代码。
+>   - 由于这个组件只在服务器上渲染，`useTask$()` 永远不会被下载或在浏览器上运行。
 
-> Notice that `useTask$()` runs **BEFORE** the actual rendering and on the server. Therefore if you need to do DOM manipulation, use [`useVisibleTask$()`](#usevisibletask) instead, which runs on the browser after rendering.
+> 请注意，`useTask$()` 在实际渲染**之前**在服务器上运行。因此，如果你需要进行DOM操作，请改用 [`useVisibleTask$()`](#usevisibletask)，它在渲染后在浏览器上运行。
 
-Use `useTask$()` when you need to:
-- Run async tasks before rendering
-- Run code only once before the component is first rendered
-- Programmatically run side-effect code when state changes
+当你需要时使用 `useTask$()`：
+- 在渲染之前运行异步任务
+- 在组件首次渲染之前只运行一次代码
+- 当状态改变时以编程方式运行副作用代码
 
-> Note, if you're thinking about loading data (like using `fetch()`) inside of `useTask$`, consider using [`useResource$()`](/docs/components/state/#useresource) instead. This API is more efficient in terms of leveraging SSR streaming and parallel data fetching.
+> 注意，如果你在考虑在 `useTask$` 内部使用 `fetch()` 加载数据，考虑使用 [`useResource$()`](/docs/components/state/#useresource) 代替。这个API在利用SSR流和并行数据获取方面更有效率。
 
-### On mount
+### 在挂载时
 
-Qwik does not have a specific "on-mount" hook because useTask$() without track() effectively behaves like a mount hook.
+在Qwik中，没有像其他一些框架那样的特定“挂载”步骤。相反，组件直接在需要的地方启动，无论是在Web服务器上还是在浏览器中。
+这是没有内部 track 函数的，track 函数用于监控特定的数据片段。
 
-This is because `useTask$` runs always at least once when the component is first mounted.
+`useTask$` 在组件首次挂载时至少总是运行一次。
 
 ```tsx {5-8}
 import { component$, useTask$ } from '@builder.io/qwik';
@@ -160,15 +178,15 @@ export default component$(() => {
 
   return <div>Hello</div>;
 });
-```
+````
 
-One unique aspect of Qwik, is that components are mounted only ONCE across the server and client. This is a property of resumability. What it means, is that if `useTask$` runs during SSR it will not run again in the browser because Qwik does not hydrate.
+Qwik 的一个独特之处在于，组件在服务器和客户端之间只会被挂载**一次**。这是可恢复性的一个属性。这意味着，如果 `useTask$` 在服务器端渲染（SSR）期间执行，它不会在浏览器中再次运行，因为 Qwik 不执行 hydration。
 
 ### `track()`
 
-There are times when it is desirable to re-run a task when a component state changes. This is done by using the `track()` function. The `track()` function allows you to set up a dependency on a component state on the server (if initially rendered there) and then re-execute the task when the state changes _on the browser_ (the same task will never be executed twice on the server side).
+有时，当组件状态改变时，重新运行任务是可取的。这可以通过使用 `track()` 函数来完成。`track()` 函数允许你在服务器上最初渲染时，设置对组件状态的依赖，并且当状态在浏览器中改变时，重新执行任务。同一个任务在服务器上永远不会执行两次。
 
-> **Note**: If all you want to do is compute a new state from an existing state synchronously, you should use [`useComputed$()`](/docs/components/state/#usecomputed) instead.
+> **注意**：如果你只是想从现有状态同步计算新状态，你应该使用 [`useComputed$()`](/docs/components/state/#usecomputed) 代替。
 
 <CodeSandbox src="/src/routes/demo/tasks/track/index.tsx" style={{ height: '6em' }} >
 ```tsx
@@ -179,48 +197,48 @@ export default component$(() => {
   const text = useSignal('Initial text');
   const delayText = useSignal('');
 
-  useTask$(({ track }) => {
-    track(() => text.value);
-    const value = text.value;
-    const update = () => (delayText.value = value);
-    isServer
-      ? update() // don't delay on server render value as part of SSR
-      : delay(500).then(update); // Delay in browser
-  });
-
-  return (
-    <section>
-      <label>
-        Enter text: <input bind:value={text} />
-      </label>
-      <p>Delayed text: {delayText}</p>
-    </section>
-  );
+useTask$(({ track }) => {
+track(() => text.value);
+const value = text.value;
+const update = () => (delayText.value = value);
+isServer
+? update() // don't delay on server render value as part of SSR
+: delay(500).then(update); // Delay in browser
 });
 
+return (
+
+<section>
+  <label>
+    Enter text: <input bind:value={text} />
+  </label>
+  <p>Delayed text: {delayText}</p>
+</section>
+); });
+
 const delay = (time: number) => new Promise((res) => setTimeout(res, time));
-```
+
+````
 </CodeSandbox>
 
-> On the server:
+> 在服务器上：
 >
-> - The `useTask$()` runs on the server and the `track()` function sets up a subscription on `text` signal.
-> - The page is rendered.
+> - `useTask$()` 在服务器上运行，`track()` 函数在 `text` 信号上设置订阅。
+> - 页面被渲染。
 >
-> On the browser:
-> - The `useTask$()` does not have to run (or be downloaded) eagerly because Qwik knows that the task is subscribed to the `text` signal from the server execution.
-> - When the user types in the input box, the `text` signal changes. Qwik knows that the `useTask$()` is subscribed to the `text` signal and it is at this time that the `useTask$()` closure is brought into the JavaScript VM to be executed.
+> 在浏览器上：
+> - `useTask$()` 不需要急切地运行或下载，因为 Qwik 知道任务已经订阅了服务器执行中的 `text` 信号。
+> - 当用户在输入框中输入时，`text` 信号改变。Qwik 知道 `useTask$()` 订阅了 `text` 信号，此时 `useTask$()` 的闭包被带入 JavaScript VM 执行。
 >
-> The `useTask$()`
+> `useTask$()`
 >
-> - The `useTask$()` blocks rendering until it completes. If you don't want to block rendering (as in this case) make sure that the task is resolved, and run the delay work on a separate unconnected promise. (In our case we don't await `delay()`. Doing so would block rendering.)
+> - `useTask$()` 阻塞渲染直到它完成。如果你不想阻塞渲染，请确保任务已解决，并在一个单独的未连接的 promise 上运行延迟工作。在这个例子中，我们不等待 `delay()`，因为它会阻塞渲染。
 
-> Sometimes it is required to only run code either in the server or in the client. This can be achieved by using the `isServer` and `isBrowser` booleans exported from `@builder.io/qwik/build` as shown above.
+> 有时只需要在服务器或客户端上运行代码。这可以通过使用 `@builder.io/qwik/build` 导出的 `isServer` 和 `isBrowser` 布尔值来实现，如上所示。
 
+### `track()` 作为一个函数
 
-### `track()` as a function
-
-In the above example `track()` was used to track a specific signal. However, `track()` can also be used as a function to track multiple signals at once.
+在上面的例子中，`track()` 被用来跟踪一个特定的信号。然而，`track()` 也可以作为一个函数来同时跟踪多个信号。
 
 <CodeSandbox src="/src/routes/demo/tasks/track-fn/index.tsx" style={{ height: '6em' }} >
 ```tsx
@@ -258,20 +276,21 @@ export default component$(() => {
 function delay(time: number) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
-```
+````
+
 </CodeSandbox>
 
-> In this example the `track()` takes a function that not only reads the signal but also transforms its value to uppercase/lowercase. The `track()` is doing subscription on multiple signals and computes their value.
+> 在这个例子中，`track()` 接受一个函数，不仅读取信号，还将其值转换为大写/小写。`track()` 订阅多个信号并计算它们的值。
 
 ### `cleanup()`
 
-Sometimes when running a task cleanup work needs to be performed. When a new task is triggered, the previous task's `cleanup()` callback is invoked. (Also when the component is removed from the DOM then the `cleanup()` callback is also invoked.)
+有时运行任务时需要进行清理工作。当触发新任务时，前一个任务的 `cleanup()` 回调被调用。当组件从 DOM 中移除时，也会调用这个回调。
 
-> - The `cleanup()` function is not invoked when the task is completed. It is only invoked when a new task is triggered or when the component is removed.
-> - The `cleanup()` function is invoked on the server after the applications are serialized into HTML.
-> - The `cleanup()` function is not transferable from server to browser. (Cleanup is meant to release resources on the VM where it is running. It is not meant to be transferred to the browser.)
+> - 当任务完成时，不会调用 `cleanup()` 函数。只有在触发新任务或组件被移除时才会调用。
+> - 在应用程序被序列化成 HTML 后，服务器上会调用 `cleanup()` 函数。
+> - `cleanup()` 函数不能从服务器传输到浏览器。清理旨在释放其运行的 VM 上的资源。它不是为了传输到浏览器而设计的。
 
-This example shows how to implement a debounce feature using the `cleanup()` function.
+这个例子展示了如何使用 `cleanup()` 函数实现防抖功能。
 
 <CodeSandbox src="/src/routes/demo/tasks/cleanup/index.tsx" style={{ height: '6em' }} >
 ```tsx
@@ -281,47 +300,50 @@ export default component$(() => {
   const text = useSignal('');
   const debounceText = useSignal('');
 
-  useTask$(({ track, cleanup }) => {
-    const value = track(() => text.value);
-    const id = setTimeout(() => (debounceText.value = value), 500);
-    cleanup(() => clearTimeout(id));
-  });
-
-  return (
-    <section>
-      <label>
-        Enter text: <input bind:value={text} />
-      </label>
-      <p>Debounced text: {debounceText}</p>
-    </section>
-  );
+useTask$(({ track, cleanup }) => {
+const value = track(() => text.value);
+const id = setTimeout(() => (debounceText.value = value), 500);
+cleanup(() => clearTimeout(id));
 });
-```
+
+return (
+
+<section>
+  <label>
+    Enter text: <input bind:value={text} />
+  </label>
+  <p>Debounced text: {debounceText}</p>
+</section>
+); });
+
+````
 </CodeSandbox>
 
 ## `useVisibleTask$()`
 
-Sometimes a task needs to run only on the browser and after rendering, in that case, you should use `useVisibleTask$()`. The `useVisibleTask$()` is similar to `useTask$()` but it only runs on the browser and after initial rendering. `useVisibleTask$()` registers a hook to be executed when the component becomes visible in the viewport, it will run at least once in the browser, and it can be reactive and re-execute when some **tracked** [state](/docs/(qwik)/components/state/index.mdx) changes.
+## `useVisibleTask$()`
 
-`useVisibleTask$()` has these properties:
+有时任务只需要在浏览器上并且在渲染后运行，在这种情况下，你应该使用 `useVisibleTask$()`。`useVisibleTask$()` 类似于 `useTask$()`，但它只在浏览器上并且在初始渲染后运行。`useVisibleTask$()` 注册一个钩子，当组件在视口中变得可见时执行，它至少会在浏览器上运行一次，并且可以是反应性的，当一些**跟踪的**状态改变时重新执行。
 
-- runs on the client only.
-- eagerly executes code on the client when the component becomes visible.
-- runs after initial rendering.
-- does not block rendering.
+`useVisibleTask$()` 有以下属性：
 
-> **Caution**: The `useVisibleTask$()` should be used as a last resort, because it eagerly executes code on the client. Qwik through [resumability]() goes out of its way to delay the execution of code on the client, and `useVisibleTask$()` is an escape hatch that should be used with caution. See [Best Practices](/docs/(qwikcity)/guides/best-practices/index.mdx#dont-register-events-eagerly-with-usevisibletask) for more details.
-> If you need to run a task on a client consider `useTask$()` with a server guard.
+- 仅在客户端运行。
+- 当组件变得可见时，急切地在客户端执行代码。
+- 在初始渲染后运行。
+- 不阻塞渲染。
+
+> **注意**：`useVisibleTask$()` 应该作为最后的手段使用，因为它急切地在客户端执行代码。Qwik 通过 [可恢复性]() 努力延迟在客户端执行代码，`useVisibleTask$()` 是一个应谨慎使用的逃生舱口。更多详情见 [最佳实践](/docs/(qwikcity)/guides/best-practices/index.mdx#dont-register-events-eagerly-with-usevisibletask)。
+> 如果你需要在客户端上运行任务，请考虑使用服务器保护的 `useTask$()`。
 >
 > <CodeSandbox src="/src/routes/demo/tasks/track-server-guard/index.tsx" style={{ height: '6em' }}>
 > ```tsx
 > import { component$, useSignal, useTask$ } from '@builder.io/qwik';
 > import { isServer } from '@builder.io/qwik/build';
-> 
+>
 > export default component$(() => {
 >   const text = useSignal('Initial text');
 >   const isBold = useSignal(false);
-> 
+>
 >   useTask$(({ track }) => {
 >     track(() => text.value);
 >     if (isServer) {
@@ -330,7 +352,7 @@ Sometimes a task needs to run only on the browser and after rendering, in that c
 >     isBold.value = true;
 >     delay(1000).then(() => (isBold.value = false));
 >   });
-> 
+>
 >   return (
 >     <section>
 >       <label>
@@ -342,16 +364,16 @@ Sometimes a task needs to run only on the browser and after rendering, in that c
 >     </section>
 >   );
 > });
-> 
+>
 > const delay = (time: number) => new Promise((res) => setTimeout(res, time));
 > ```
 > </CodeSandbox>
 >
-> In the above example the `useTask$()` is guarded by `isServer`. The `track()` is before the guard which
-> allows the server to set up the subscription but does not execute any code on the server. The client
-> then executes the `useTask$()` once the `text` signal changes.
+> 在上面的例子中，`useTask$()` 由 `isServer` 保护。`track()` 函数放在保护之前，这
+> 允许服务器设置订阅而不在服务器上执行任何代码。然后客户端
+> 在 `text` 信号改变时执行 `useTask$()`。
 
-This example shows how to use `useVisibleTask$()` to initialize a clock on the browser only when the clock component becomes visible.
+这个例子展示了如何使用 `useVisibleTask$()` 仅在时钟组件变得可见时，在浏览器上初始化时钟。
 
 <CodeSandbox src="/src/routes/demo/tasks/use-visible-task/index.tsx" style={{ height: '6em' }} >
 ```tsx
@@ -387,14 +409,18 @@ const Clock = component$<{ isRunning: Signal<boolean> }>(({ isRunning }) => {
   });
   return <div>{time}</div>;
 });
-```
+````
+
 </CodeSandbox>
 
-> Notice how the clock's `useVisibleTask$()` does not run until the `<Clock>` component became visible. The default behavior of `useVisibleTask$()` is to run the task when the component becomes visible. This behavior is implemented through [intersection observers](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API).
+> 注意时钟的 `useVisibleTask$()` 直到 `<Clock>` 组件变得可见时才运行。`useVisibleTask$()` 的默认行为是在组件变得可见时运行任务。这个行为是通过 [交叉观察者](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) 实现的。
 
-### Option `eagerness`
+> **注意**：
+> [intersection observers](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) 不会在不被认为是可见的组件上运行，如 `<audio />`。
 
-At times it is desirable to run `useVisibleTask$()` eagerly as soon as the application is loaded in the browser. In that case the `useVisibleTask$()` needs to run in eager mode. This is done by using the `{ strategy: 'document-ready' }`.
+### 选项 `eagerness`
+
+有时希望 `useVisibleTask$()` 在浏览器加载应用程序后立即急切地运行。在这种情况下，需要以急切模式运行 `useVisibleTask$()`。这是通过使用 `{ strategy: 'document-ready' }` 来完成的。
 
 <CodeSandbox src="/src/routes/demo/tasks/use-visible-task-eager/index.tsx" style={{ height: '6em' }}>
 ```tsx
@@ -408,43 +434,44 @@ import {
 export default component$(() => {
   const isClockRunning = useSignal(false);
 
-  return (
-    <>
-      <div style="position: sticky; top:0">
-        Scroll to see clock. (Currently clock is
-        {isClockRunning.value ? ' running' : ' not running'}.)
-      </div>
-      <div style="height: 200vh" />
-      <Clock isRunning={isClockRunning} />
-    </>
-  );
-});
+return (
+
+<>
+  <div style="position: sticky; top:0">
+    Scroll to see clock. (Currently clock is
+    {isClockRunning.value ? ' running' : ' not running'}.)
+  </div>
+  <div style="height: 200vh" />
+  <Clock isRunning={isClockRunning} />
+</>
+); });
 
 const Clock = component$<{ isRunning: Signal<boolean> }>(({ isRunning }) => {
   const time = useSignal('paused');
   useVisibleTask$(
-    ({ cleanup }) => {
-      isRunning.value = true;
-      const update = () => (time.value = new Date().toLocaleTimeString());
-      const id = setInterval(update, 1000);
-      cleanup(() => clearInterval(id));
-    },
-    { strategy: 'document-ready' }
-  );
-  return <div>{time}</div>;
+({ cleanup }) => {
+isRunning.value = true;
+const update = () => (time.value = new Date().toLocaleTimeString());
+const id = setInterval(update, 1000);
+cleanup(() => clearInterval(id));
+},
+{ strategy: 'document-ready' }
+);
+return <div>{time}</div>;
 });
-```
+
+````
 </CodeSandbox>
 
-> In this example the clock starts running immediately on the browser regardless of whether it is visible or not.
+> 在这个例子中，无论时钟是否可见，时钟都会立即在浏览器上开始运行。
 
-### Advanced: Time of running, and managing visibility with CSS
+### 高级：运行时间和使用 CSS 管理可见性
 
-Internally, `useVisibleTask$` is implemented by adding an attribute on the first rendered component (either the returned component or in case of a Fragment, its first child).  With the standard `eagerness`, this means that if the first rendered component is hidden, the task will not run.
+内部地，`useVisibleTask$` 是通过向第一个渲染的组件（返回的组件或在 Fragment 的情况下，其第一个子组件）添加属性来实现的。使用标准的 `eagerness`，这意味着如果第一个渲染的组件被隐藏，任务将不会运行。
 
-This means that you can use CSS to influence when the task runs. For example, if the task should only run on a mobile device, you can return a `<div class="md:invisible" />` (in the case of Tailwind CSS).
+这意味着你可以使用 CSS 影响任务的运行时间。例如，如果任务只应在移动设备上运行，你可以返回一个 `<div class="md:invisible" />`（在 Tailwind CSS 的情况下）。
 
-This also means you cannot unhide a component using a visible task; for that you can return a Fragment:
+这也意味着你不能使用可见任务使组件变为可见；对此，你可以返回一个 Fragment：
 
 ```tsx
 return (<>
@@ -453,12 +480,12 @@ return (<>
 </>)
 ```
 
-## Use Hook Rules
+## 使用 Hook 规则
 
-When using lifecycle hooks, you must adhere to the following rules:
+使用生命周期钩子时，必须遵守以下规则：
 
-- They can only be called at the root level of `component$` (not inside conditional blocks)
-- They can only be called at the root of another `use*` method, allowing for composition.
+- 它们只能在 `component$` 的根级别调用（不在条件块内）
+- 它们只能在另一个 `use*` 方法的根部调用，允许进行组合。
 
 ```tsx
 useHook(); // <-- ❌ does not work
@@ -482,3 +509,4 @@ function useCustomHook() {
   }
 }
 ```
+````

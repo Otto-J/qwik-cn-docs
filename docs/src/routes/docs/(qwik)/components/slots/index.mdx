@@ -12,20 +12,24 @@ contributors:
   - gabrielgrant
   - mhevery
   - jakovljevic-mladen
+  - mrhoodz
+  - Jemsco
+updated_at: '2023-10-09T12:58:31Z'
+created_at: '2023-04-02T20:45:37Z'
 ---
 import CodeSandbox from '../../../../../components/code-sandbox/index.tsx';
 
 # Slots
 
-Slots allow a component to treat the JSX children of the component as a form of input and project these children into the component's DOM tree.
+Slots 允许组件将组件的 JSX 子元素视为一种输入形式，并将这些子元素投影到组件的 DOM 树中。
 
-This concept has different names in different frameworks:
+这个概念在不同的框架中有着不同的名称：
 
-- In Angular is called Content Projection
-- In React, it's the `children` of the props
-- In Web components it's [`<slot>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot) as well
+- 在 Angular 中被称为内容投影
+- 在 React 中，它是 props 的 `children`
+- 在 Web 组件中，它是 [`<slot>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot)
 
-The main API to achieve this is the `<Slot>` component, exported in `@builder.io/qwik`:
+实现此目的的主要 API 是 `<Slot>` 组件，它在 `@builder.io/qwik` 中导出：
 <CodeSandbox src="/src/routes/demo/slot/basic/index.tsx" style={{ height: '6em' }}>
 ```tsx {6} /Slot/
 import { Slot, component$ } from '@builder.io/qwik';
@@ -48,16 +52,17 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-The `<Slot>` component is a placeholder for the children of the component. The `<Slot>` component will be replaced by the children of the component during rendering.
+`<Slot>` 组件是组件子元素的占位符。在渲染过程中，`<Slot>` 组件将被组件的子元素替换。
 
-> **Note**: Slots in Qwik are declarative, allowing Qwik to render parents and children in isolation. Because slots are declarative, the children can NOT be read, or transformed by the components.
+> **注意**: Qwik 中的插槽是声明式的，允许 Qwik 独立渲染父元素和子元素。由于插槽是声明式的，因此子元素不能被组件读取或转换。
 >
-> Why? Because Qwik needs to be able to render parent/children components independently from each other. With an imperative (`children`) approach, the child component can modify the `children` in countless ways. If a child component relied on `children`, it would be forced to re-render whenever a parent component would re-render to reapply the imperative transformation to the `children`. The extra rendering goes explicitly against the goals of Qwik components rendering in isolation.
+> Qwik 中的插槽充当内容的指定占位符，允许组件保持独立并避免不必要的重新渲染。这种设置使事情保持灵活和易于管理，不像直接子元素方法，其中父元素更改会导致频繁且复杂的子元素更新。插槽有助于维护流畅且高效的组件结构。
+>
+> 在一些需要根据子元素进行操作的特殊情况下，并且理解了父元素和子元素一起延迟加载的缺点，那么内联组件是另一种选择。
 
+### 命名插槽
 
-### Named slots
-
-The `Slot` component can be used multiple times in the same component, as long as it has a different `name` property:
+`<Slot>` 组件可以在同一个组件中使用多次，只要它具有不同的 `name` 属性：
 
 <CodeSandbox src="/src/routes/demo/slot/named/index.tsx" style={{ height: '10em' }}>
 ```tsx {9} /start/#a /title/#c /footer/#a /end/#c /q:slot/ /Slot/
@@ -96,16 +101,16 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-Now, when consuming the `<Tab>` component, we can pass children and specify in which slot they should be placed, using the `q:slot` attribute:
+现在，在使用 `<Tab>` 组件时，我们可以传递子元素并使用 `q:slot` 属性指定它们应该放置在哪个插槽中：
 
-Notice that:
+请注意：
 
-- If `q:slot` is not specified or it's an empty string, the content will be projected into the default `<Slot>`, i.e. the `<Slot>` without a `name` property.
-- Multiple `q:slot="footer"` attributes coalesce items together in the content projection.
+- 如果未指定 `q:slot` 或它是一个空字符串，则内容将被投影到默认的 `<Slot>` 中，即没有 `name` 属性的 `<Slot>`。
+- 多个 `q:slot="footer"` 属性将项目合并到内容投影中。
 
-### Unprojected content
+### 未投影内容
 
-Qwik keeps all content around, even if not projected. This is because the content could be projected in the future. When projected content does not match any `<Slot>` component, the content is moved into an inert `<q:template>` element.
+Qwik 保留所有内容，即使没有投影。这是因为内容可能在将来被投影。当投影的内容与任何 `<Slot>` 组件不匹配时，内容将被移动到一个惰性的 `<q:template>` 元素中。
 
 
 <CodeSandbox src="/src/routes/demo/slot/unprojected/index.tsx" style={{ height: '7em' }}>
@@ -134,7 +139,7 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-Results in:
+结果是：
 
 ```html
 <div>
@@ -145,11 +150,11 @@ Results in:
 </q:template>
 ```
 
-Notice that the un-projected content is moved into an inert `<q:template>`. This is done just in case the `Accordion` component re-renders and inserts the `<Slot>`. In that case, we avoid having to re-render the parent component just to generate the projected content. By persisting the un-projected content when the parent is initially rendered, the rendering of the two components can stay independent.
+请注意，未投影的内容被移动到一个惰性的 `<q:template>` 中。这样做是为了在 `Accordion` 组件重新渲染到 `<Slot>` 中时避免重新渲染父组件。在这种情况下，我们避免了必须重新渲染父组件才能生成投影内容。通过在父组件最初渲染时保留未投影的内容，两个组件的渲染可以保持独立。
 
-### Invalid projection
+### 无效投影
 
-The `q:slot` attribute must be a direct child of a component.
+`q:slot` 属性必须是组件的直接子元素。
 
 ```tsx
 import { component$ } from '@builder.io/qwik';
@@ -169,9 +174,9 @@ export const MyApp = component$(() => {
 ```
 
 
-## Advanced Example
+## 高级示例
 
-An example of a collapsible component that conditionally projects editable content.
+一个可折叠组件的示例，它有条件地投影可编辑内容。
 
 <CodeSandbox src="/src/routes/demo/slot/advanced/index.tsx" style={{ height: '15em' }}>
 ```tsx
@@ -213,33 +218,32 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-The `Collapsible` component will always display the title, but the body of the text will only display if `store.isOpen` is `true`.
+`Collapsible` 组件将始终显示标题，但文本主体只有在 `store.isOpen` 为 `true` 时才会显示。
 
-Additionally, the `title` and `description` of the projected content are editable.
+此外，投影内容的 `title` 和 `description` 是可编辑的。
 
-- The parent component needs to be able to change content without forcing the `Collapsible` component to re-render.
-- The child component needs to change what is projected without having the parent component re-render. In our case, `Collapsible` should be able to show/hide the default `q:slot` without downloading and re-rendering the parent component.
+- 父组件需要能够更改内容，而不会强制 `Collapsible` 组件重新渲染。
+- 子组件需要更改投影的内容，而不会导致父组件重新渲染。在我们的例子中，`Collapsible` 应该能够显示/隐藏默认的 `q:slot`，而无需下载和重新渲染父组件。
 
-In order for the two components to have an independent lifecycle, the projection needs to be declarative. In this way, either the parent or child can change what is projected or how it is projected without forcing the re-rendering of the other.
+为了使这两个组件拥有独立的生命周期，投影需要是声明式的。这样，父组件或子组件都可以更改投影的内容或投影方式，而不会强制另一个组件重新渲染。
 
+### 投影 vs `children`
 
-### Projection vs `children`
+所有框架都需要一种方法让组件有条件地包装其复杂内容。这个问题可以通过多种方式解决，但主要有两种方法：
 
-All frameworks need a way for a component to wrap its complex content conditionally. This problem is solved in many different ways, but there are two predominant approaches:
+- **投影**: 投影是一种声明式的方式，用于描述内容如何从父模板传递到需要投影的位置。
+- **`children`**: `children` 指的是将内容视为另一种输入的 vDOM 方法。
 
-- **projection**: Projection is a declarative way of describing how the content gets from the parent template to where it needs to be projected.
-- **`children`**: `children` refers to vDOM approaches that treat content just like another input.
+这两种方法可以最好地描述为声明式与命令式。它们都有各自的优缺点。
 
-The two approaches can best be described as declarative vs imperative. They both come with their set of advantages and disadvantages.
+Qwik 使用声明式投影方法，因为它需要能够独立渲染父组件和子组件。在命令式方法中，子组件可以修改 `children` 的方法不计其数。如果子组件依赖于其 `children`，则每次父组件重新渲染时，它都将被迫重新渲染以重新应用更改。这种额外的渲染与 Qwik 将组件独立渲染的目标相矛盾。
 
-Qwik uses the declarative projection approach. The reason for this is that Qwik needs to be able to render parent/children components independently from each other. With an imperative (`children`) approach, the child component can modify the `children` in countless ways. If a child component relied on `children`, it would be forced to re-render whenever a parent component would re-render to reapply the imperative transformation to the `children`. The extra rendering goes explicitly against the goals of Qwik components rendering in isolation.
+> **注意**: 确保在 `component$()` 函数中使用 `<Slot />` 以确保其正常工作。`<Slot />` 不能在 [内联组件](/docs/components/overview/#inline-components) 中使用，内联组件类似于普通函数 `export const MyInlineComp = () => `.
 
-> **Note**: Due to Slots being declarative in Qwik, projection with `<Slot>` will only work if the parent component is wrapped in `component$()`. If parent component is not wrapped in `component$()`, it is considered an [inline component](/docs/components/overview/#inline-components) and `<Slot>` will not work.
+### 高级：插槽和上下文
 
-### Advanced: Slots and Context
+插槽组件可以访问其父组件的 [上下文](../context/)，即使它们没有被投影。此外，如果父组件在另一个组件中投影 `<Slot />`，则插槽组件也可以访问该更深层组件的上下文。
 
-Slotted components have access to the [Context](../context/) of their parent component, even while they aren't being projected. Furthermore, if the parent is projecting the `<Slot />` inside another component, the slotted components will also have access to the Contexts of that deeper component.
+但是，如果一个组件还没有被投影，因为 `<Slot />` 是有条件地渲染的，那么不可能知道更深层的上下文，然后插槽组件将只看到直接父组件的上下文。
 
-However, if a component hasn't been projected yet because the `<Slot />` are rendered conditionally, it's impossible to know about the deeper Context, and then the slotted component will only see the Context of the immediate parent.
-
-As such, it's safest to avoid these situations; if you are providing Contexts, don't conditionally render your `<Slot />`.
+因此，最安全的方法是避免这些情况；如果你正在提供上下文，不要有条件地渲染你的 `<Slot />`。

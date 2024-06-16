@@ -13,7 +13,15 @@ contributors:
   - un33k
   - egmaleta
   - mugan86
+  - octoper
+  - mrhoodz
+  - VinuB-Dev
+  - anartzdev
+  - adamdbradley
   - hamatoyogi
+  - maiieul
+updated_at: '2024-04-02T18:38:38Z'
+created_at: '2023-03-30T17:37:51Z'
 ---
 
 # Best Practices
@@ -26,12 +34,15 @@ Qwik optimizer can better optimize the reactivity of the application if the oper
 // Don't do this!
 export default component$(() => {
   const signal = useSignal(0);
-  const isBiggerThanZero = signal.value > 0 ? 'Bigger than zero' : 'Smaller than zero';
+  const isBiggerThanZero =
+    signal.value > 0 ? 'Bigger than zero' : 'Smaller than zero';
   return (
     <div>
       <button onClick$={() => signal.value++}>+</button>
       <button onClick$={() => signal.value--}>-</button>
-      <div>{isBiggerThanZero} - Current value: { signal.value }</div>
+      <div>
+        {isBiggerThanZero} - Current value: {signal.value}
+      </div>
     </div>
   );
 });
@@ -45,21 +56,72 @@ export default component$(() => {
   return (
     <div>
       <button onClick$={() => signal.value++}>+</button>
-        <button onClick$={() => signal.value--}>-</button>
-        <div>
-          {signal.value > 0 ? 'Bigger than zero' : 'Smaller than zero'} - Current
-          value: {signal.value}
-        </div>
+      <button onClick$={() => signal.value--}>-</button>
+      <div>
+        {signal.value > 0 ? 'Bigger than zero' : 'Smaller than zero'} - Current
+        value: {signal.value}
+      </div>
     </div>
   );
 });
 ```
 
-## Avoid registering DOM events in `useVisibleTask$()`
+## Moving signal reads to `useTask$` or `useComputed$`
+
+This is similar to the tip above.
+
+Every time Qwik "reads" a signal/store value
+the function that the "read" is happening at, will re-run again
+on every change to that signal.
+
+That’s why it’s better to "read" values (and track them)
+inside of `useTask$` or `useComputed$` functions instead of inside component functions,
+whenever possible.
+
+Because otherwise, your component function will re-run
+on each change.
+
+```tsx title="Suboptimal implementation"
+// Don't do this!
+export default component$(() => {
+  const count = useSignal(1);
+  const doubleCount = count.value * 2;
+  return <div>{doubleCount}</div>;
+});
+```
+
+The above implementation will cause the whole template to be re-rendered when the signal changes.
+
+Below, only the `useComputed$` function will re-run on any `count.value` change:
+
+```tsx title="Optimal Implementation"
+export default component$(() => {
+  const count = useSignal(1);
+  const dobuleCount = useComputed$(() => count.value * 2);
+  return <div>{doubleCount.value}</div>;
+});
+```
+
+## Use `useVisibleTask$()` as a last resort
+
+Although convenient, `useVisibleTask$()` runs code eagerly and blocks the main thread, preventing user interaction until the task is finished. You can think of it as an escape hatch.
+
+When in doubt, instead of "useVisibleTask$()" use:
+
+- `useTask$()` -> perform code execution in SSR mode.
+- `useOn()` -> listen to events on the root element of `the current component`.
+- `useOnWindow()` -> listen to events on the `window` object.
+- `useOnDocument()` -> listen to events on the `document` object.
+
+Sometimes though, it is the only way to achieve the result.
+
+In that case, you can add `// eslint-disable-next-line qwik/no-use-visible-task` to the line before "useVisibleTask$" to remove the warning.
+
+### Register DOM events with `useOn()`, `useOnWindow()`, or `useOnDocument()`
 
 Qwik allows to register event listeners in a declarative way, using the `useOn()` or using JSX.
 
-When using `useVisibleTask` to programmatically register events, we are downloading and executing JavaScript eagerly, even if the event is not triggered.
+When using `useVisibleTask$()` to programmatically register events, we are downloading and executing JavaScript eagerly, even if the event is not triggered.
 
 ```tsx title="Suboptimal implementation"
 // Don't do this!
@@ -87,15 +149,9 @@ useOnDocument(
     const mouseEvent = event as MouseEvent;
     console.log(mouseEvent.x, mouseEvent.y);
     // No manual clean up required!
-  })
+  }),
 );
 ```
-
-When in doubt, instead of `useVisibleTask$()` use:
-- `useOn()`: listen to events on the root element of `the current component`.
-- `useOnWindow()`: listen to events on the `window` object.
-- `useOnDocument()`: listen to events on the `document` object.
-
 
 ## Avoid accessing the location from the `window` object
 
@@ -109,23 +165,18 @@ useVisibleTask$(()=> {
     }
 })
 // or
-if (typeof window !== "undefined") {
-    const queryParams = new URLSearchParams(window.location.search);
-    const query: Record<string, string> = {};
-    queryParams.forEach((value, key) => {
-        query[key] = value;
-    })
-    doTheThing(query);
-}
+useTask$(() => {
+  if (isBrowser) {
+        if (window.location.href).includes('foo') {
+        //... do the thing
+    }
+  }
+})
 ```
 
 Many actions related to location information can be executed during the initial server-side render, resulting in pure HTML without any JavaScript overhead.
 
-By forcing this logic to run on the client side, it introduces increased upfront JavaScript and leads to eager loading.
-
-Using the `if typeof window !== "undefined"` pattern may cause the code to be skipped. On the server, the code block will be skipped since the window is always undefined.
-
-While developers may be accustomed to code running twice, Qwik eliminates this necessity by providing a more efficient approach.
+Forcing this logic to run on the client side introduces increased upfront JavaScript and leads to eager loading.
 
 ```tsx title="Optimal Implementation"
 // Do this!
@@ -134,8 +185,6 @@ const location = useLocation();
 if (location.url.href.includes('foo')) {
   // Do the thing
 }
-
-doTheThing(location.url.searchParams);
 ```
 
 ### Exception
@@ -146,5 +195,4 @@ However, exercise caution! If the required information (such as query parameters
 
 This approach helps to prevent eager loading of JavaScript and improves performance.
 
-> See: [useLocation() Docs](/docs/(qwikcity)/api/index.mdx#uselocation)
-
+> See: [useLocation() Docs](</docs/(qwikcity)/api/index.mdx#uselocation>)

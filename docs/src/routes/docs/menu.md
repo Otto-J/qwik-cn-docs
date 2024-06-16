@@ -1,13 +1,13 @@
-# Qwik Guide
+# Qwik 指引文档
 
-## Introduction
+## 介绍
 
 - [Overview](</docs/(qwik)/index.mdx>)
 - [Getting Started](</docs/(qwik)/getting-started/index.mdx>)
 - [Project structure](</docs/(qwikcity)/project-structure/index.mdx>)
 - [FAQ](</docs/(qwik)/faq/index.mdx>)
 
-## Component
+## 组件
 
 - [Overview](</docs/(qwik)/components/overview/index.mdx>)
 - [State](</docs/(qwik)/components/state/index.mdx>)
@@ -38,10 +38,21 @@
 ## Cookbook
 
 - [Overview](/docs/cookbook/index.mdx)
-- [Portal](/docs/cookbook/portal/index.mdx)
+- [Algolia Search](/docs/cookbook/algolia-search/index.mdx)
+- [Combine Handlers](/docs/cookbook/combine-request-handlers/index.mdx)
+- [Debouncer](/docs/cookbook/debouncer/index.mdx)
+- [Fonts](/docs/cookbook/fonts/index.mdx)
+- [Glob Import](/docs/cookbook/glob-import/index.mdx)
 - [Media Controller](/docs/cookbook/mediaController/index.mdx)
+- [NavLink](/docs/cookbook/nav-link/index.mdx)
+- [Node Docker deploy](/docs/cookbook/node-docker-deploy/index.mdx)
+- [Portals](/docs/cookbook/portals/index.mdx)
+- [Re-exporting loaders](/docs/cookbook/re-exporting-loaders/index.mdx)
+- [Streaming loaders](/docs/cookbook/streaming-deferred-loaders/index.mdx)
+- [Sync events w state](/docs/cookbook/sync-events/index.mdx)
+- [Theme Managment](/docs/cookbook/theme-management/index.mdx)
 
-## Integrations
+## 集成
 
 - [Overview](integrations/index.mdx)
 - [Astro](integrations/astro/index.mdx)
@@ -49,12 +60,14 @@
 - [Bootstrap](integrations/bootstrap/index.mdx)
 - [Builder.io](integrations/builderio/index.mdx)
 - [Cypress](integrations/cypress/index.mdx)
+- [Drizzle](integrations/drizzle/index.mdx)
+- [i18n](integrations/i18n/index.mdx)
 - [Icons](integrations/icons/index.mdx)
 - [Image Optimization](integrations/image-optimization/index.mdx)
-- [i18n](integrations/i18n/index.mdx)
 - [Leaflet Map](integrations/leaflet-map/index.mdx)
 - [Modular Forms](integrations/modular-forms/index.mdx)
 - [Nx Monorepos](integrations/nx/index.mdx)
+- [OG Image](integrations/og-img/index.mdx)
 - [Orama](integrations/orama/index.mdx)
 - [Panda CSS](integrations/panda-css/index.mdx)
 - [Partytown](integrations/partytown/index.mdx)
@@ -70,7 +83,7 @@
 - [Turso](integrations/turso/index.mdx)
 - [Vitest](integrations/vitest/index.mdx)
 
-## Deployments
+## 部署
 
 - [Overview](deployments/index.mdx)
 - [Azure SWA](deployments/azure-swa/index.mdx)
@@ -85,7 +98,7 @@
 - [Vercel Edge](deployments/vercel-edge/index.mdx)
 - [Static Site](deployments/static/index.mdx)
 
-## Guides
+## 指导
 
 - [Qwik in a nutshell](</docs/(qwikcity)/guides/qwik-nutshell/index.mdx>)
 - [Markdown & MDX](</docs/(qwikcity)/guides/mdx/index.mdx>)
@@ -101,7 +114,7 @@
 - [Progressive](</docs/(qwik)/concepts/progressive/index.mdx>)
 - [Reactivity](</docs/(qwik)/concepts/reactivity/index.mdx>)
 
-## Advanced
+## 高阶
 
 - [The $ dollar sign](</docs/(qwik)/advanced/dollar/index.mdx>)
 - [Containers](</docs/(qwik)/advanced/containers/index.mdx>)
@@ -109,10 +122,11 @@
 - [Library mode](</docs/(qwik)/advanced/library/index.mdx>)
 - [Qwikloader](</docs/(qwik)/advanced/qwikloader/index.mdx>)
 - [Optimizer](</docs/(qwik)/advanced/optimizer/index.mdx>)
-- [Prefetching](</docs/(qwik)/advanced/prefetching/index.mdx>)
+- [Modules Prefetching](</docs/(qwik)/advanced/modules-prefetching/index.mdx>)
 - [Build Directory](</docs/(qwik)/advanced/custom-build-dir/index.mdx>)
 - [Vite](</docs/(qwik)/advanced/vite/index.mdx>)
 - [Advanced Routing](</docs/(qwikcity)/advanced/routing/index.mdx>)
+- [Qwik Plugins](</docs/(qwikcity)/advanced/plugins/index.mdx>)
 - [Request Handling](</docs/(qwikcity)/advanced/request-handling/index.mdx>)
 - [Speculative Module Fetching](</docs/(qwikcity)/advanced/speculative-module-fetching/index.mdx>)
 - [Menus](</docs/(qwikcity)/advanced/menu/index.mdx>)
@@ -122,22 +136,22 @@
 - [Content Security Policy](</docs/(qwikcity)/advanced/content-security-policy/index.mdx>)
 - [Complex Forms](</docs/(qwikcity)/advanced/complex-forms/index.mdx>)
 
-## Reference
+## 引用
 
 - [API Reference](/api/)
 - [Deprecated Features](</docs/(qwik)/deprecated-features/index.mdx>)
 
-## Qwik Labs 🧪
+## Qwik 实验室 🧪
 
 - [Overview](/docs/labs/index.mdx)
 - [Insights](/docs/labs/insights/index.mdx)
 - [Typed Routes](/docs/labs/typed-routes/index.mdx)
 - [Devtools](/docs/labs/devtools/index.mdx)
 
-## Community
+## 社区
 
-- [GitHub](https://github.com/BuilderIO/qwik)
+- [GitHub](https://github.com/QwikDev/qwik)
 - [@QwikDev](https://twitter.com/QwikDev)
-- [Discord](https://qwik.builder.io/chat)
+- [Discord](https://qwik.dev/chat)
 - [Community Projects](/community/projects/index.mdx)
 - [Values](/community/values/index.mdx)

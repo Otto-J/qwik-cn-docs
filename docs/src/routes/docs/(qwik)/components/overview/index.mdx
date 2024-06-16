@@ -21,23 +21,34 @@ contributors:
   - AnthonyPAlicea
   - khalilou88
   - n8sabes
+  - fabian-hiller
+  - gioboa
+  - mrhoodz
+  - eecopa
+  - drumnistnakano
+  - maiieul
+  - wmertens
+  - aendel
+  - jemsco
+updated_at: '2023-12-14T18:38:38Z'
+created_at: '2023-03-20T23:45:13Z'
 ---
 
 import CodeSandbox from '../../../../../components/code-sandbox/index.tsx';
 
 # Components
 
-Components are the basic building blocks of Qwik Applications. They are reusable piece of code that can be used to build a UI.
+组件是 Qwik 应用程序的基本构建块。它们是可重用的代码片段，可用于构建 UI。
 
-Qwik components are unique in that:
+Qwik 组件的独特之处在于：
 
-- Qwik components automatically get broken down into lazy-loaded chunks by the [Optimizer](../../advanced/optimizer/index.mdx).
-- They are [resumable](../../concepts/resumable/index.mdx) (a component can get created on a server and continue its execution on the client).
-- They are [reactive](../../concepts/reactivity/index.mdx) and render independently of other components on the page. See [rendering](../../components/rendering/index.mdx).
+- Qwik 组件会自动被 [优化器](../../advanced/optimizer/index.mdx) 分解成惰性加载的块。
+- 它们是 [可恢复的](../../concepts/resumable/index.mdx)（组件可以在服务器上创建，并在客户端继续执行）。
+- 它们是 [响应式的](../../concepts/reactivity/index.mdx) 并且独立于页面上的其他组件进行渲染。参见 [渲染](../../components/rendering/index.mdx)。
 
 ## `component$()`
 
-A Qwik component is a function that returns JSX wrapped in a `component$` call.
+Qwik 组件是一个返回 JSX 的函数，并包装在 `component$` 调用中。
 
 <CodeSandbox src="/src/routes/demo/component/simple/index.tsx" style={{ height: '3em' }}>
 ```tsx /component$/
@@ -49,11 +60,13 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-> The reason for the `component$` is that the trailing `$` allows the [Optimizer](/docs/advanced/dollar/) to break the components into an application tree into a separate chunk so that each chunk can be loaded (or not loaded if it is not needed) independently. Without the `$` the component would be always loaded if the parent component needs to be loaded.
+> `component$` 函数（以 `$` 结尾）使优化器能够将组件拆分为单独的块。
+这允许每个块根据需要独立加载，而不是在加载父组件时加载所有组件。
+> 注意：routes 文件夹中的 index.tsx、layout.tsx、root.tsx 以及所有入口文件都需要 **export default**。对于其他组件，您可以使用 export const 和 export function。
 
-### Composing Components
+### 组件组合
 
-Components can be composed together to create more complex components.
+组件可以组合在一起以创建更复杂的组件。
 
 
 <CodeSandbox src="/src/routes/demo/component/child/index.tsx" style={{ height: '6em' }}>
@@ -75,11 +88,11 @@ const Child = component$(() => {
 ```
 </CodeSandbox>
 
-> Notice that Qwik components are already lazy loaded thanks to the `$` sign. That means that you don't need to dynamically import the child component manually, Qwik will do it for you.
+> 请注意，由于 `$` 符号的存在，Qwik 组件已经实现了惰性加载。这意味着您不需要手动动态导入子组件，Qwik 会为您完成。
 
-### Counter Example
+### 计数器示例
 
-A slightly more complex example of a counter.
+一个稍微复杂一点的计数器示例。
 
 <CodeSandbox src="/src/routes/demo/state/counter/index.tsx" style={{ height: '6em' }}>
 ```tsx
@@ -100,26 +113,35 @@ export default component$(() => {
 
 ## Props
 
-Props are used to pass data from the parent into the component. Props are accesible via the `props` argument to the component$ function.
+Props 用于将数据从父组件传递到子组件。通过 props 传递的数据可以通过 `component$` 函数的 `props` 参数访问。
 
-In this example a component `Item` declares optional `name`, `quantity`, `description`, and `price`.
+Props 是浅不可变的，这意味着基本数据类型（字符串、数字、布尔值）一旦传递就不能更改。但是，引用类型（对象、数组、函数）的内部元素可以更改，尽管引用本身是不可变的。
 
-<CodeSandbox src="/src/routes/demo/component/props/index.tsx" style={{ height: '10em' }}>
+要从子组件更改父组件中的基本 props 数据，请使用信号。当在子组件中本地更新数据时，不需要使用信号，只需解构 props 并使用这些值定义新的局部变量。
+
+以下两个示例展示了一个名为 `Item` 的组件，它声明了可选的 `name`、`quantity`、`description` 和 `price` props。
+
+在第一个示例中，基本数据类型通过 props 传递。`price` prop 作为信号传递，可以从父组件更改。`quantity` 作为数值传递，用于在 `Item` 中定义一个新的信号，该信号可以在本地进行响应式更新。或者，如果 `quantity` 不需要响应式，则可以将其定义为普通变量而不是信号。
+
+<CodeSandbox src="/src/routes/demo/component/primitive-props/index.tsx" style={{ height: '10em' }}>
 ```tsx {3-8, 27} /ItemProps/
-import { component$ } from '@builder.io/qwik';
+import { component$, useSignal } from "@builder.io/qwik";
+import type { Signal } from "@builder.io/qwik";
 
 interface ItemProps {
   name?: string;
   quantity?: number;
   description?: string;
-  price?: number;
+  price?: Signal<number>;
 }
 
 export const Item = component$<ItemProps>((props) => {
+  const localQuantity = useSignal(props.quantity);
+
   return (
     <ul>
       <li>name: {props.name}</li>
-      <li>quantity: {props.quantity}</li>
+      <li>quantity: {localQuantity}</li>
       <li>description: {props.description}</li>
       <li>price: {props.price}</li>
     </ul>
@@ -127,21 +149,63 @@ export const Item = component$<ItemProps>((props) => {
 });
 
 export default component$(() => {
+  const price = useSignal(9.99);
+
   return (
     <>
       <h1>Props</h1>
-      <Item name="hammer" price={9.99} />
+      <Item name="hammer" price={price} quantity={5} />
     </>
   );
 });
+
 ```
 </CodeSandbox>
 
-> In the example above we are using `component$<ItemProps>` to provide an explicit type for the props. This is optional but it allows the TypeScript compiler to check that the props are used correctly.
+在第二个示例中，props 作为包含数据的单个 `details` 对象传递，而不是单独的基本值。这允许在不使用信号的情况下对内部数据进行变异。但是，存储数据的 `details` 对象仍然是不可变的，一旦传递就不能更改。
 
-### Default props
+<CodeSandbox src="/src/routes/demo/component/reference-props/index.tsx" style={{ height: '10em' }}>
+```tsx {3-8, 27} /ItemProps/
+import { component$ } from "@builder.io/qwik";
 
-You can use the destructuring pattern with props to provide default values.
+interface ItemProps {
+  details: {
+    name?: string;
+    quantity?: number;
+    description?: string;
+    price?: number;
+  };
+}
+
+export const Item = component$((props: ItemProps) => {
+  props.details.price = 4.99;
+
+  return (
+    <ul>
+      <li>name: {props.details.name}</li>
+      <li>quantity: {props.details.quantity}</li>
+      <li>description: {props.details.description}</li>
+      <li>price: {props.details.price}</li>
+    </ul>
+  );
+});
+
+export default component$(() => {
+  return (
+    <Item
+      details={{ name: "hammer", quantity: 5, description: "", price: 9.99 }}
+    />
+  );
+});
+
+```
+</CodeSandbox>
+
+> 在上面的示例中，我们使用 `component$<ItemProps>` 来为 props 提供显式类型。这是可选的，但它允许 TypeScript 编译器检查 props 是否被正确使用。
+
+### 默认 props
+
+您可以使用 props 的解构模式来提供默认值。
 
 ```tsx
 interface Props {
@@ -149,7 +213,7 @@ interface Props {
   placeholder?: string;
 }
 
-// We can use JS's destructuring of props to provide a default value.
+// 我们可以使用 JS 的 props 解构来提供默认值。
 export default component$<Props>(({enabled = true, placeholder = ''}) => {
   return (
     <input disabled={!enabled} placeholder={placeholder} />
@@ -157,22 +221,22 @@ export default component$<Props>(({enabled = true, placeholder = ''}) => {
 });
 ```
 
-## Rendering on Reactivity
+## 响应式渲染
 
-Qwik components are reactive. This means that they automatically update on a state change. There are two kinds of updates:
+Qwik 组件是响应式的。这意味着它们会在状态发生变化时自动更新。更新有两种类型：
 
-1. A state is bound to a DOM text or attribute. Such changes usually directly update the DOM and do not require component function re-execute.
-2. A state causes a structural change to the DOM (elements are created and or removed). Such changes require component function to re-execute.
+1. 状态绑定到 DOM 文本或属性。此类更改通常会直接更新 DOM，并且不需要重新执行组件函数。
+2. 状态导致 DOM 结构发生变化（元素被创建或删除）。此类更改需要重新执行组件函数。
 
-The thing to keep in mind is that when state changes your component function may execute zero or more times depending on what the state is bound to. For this reason, the function should be idempotent and you should not rely on the number of times it executes.
+需要注意的是，当状态发生变化时，您的组件函数可能会执行零次或多次，具体取决于状态绑定到的内容。因此，该函数应该是幂等的，您不应该依赖于它执行的次数。
 
-A state change causes the component to get invalidated. When components get invalidated, they are added to the invalidation queue, which is flushed (rendered) on the next `requestAnimationFrame`. This acts as a form of coalescing for component rendering.
+状态变化会导致组件失效。当组件失效时，它们会被添加到失效队列中，该队列会在下一个 `requestAnimationFrame` 上被刷新（渲染）。这充当组件渲染的合并形式。
 
-## Getting hold of DOM element
+## 获取 DOM 元素
 
-Use `ref` to get hold of a DOM element. Create a signal to store DOM element. Then pass the signal to the JSX `ref` property.
+使用 `ref` 获取 DOM 元素。创建一个信号来存储 DOM 元素。然后将信号传递给 JSX 的 `ref` 属性。
 
-> Getting a reference to DOM elements can be useful to calculate the element size (`getBoundingClientRect`), computed styles, initializing a WebGL canvas, or even wire-up some third-party library that interacts with DOM elements directly.
+> 获取 DOM 元素的引用对于计算元素大小 (`getBoundingClientRect`)、计算样式、初始化 WebGL 画布，甚至连接直接与 DOM 元素交互的第三方库很有用。
 
 <CodeSandbox src="/src/routes/demo/component/ref/index.tsx" style={{ height: '10em' }}>
 ```tsx /const outputRef = useSignal<Element>();/ /ref={outputRef}/
@@ -209,15 +273,15 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-## Accessing Elements by `id` Across Server and Client Environments
+## 通过 `id` 在服务器和客户端环境中访问元素
 
-In server and client environments, elements must sometimes be accessed by their `id`. Use the `useId()` function to get a unique identifier for the current component that remains consistent across server-side rendering (SSR) and client-side operations. This is pivotal when server-rendered components need client-side scripting, such as:
+在服务器和客户端环境中，有时需要通过 `id` 访问元素。使用 `useId()` 函数获取当前组件的唯一标识符，该标识符在服务器端渲染 (SSR) 和客户端操作中保持一致。当服务器端渲染的组件需要客户端脚本时，这一点至关重要，例如：
 
-1. **Animation Engines**
-2. **Accessibility Enhancement**
-3. **Other Client-Side Libraries**
+1. **动画引擎**
+2. **辅助功能增强**
+3. **其他客户端库**
 
-In a microfrontends setup, where multiple fragments run concurrently, `useId()` ensures unique and consistent IDs across execution environments, eliminating conflicts.
+在多个片段同时运行的微前端设置中，`useId()` 确保了跨执行环境的唯一且一致的 ID，消除了冲突。
 
 <CodeSandbox src="/src/routes/demo/component/useId/index.tsx" style={{ height: '10em' }}>
 ```tsx /const outputRef = useSignal<Element>();/ /ref={outputRef}/
@@ -253,9 +317,9 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-## Lazy Loading
+## 延迟加载
 
-The component also serves an important role when breaking parent-child relationships for bundling purposes.
+组件在为捆绑目的打破父子关系时也起着重要作用。
 
 ```tsx
 export const Child = () => <span>child</span>;
@@ -267,9 +331,9 @@ const Parent = () => (
 );
 ```
 
-In the above example, referring to the `Parent` component implies a transitive reference to the `Child` component. When the bundler is creating a chunk, a reference to `Parent` necessitates bundling `Child` as well. (`Parent` internally refers to `Child`.) These transitive dependencies are a problem because it means that having a reference to the root component will transitively refer to the remainder of the application—something which Qwik tries to avoid explicitly.
+在上面的示例中，引用 `Parent` 组件意味着对 `Child` 组件的传递引用。当捆绑器创建块时，对 `Parent` 的引用也需要捆绑 `Child`。（`Parent` 在内部引用 `Child`。）这些传递依赖关系是一个问题，因为它意味着对根组件的引用将传递地引用应用程序的其余部分——这是 Qwik 试图明确避免的事情。
 
-To avoid the above problem we don't refer to components directly, instead, we refer to the lazy wrapper. This is created automatically by the `component$()` function.
+为了避免上述问题，我们不直接引用组件，而是引用延迟包装器。这是由 `component$()` 函数自动创建的。
 
 <CodeSandbox src="/src/routes/demo/component/lazy/index.tsx" style={{ height: '4em' }} sandbox={false}>
 ```tsx
@@ -291,7 +355,7 @@ export default Parent;
 ```
 </CodeSandbox>
 
-In the above example the Optimizer transforms the above to:
+在上面的示例中，优化器将上述代码转换为：
 
 ```tsx
 const Child = componentQrl(qrl('./chunk-a', 'Child_onMount'));
@@ -304,12 +368,12 @@ const Parent_onRender = () => (
 );
 ```
 
-> **NOTE**
-> For simplicity, not all of the transformations are shown; all resulting symbols are kept in the same file for succinctness.
+> **注意**
+> 为了简单起见，并非所有转换都显示出来；所有生成的符号都保存在同一个文件中，以简洁起见。
 
-Notice that after the Optimizer transforms the code, the `Parent` no longer directly references `Child`. This is important because it allows the bundler (and tree shakers) to freely move the symbols into different chunks without pulling the rest of the application with it.
+请注意，在优化器转换代码后，`Parent` 不再直接引用 `Child`。这一点很重要，因为它允许捆绑器（和树摇器）自由地将符号移动到不同的块中，而不会将应用程序的其余部分也拉进来。
 
-So what happens when the `Parent` component needs to render a `Child` component, but the `Child` component has not yet been downloaded? First, the `Parent` component renders its DOM like so.
+那么，当 `Parent` 组件需要渲染 `Child` 组件，但 `Child` 组件尚未下载时会发生什么？首先，`Parent` 组件会像这样渲染它的 DOM。
 
 ```html
 <main>
@@ -319,24 +383,22 @@ So what happens when the `Parent` component needs to render a `Child` component,
 </main>
 ```
 
-As you can see in the above example, the `<!--qv-->` acts as a marker where the `Child` component will be inserted once it is lazy-loaded.
+如您在上面的示例中所见，`<!--qv-->` 充当 `Child` 组件延迟加载后将被插入的标记。
 
-## Inline Components
+## 内联组件
 
-In addition to the standard `component$()` with all of it's lazy-loaded
-properties, Qwik also supports lightweight (inline) components that act more
-like components in traditional frameworks.
+除了具有所有延迟加载属性的标准 `component$()` 之外，Qwik 还支持轻量级（内联）组件，这些组件的行为更像传统框架中的组件。
 
 <CodeSandbox src="/src/routes/demo/component/inline-child/index.tsx" style={{height: '4em'}}>
 ```tsx
 import { component$ } from '@builder.io/qwik';
 
-// Inline component: declared using a standard function.
+// 内联组件：使用标准函数声明。
 export const MyButton = (props: { text: string }) => {
   return <button>{props.text}</button>;
 };
 
-// Component: declared using `component$()`.
+// 组件：使用 `component$()` 声明。
 export default component$(() => {
   return (
     <p>
@@ -348,26 +410,56 @@ export default component$(() => {
 ```
 </CodeSandbox>
 
-In the above example, `MyButton` is an inline component.
-Unlike the standard `component$()`, inline components cannot be individually
-lazy-loaded; instead, they are bundled with their parent component. In this case:
+在上面的示例中，`MyButton` 是一个内联组件。
+与标准 `component$()` 不同，内联组件不能单独延迟加载；相反，它们会与它们的父组件捆绑在一起。在本例中：
 
-- `MyButton` will get bundled with the `default` component.
-- Whenever `default` is rendered, it will also guarantee that `MyButton` is
-rendered.
+- `MyButton` 将与 `default` 组件捆绑在一起。
+- 每当渲染 `default` 时，它也会保证渲染 `MyButton`。
 
-You can think of inline components as being inlined into the component where they are instantiated.
+您可以将内联组件视为内联到它们被实例化的组件中。
 
-### Limitations
-Inline components come with some limitations that the standard `component$()`
-does not have. Inline components:
-- Cannot use `use*` methods such as `useSignal` or `useStore`.
-- Cannot project content with a `<Slot>`.
+### 限制
+内联组件具有一些标准 `component$()` 不具备的限制。内联组件：
+- 不能使用 `use*` 方法，例如 `useSignal` 或 `useStore`。
+- 不能使用 `<Slot>` 投射内容。
 
-As the name implies, inline components are best used sparingly for
-lightweight pieces of markup since they offer the convenience of being
-bundled with the parent component.
+顾名思义，内联组件最适合谨慎地用于轻量级标记片段，因为它们提供了与父组件捆绑在一起的便利性。
 
+## 多态组件
+
+当您想要根据道具输出不同类型的元素，但默认使用 `<div>` 时，您可以使用类似以下代码：
+
+```tsx
+const Poly = component$(
+  <C extends string | FunctionComponent = 'div'>({
+    as,
+    ...props
+  }: { as?: C } & PropsOf<string extends C ? 'div' : C>) => {
+    const Cmp = as || 'div';
+    return (
+      <Cmp {...props}>
+        <Slot />
+      </Cmp>
+    );
+  }
+);
+
+export const TestComponent = component$(() => {
+  // These all work with correct types
+  return (
+    <>
+      <Poly>Hello from a div</Poly>
+      <Poly as="a" href="/blog">
+        Blog
+      </Poly>
+      <Poly as="input" onInput$={(ev, el) => console.log(el.value)} />
+      <Poly as={OtherComponent} someProp />
+    </>
+  );
+});
+```
+
+Note the `string extends C`, this is only true when TypeScript cannot infer the type from the `as` prop allowing you to specify the default type.
 
 ## API Overview
 
@@ -386,9 +478,9 @@ bundled with the parent component.
 
 ### Events
 
-- [`useOn()`](../events/index.mdx) - appends a listener to the current component programmatically
-- [`useOnWindow()`](../events/index.mdx) - appends a listener to the window object programmatically
-- [`useOnDocument()`](../events/index.mdx) - appends a listener to the document object programmatically
+- [`useOn()`](../events/index.mdx#useonwindowdocument-hook) - appends a listener to the current component programmatically
+- [`useOnWindow()`](../events/index.mdx#useonwindowdocument-hook) - appends a listener to the window object programmatically
+- [`useOnDocument()`](../events/index.mdx#useonwindowdocument-hook) - appends a listener to the document object programmatically
 
 ### Tasks/Lifecycle
 
