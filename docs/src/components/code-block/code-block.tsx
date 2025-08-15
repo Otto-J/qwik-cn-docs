@@ -1,15 +1,11 @@
-import { component$, useStyles$, type QRL, useVisibleTask$, useSignal } from '@builder.io/qwik';
-import prismjs from 'prismjs';
-// Set to global so that prism language plugins can find it.
-const _global =
-  (typeof globalThis !== 'undefined' && globalThis) ||
-  (typeof global !== 'undefined' && global) ||
-  (typeof self !== 'undefined' && self) ||
-  (typeof this !== 'undefined' && this) ||
-  (typeof window !== 'undefined' && window);
-(_global as any).PRISM = prismjs;
-import 'prismjs/components/prism-jsx'; // needs PRISM global
-import 'prismjs/components/prism-tsx'; // needs PRISM global
+import {
+  component$,
+  useStyles$,
+  type QRL,
+  useVisibleTask$,
+  useSignal,
+  useTask$,
+} from '@builder.io/qwik';
 
 import styles from './code-block.css?inline';
 import { CopyCode } from '../copy-code/copy-code-block';
@@ -21,9 +17,26 @@ interface CodeBlockProps {
   observerRootId?: string;
 }
 
+const holder: { prismjs?: typeof import('prismjs') } = {};
+
 export const CodeBlock = component$((props: CodeBlockProps) => {
   const listSig = useSignal<Element>();
   useStyles$(styles);
+
+  useTask$(() => {
+    if (!holder.prismjs) {
+      return import('prismjs').then(async (prism) => {
+        holder.prismjs = prism;
+
+        // These need the Prism global that prismjs provides
+        // We lazy import so we're sure about the order of the imports
+        await Promise.all([
+          import('prismjs/components/prism-jsx'),
+          import('prismjs/components/prism-tsx'),
+        ]);
+      });
+    }
+  });
 
   useVisibleTask$(async () => {
     const { pathInView$, path, observerRootId } = props;
