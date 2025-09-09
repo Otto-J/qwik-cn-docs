@@ -1,7 +1,7 @@
 /** Maintains the state for a REPL instance */
 
 import { isServer, unwrapStore } from '@builder.io/qwik';
-import { getBundler } from '../bundler';
+import { getBundler, ssrWorkerString } from '../bundler';
 import { registerReplSW } from '../register-repl-sw';
 import type { RequestMessage, ResponseMessage } from '../repl-sw';
 import type { ReplAppInput, ReplResult, ReplStore } from '../types';
@@ -10,10 +10,6 @@ import type {
   InitSSRMessage,
   OutgoingMessage as SSROutgoingMessage,
 } from '../bundler/repl-ssr-worker';
-// @ts-expect-error - we don't have types for this yet
-import ssrWorkerStringPre from '../bundler/repl-ssr-worker?compiled-string';
-
-const ssrWorkerString = ssrWorkerStringPre.replace(/DO_NOT_TOUCH_IMPORT/g, 'import');
 
 let channel: BroadcastChannel;
 let registered = false;
@@ -142,13 +138,12 @@ export class ReplInstance {
     const status = fileContent === null ? 404 : error ? 500 : 200;
     const statusText =
       status === 200 ? 'OK' : status === 404 ? 'Not Found' : 'Internal Server Error';
-    const headers: Record<string, string> =
-      status === 200
-        ? {
-            'Content-Type': this.getContentType(url),
-            'Cache-Control': 'no-store, no-cache, max-age=0',
-          }
-        : {};
+    const headers: Record<string, string> = {
+      'Cache-Control': 'no-store, no-cache, max-age=0',
+    };
+    if (status === 200) {
+      headers['Content-Type'] = this.getContentType(url);
+    }
 
     const message: ResponseMessage = {
       type: 'repl-response',
@@ -273,7 +268,7 @@ export class ReplInstance {
       };
 
       ssrWorker.onerror = (error) => {
-        resolve({ html: errorHtml(error, 'SSR ') });
+        resolve({ html: errorHtml('Worker failed to load', 'SSR ') });
         ssrWorker.terminate();
       };
     });

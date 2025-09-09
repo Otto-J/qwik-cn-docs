@@ -65,8 +65,8 @@ self.onmessage = async (e: MessageEvent<IncomingMessage>) => {
 async function executeSSR(message: InitSSRMessage): Promise<{ html: string; events: any[] }> {
   const { baseUrl, manifest, entry } = message;
 
-  // @ts-expect-error - we prevent Vite from touching this import and replace it later
-  const module = await DO_NOT_TOUCH_IMPORT(`/repl/${replId}-ssr/${entry}`);
+  // We prevent Vite from touching this import() and replace it after bundling
+  const module = await (globalThis as any).DO_NOT_TOUCH_IMPORT(`/repl/${replId}-ssr/${entry}`);
   const server = module.default;
 
   const render = typeof server === 'function' ? server : server?.render;
@@ -98,12 +98,13 @@ async function executeSSR(message: InitSSRMessage): Promise<{ html: string; even
     base: baseUrl,
     manifest,
     prefetchStrategy: null,
-  }).catch((e: any) => {
-    console.error('SSR failed', e);
-    return {
-      html: `<html><h1>SSR Error</h1><pre><code>${String(e).replaceAll('<', '&lt;')}</code></pre></html>`,
-    };
   });
+
+  // Inject the event listener script
+  ssrResult.html = ssrResult.html.replace(
+    '</body>',
+    `<script>${(globalThis as any).LISTENER_SCRIPT}</script></body>`
+  );
 
   // Restore console methods
   console.log = orig.log;
