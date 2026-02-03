@@ -1,0 +1,44 @@
+# Build
+build
+dist
+server
+functions/**/*.js
+# This is used in dev mode because service
+# workers don't support imports
+public/repl/repl-sw.js*
+
+!src/routes/api/qwik/server/
+
+# Development
+node_modules
+
+# Cache
+.cache
+.mf
+.vscode
+.rollup.cache
+tsconfig.tsbuildinfo
+q-insights.json
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Cloudflare
+
+*.local
