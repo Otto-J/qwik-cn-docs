@@ -42,3 +42,6 @@ lerna-debug.log*
 # Cloudflare
 
 *.local
+.vercel/
+.claude/settings.local.json
+node_modules

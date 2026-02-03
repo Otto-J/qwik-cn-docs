@@ -1,0 +1,51 @@
+name: Translate Docs
+
+on:
+  workflow_dispatch:  # 手动触发
+  schedule:
+    - cron: '30 13 * * *'  # 每天 UTC 13:30 (北京时间 21:30)，在 sync 后 2 小时
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整历史用于 diff
+          ref: translate  # 检出 translate 分支
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Configure git
+        run: |
+          git config --global user.name "Translate Bot"
+          git config --global user.email "translate@qwik-cn.dev"
+
+      - name: Fetch docs branch
+        run: git fetch origin docs
+
+      - name: Install dependencies
+        run: |
+          cd docs
+          pnpm install
+
+      - name: Run translation script
+        env:
+          DASHSCOPE_API_KEY: ${{ secrets.DASHSCOPE_API_KEY }}
+        run: |
+          cd docs
+          node ../scripts/translate-docs.js
+
+      - name: Commit and push
+        run: |
+          git add .
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "chore: Auto translate docs"
+            git push origin translate
+          else
+            echo "No changes to commit"
+          fi
